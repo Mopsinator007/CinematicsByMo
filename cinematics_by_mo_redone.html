@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cinematics by Mo — Gym, Lifestyle &amp; Travel Films</title>
+<meta name="description" content="Cinematics by Mo — cinematic gym, lifestyle, and travel films. Based behind the lens, shooting stories that move.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230D0E10' stroke='%23E8542C' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='18' fill='none' stroke='%23EDE9E2' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --ink:#0D0E10;
+  --panel:#17191C;
+  --panel-raised:#1E2124;
+  --steel:#4A5058;
+  --steel-line:#2B2E32;
+  --steel-light:#8A909A;
+  --bone:#EDE9E2;
+  --ember:#E8542C;
+  --ember-dim:#8f3620;
+  --gold:#C9A45C;
+  --teal:#3E9A9C;
+  --display:'Anton', sans-serif;
+  --body:'Manrope', sans-serif;
+  --mono:'JetBrains Mono', monospace;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--ink);
+  color:var(--bone);
+  font-family:var(--body);
+  line-height:1.5;
+  overflow-x:hidden;
+}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+}
+
+/* film grain overlay */
+.grain{
+  position:fixed; inset:0; pointer-events:none; z-index:200;
+  opacity:0.05; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* camera flash */
+#flashOverlay{
+  position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:400;
+  transition:opacity 0.09s ease-out;
+}
+#flashOverlay.fire{opacity:1; transition:opacity 0.03s ease-in;}
+
+/* film-strip sprocket divider */
+.film-divider{
+  height:22px; width:100%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='22'%3E%3Crect width='40' height='22' fill='%2317191C'/%3E%3Crect x='13' y='5' width='14' height='12' rx='3' fill='%230D0E10'/%3E%3C/svg%3E");
+  background-repeat:repeat-x; background-size:40px 22px;
+  border-top:1px solid var(--steel-line); border-bottom:1px solid var(--steel-line);
+}
+.film-divider.on-panel{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='22'%3E%3Crect width='40' height='22' fill='%230D0E10'/%3E%3Crect x='13' y='5' width='14' height='12' rx='3' fill='%2317191C'/%3E%3C/svg%3E");
+}
+
+a{color:inherit; text-decoration:none;}
+ul{list-style:none;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+section{position:relative;}
+
+.eyebrow{
+  font-family:var(--mono); text-transform:uppercase; letter-spacing:0.18em;
+  font-size:12px; color:var(--ember); display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{content:''; width:8px; height:8px; border-radius:50%; background:var(--ember); display:inline-block; box-shadow:0 0 8px var(--ember);}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:0.01em; text-transform:uppercase;}
+
+.reveal{opacity:0; transform:translateY(28px); transition:opacity 0.8s ease, transform 0.8s ease;}
+.reveal.in{opacity:1; transform:translateY(0);}
+
+/* ===== NAV ===== */
+header{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background:linear-gradient(to bottom, rgba(13,14,16,0.92), rgba(13,14,16,0));
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--steel-line);
+}
+nav{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 32px; max-width:1180px; margin:0 auto;
+}
+.logo{
+  font-family:var(--display); font-size:20px; letter-spacing:0.03em; text-transform:uppercase;
+  display:flex; align-items:center; gap:10px;
+}
+.logo .dot{width:10px; height:10px; border-radius:50%; background:var(--ember); box-shadow:0 0 10px var(--ember);}
+.nav-links{display:flex; gap:26px; font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.1em;}
+.nav-links a{color:var(--steel-light); transition:color 0.25s ease; position:relative; padding-bottom:4px;}
+.nav-links a::after{content:''; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--ember); transition:width 0.25s ease;}
+.nav-links a:hover{color:var(--bone);}
+.nav-links a:hover::after{width:100%;}
+.nav-social{display:flex; gap:16px; align-items:center;}
+.nav-social a{width:34px; height:34px; border:1px solid var(--steel-line); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--bone); transition:all 0.25s ease;}
+.nav-social a:hover{border-color:var(--ember); color:var(--ember); transform:translateY(-2px);}
+.burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer;}
+.burger span{width:24px; height:2px; background:var(--bone);}
+
+/* ===== HERO ===== */
+.hero{
+  min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+  padding-top:120px; padding-bottom:80px; position:relative; overflow:hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232,84,44,0.12), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(62,154,156,0.08), transparent 60%),
+    var(--ink);
+}
+.hero::before{
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:radial-gradient(ellipse 120% 90% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
+}
+.hero::after{
+  content:''; position:absolute; top:-50%; left:-20%; width:60%; height:220%; z-index:0; pointer-events:none;
+  background:linear-gradient(100deg, transparent 40%, rgba(237,233,226,0.05) 48%, rgba(237,233,226,0.09) 50%, rgba(237,233,226,0.05) 52%, transparent 60%);
+  animation:sweep 7s ease-in-out 0.4s 1;
+}
+@keyframes sweep{
+  0%{transform:translateX(-40%);}
+  100%{transform:translateX(220%);}
+}
+.hero > *{position:relative; z-index:1;}
+.viewfinder{position:relative;}
+.vf-corner{position:absolute; width:26px; height:26px; border-color:var(--steel-light); opacity:0.6;}
+.vf-tl{top:-20px; left:0; border-top:2px solid; border-left:2px solid;}
+.vf-tr{top:-20px; right:0; border-top:2px solid; border-right:2px solid;}
+.vf-bl{bottom:-20px; left:0; border-bottom:2px solid; border-left:2px solid;}
+.vf-br{bottom:-20px; right:0; border-bottom:2px solid; border-right:2px solid;}
+
+.hud-row{
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--mono); font-size:12px; color:var(--steel-light);
+  letter-spacing:0.08em; margin-bottom:56px; flex-wrap:wrap; gap:12px;
+}
+.hud-rec{display:flex; align-items:center; gap:8px; color:var(--bone);}
+.rec-dot{width:9px; height:9px; border-radius:50%; background:var(--ember); animation:blink 1.6s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.25;}}
+.hud-settings{display:flex; gap:22px;}
+.hud-settings span b{color:var(--bone); font-weight:500;}
+
+.hero-title{
+  font-size:clamp(56px, 11vw, 132px); line-height:0.92; text-align:center;
+}
+.hero-title .accent{color:var(--ember);}
+.hero-sub{
+  text-align:center; font-family:var(--mono); text-transform:uppercase;
+  letter-spacing:0.22em; font-size:13px; color:var(--steel-light); margin-top:22px;
+}
+.hero-cta{display:flex; justify-content:center; gap:18px; margin-top:44px; flex-wrap:wrap;}
+.btn{
+  font-family:var(--mono); text-transform:uppercase; letter-spacing:0.1em; font-size:13px;
+  padding:16px 30px; border-radius:2px; cursor:pointer; transition:all 0.25s ease; border:1px solid transparent;
+  display:inline-flex; align-items:center; gap:10px;
+}
+.btn-primary{background:var(--ember); color:var(--ink); font-weight:700; box-shadow:0 0 0 rgba(232,84,44,0);}
+.btn-primary:hover{background:#ff6a3d; transform:translateY(-2px); box-shadow:0 10px 28px rgba(232,84,44,0.28);}
+.btn-primary:active{transform:translateY(0) scale(0.97);}
+.btn-outline{border-color:var(--steel); color:var(--bone);}
+.btn-outline:hover{border-color:var(--bone); background:var(--panel); transform:translateY(-2px);}
+.btn-outline:active{transform:translateY(0) scale(0.97);}
+.shutter-btn:active{transform:scale(0.94);}
+
+/* ticker */
+.ticker-wrap{overflow:hidden; border-top:1px solid var(--steel-line); border-bottom:1px solid var(--steel-line); background:var(--panel); margin-top:70px;}
+.ticker{display:flex; white-space:nowrap; animation:scroll 26s linear infinite; width:max-content;}
+@keyframes scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+.ticker span{
+  font-family:var(--display); font-size:20px; text-transform:uppercase; letter-spacing:0.04em;
+  padding:16px 36px; color:var(--steel-light); display:flex; align-items:center; gap:36px;
+}
+.ticker span em{color:var(--ember); font-style:normal;}
+
+/* ===== SECTION HEADERS ===== */
+.sec-head{max-width:640px; margin-bottom:56px;}
+.sec-head h2{font-size:clamp(34px,5vw,54px); margin-top:14px; line-height:1.02;}
+.sec-head p{color:var(--steel-light); margin-top:16px; font-size:16px; max-width:520px;}
+.section-pad{padding:110px 0;}
+
+/* ===== DIAL / WORK SECTION ===== */
+.work-section{background:var(--ink);}
+.dial-layout{display:grid; grid-template-columns:340px 1fr; gap:64px; align-items:start;}
+@media(max-width:900px){.dial-layout{grid-template-columns:1fr; justify-items:center;}}
+@media(max-width:480px){
+  .dial-outer, .dial-ticks{width:250px; height:250px;}
+  .dial-face{width:190px; height:190px;}
+  .dl-right{right:-52px;} .dl-left{left:-52px;}
+  .dial-label-btn{font-size:10px;}
+  .fstop-label{font-size:8px;}
+}
+
+.dial-outer{
+  width:300px; height:300px; border-radius:50%; position:sticky; top:130px;
+  background:
+    radial-gradient(circle at 35% 30%, #23262a, #101113 70%);
+  box-shadow:inset 0 0 0 1px var(--steel-line), 0 20px 60px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.6);
+  display:flex; align-items:center; justify-content:center;
+}
+@media(max-width:900px){.dial-outer{position:static;}}
+.dial-ticks{position:absolute; width:300px; height:300px; border-radius:50%;}
+.tick{position:absolute; width:2px; height:10px; background:var(--steel); left:50%; top:6px; transform-origin:1px 144px;}
+.tick.major{height:14px; background:var(--steel-light);}
+.fstop-label{
+  position:absolute; top:50%; left:50%; transform-origin:center;
+  font-family:var(--mono); font-size:9px; color:var(--steel-light); opacity:0.65;
+  letter-spacing:0.02em; pointer-events:none;
+}
+
+.dial-face{
+  width:230px; height:230px; border-radius:50%; position:relative;
+  background:radial-gradient(circle at 40% 35%, #1c1e21, #0c0d0e 75%);
+  box-shadow:inset 0 0 0 1px var(--steel-line), inset 0 6px 18px rgba(0,0,0,0.7);
+  display:flex; align-items:center; justify-content:center;
+}
+.dial-pointer{
+  position:absolute; top:14px; left:50%; width:3px; height:44px;
+  background:linear-gradient(var(--ember), transparent);
+  transform:translateX(-50%) rotate(var(--angle, 0deg)); transform-origin:50% 115px;
+  transition:transform 0.6s cubic-bezier(.2,.9,.25,1);
+  border-radius:2px;
+}
+.dial-pointer::after{content:''; position:absolute; top:-4px; left:50%; transform:translateX(-50%); width:8px; height:8px; border-radius:50%; background:var(--ember); box-shadow:0 0 10px var(--ember);}
+
+.shutter-btn{
+  width:96px; height:96px; border-radius:50%; border:1px solid var(--steel-line);
+  background:radial-gradient(circle at 40% 35%, #2a2d31, #0a0b0c 80%);
+  color:var(--bone); font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; text-align:center;
+}
+.shutter-btn:hover{color:var(--ember);}
+
+.dial-label-btn{
+  position:absolute; transform:translate(-50%,-50%);
+  font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:0.1em;
+  color:var(--steel-light); background:none; border:none; cursor:pointer; padding:6px 8px;
+  transition:color 0.25s ease;
+}
+.dial-label-btn.active, .dial-label-btn:hover{color:var(--ember);}
+.dl-top{top:-30px; left:50%;}
+.dl-right{top:50%; right:-70px;}
+.dl-bottom{bottom:-30px; left:50%;}
+.dl-left{top:50%; left:-70px;}
+
+.mode-readout{
+  margin-top:26px; font-family:var(--mono); font-size:12px; color:var(--steel-light);
+  text-align:center; letter-spacing:0.08em;
+}
+.mode-readout b{color:var(--bone); font-size:14px; letter-spacing:0.14em;}
+
+/* portfolio grid */
+.portfolio-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+@media(max-width:640px){.portfolio-grid{grid-template-columns:1fr;}}
+.card{
+  border-radius:4px; overflow:hidden; border:1px solid var(--steel-line);
+  background:var(--panel); cursor:pointer; transition:transform 0.35s ease, border-color 0.35s ease;
+  opacity:0; transform:translateY(14px); animation:cardIn 0.5s ease forwards;
+}
+@keyframes cardIn{to{opacity:1; transform:translateY(0);}}
+.card:hover{transform:translateY(-6px); border-color:var(--steel);}
+.card[data-cat="gym"]:hover{border-color:var(--ember); box-shadow:0 14px 34px rgba(232,84,44,0.16);}
+.card[data-cat="lifestyle"]:hover{border-color:var(--gold); box-shadow:0 14px 34px rgba(201,164,92,0.16);}
+.card[data-cat="travel"]:hover{border-color:var(--teal); box-shadow:0 14px 34px rgba(62,154,156,0.18);}
+.card[data-cat="reel"]:hover{border-color:var(--bone); box-shadow:0 14px 34px rgba(237,233,226,0.10);}
+.card-time{
+  position:absolute; top:12px; right:14px; font-family:var(--mono); font-size:10px; color:rgba(237,233,226,0.7);
+  letter-spacing:0.04em; z-index:1;
+}
+.card-thumb{
+  aspect-ratio:16/10; position:relative; display:flex; align-items:flex-end; padding:16px; overflow:hidden;
+}
+.card-thumb::before{content:''; position:absolute; inset:0; opacity:0.9;}
+.thumb-gym::before{background:
+  repeating-linear-gradient(115deg, rgba(232,84,44,0.16) 0px, rgba(232,84,44,0.16) 2px, transparent 2px, transparent 34px),
+  linear-gradient(160deg, #1a1b1d, #0a0a0b 60%, #2a1410);}
+.thumb-lifestyle::before{background: linear-gradient(160deg, #2a2018, #0e0c0a 55%, #4a3420); background-blend-mode:screen;}
+.thumb-travel::before{background: linear-gradient(160deg, #10262a, #0a0e10 55%, #1c3a44);}
+.thumb-reel::before{background: conic-gradient(from 200deg, #1a1b1d, #2a1410, #10262a, #2a2018, #1a1b1d);}
+.card-tag{
+  font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.1em;
+  color:var(--bone); background:rgba(13,14,16,0.55); border:1px solid rgba(237,233,226,0.2);
+  padding:4px 9px; border-radius:2px; position:relative; z-index:1;
+}
+.card-play{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:52px; height:52px; border-radius:50%; border:1px solid rgba(237,233,226,0.4);
+  display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.3s ease, transform 0.3s ease;
+  background:rgba(13,14,16,0.4);
+}
+.card:hover .card-play{opacity:1; transform:translate(-50%,-50%) scale(1.08);}
+.card-body{padding:16px 18px 20px;}
+.card-body h4{font-family:var(--body); font-weight:700; font-size:16px; text-transform:none; letter-spacing:0; margin-bottom:4px;}
+.card-body p{font-size:13px; color:var(--steel-light); font-family:var(--mono); letter-spacing:0.03em;}
+
+/* ===== SETTINGS / SERVICES ===== */
+.settings-section{background:var(--panel);}
+.settings-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--steel-line); border:1px solid var(--steel-line);}
+@media(max-width:900px){.settings-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:520px){.settings-grid{grid-template-columns:1fr;}}
+.setting-card{background:var(--panel); padding:34px 26px;}
+.setting-icon{margin-bottom:16px; opacity:0.9;}
+.setting-readout{font-family:var(--mono); font-size:13px; color:var(--ember); letter-spacing:0.06em;}
+.setting-value{font-family:var(--display); font-size:38px; margin:10px 0 14px; letter-spacing:0.01em;}
+.setting-card p{font-size:14px; color:var(--steel-light); line-height:1.6;}
+
+/* ===== ABOUT ===== */
+.about-section{background:var(--ink);}
+.about-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:64px; align-items:center;}
+@media(max-width:860px){.about-grid{grid-template-columns:1fr;}}
+.about-frame{
+  aspect-ratio:4/5; border-radius:4px; border:1px solid var(--steel-line);
+  background:
+    radial-gradient(circle at 30% 25%, rgba(232,84,44,0.18), transparent 55%),
+    linear-gradient(160deg, #1c1d1f, #0a0a0b 70%);
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.vf-grid{position:absolute; inset:0; pointer-events:none;}
+.vf-grid span{position:absolute; background:rgba(237,233,226,0.09);}
+.vf-grid .v1{left:33.33%; top:0; bottom:0; width:1px;}
+.vf-grid .v2{left:66.66%; top:0; bottom:0; width:1px;}
+.vf-grid .h1{top:33.33%; left:0; right:0; height:1px;}
+.vf-grid .h2{top:66.66%; left:0; right:0; height:1px;}
+.about-frame svg{width:40%; opacity:0.85;}
+.about-frame .corner-tag{position:absolute; top:16px; left:16px; font-family:var(--mono); font-size:11px; color:var(--steel-light); letter-spacing:0.1em;}
+.about-copy h2{font-size:clamp(30px,4vw,46px); margin-bottom:20px;}
+.about-copy p{color:var(--steel-light); margin-bottom:16px; font-size:16px; line-height:1.7; max-width:520px;}
+.about-stats{display:flex; gap:40px; margin-top:30px; flex-wrap:wrap;}
+.about-stats div b{font-family:var(--display); font-size:32px; display:block; color:var(--bone);}
+.about-stats div span{font-family:var(--mono); font-size:11px; color:var(--steel-light); text-transform:uppercase; letter-spacing:0.1em;}
+
+/* ===== PROCESS ===== */
+.process-section{background:var(--panel);}
+.process-list{display:flex; flex-direction:column;}
+.process-item{
+  display:grid; grid-template-columns:70px 1fr; gap:24px; padding:28px 0; border-bottom:1px solid var(--steel-line);
+  align-items:start;
+}
+.process-item:last-child{border-bottom:none;}
+.process-num{font-family:var(--mono); font-size:14px; color:var(--ember); padding-top:4px;}
+.process-item h3{font-family:var(--body); font-weight:700; font-size:19px; text-transform:none; letter-spacing:0; margin-bottom:6px;}
+.process-item p{color:var(--steel-light); font-size:14.5px; max-width:560px;}
+
+/* ===== CONTACT ===== */
+.contact-section{background:var(--ink);}
+.contact-panel{
+  border:1px solid var(--steel-line); border-radius:6px; background:var(--panel);
+  padding:56px; display:grid; grid-template-columns:1fr 1fr; gap:56px;
+}
+@media(max-width:860px){.contact-panel{grid-template-columns:1fr; padding:36px 24px;}}
+.contact-left h2{font-size:clamp(30px,4vw,44px); margin-bottom:16px;}
+.contact-left p{color:var(--steel-light); font-size:15.5px; margin-bottom:28px; max-width:420px;}
+.contact-socials{display:flex; gap:14px; flex-wrap:wrap;}
+.social-chip{
+  display:flex; align-items:center; gap:10px; border:1px solid var(--steel-line); padding:12px 18px; border-radius:30px;
+  font-family:var(--mono); font-size:13px; transition:all 0.25s ease;
+}
+.social-chip:hover{border-color:var(--ember); color:var(--ember); transform:translateY(-2px);}
+
+.field{margin-bottom:18px;}
+.field label{display:block; font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--steel-light); margin-bottom:8px;}
+.field input, .field select, .field textarea{
+  width:100%; background:var(--ink); border:1px solid var(--steel-line); color:var(--bone);
+  padding:13px 14px; font-family:var(--body); font-size:14px; border-radius:2px; outline:none; transition:border-color 0.25s ease;
+}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--ember);}
+.field textarea{resize:vertical; min-height:90px;}
+.submit-row{display:flex; align-items:center; gap:16px; margin-top:6px; flex-wrap:wrap;}
+.form-note{font-family:var(--mono); font-size:11.5px; color:var(--steel-light);}
+
+/* ===== BEHIND THE SCENES ===== */
+.bts-section{background:var(--ink);}
+.bts-tabs{display:flex; gap:12px; margin-bottom:36px; flex-wrap:wrap;}
+.bts-tab{
+  font-family:var(--mono); text-transform:uppercase; letter-spacing:0.08em; font-size:12.5px;
+  padding:12px 20px; border:1px solid var(--steel-line); border-radius:30px; background:none; color:var(--steel-light);
+  cursor:pointer; transition:all .25s ease;
+}
+.bts-tab.active, .bts-tab:hover{border-color:var(--ember); color:var(--ember);}
+.bts-log{display:flex; flex-direction:column; gap:18px;}
+.bts-day{
+  display:grid; grid-template-columns:150px 1fr; gap:0; border:1px solid var(--steel-line); border-radius:6px; overflow:hidden;
+  background:var(--panel); opacity:0; transform:translateY(14px); animation:cardIn .5s ease forwards;
+}
+@media(max-width:640px){.bts-day{grid-template-columns:1fr;}}
+.bts-thumb{position:relative; overflow:hidden; min-height:130px;}
+.bts-thumb::before{content:''; position:absolute; inset:0;}
+.thumb-bodybuilding::before{background:
+  radial-gradient(circle at 30% 25%, rgba(201,164,92,0.4), transparent 60%),
+  linear-gradient(160deg,#2a2015,#0d0a08 65%);}
+.thumb-powerlifting::before{background:
+  linear-gradient(160deg,#22262b,#0a0c0e 65%),
+  repeating-linear-gradient(45deg, rgba(237,233,226,0.05) 0 2px, transparent 2px 14px);}
+.bts-daytag{
+  position:absolute; top:10px; left:10px; font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.08em;
+  color:var(--bone); background:rgba(13,14,16,0.55); border:1px solid rgba(237,233,226,0.2); padding:4px 8px; border-radius:2px;
+}
+.bts-body{padding:20px 24px;}
+.bts-day-label{font-family:var(--mono); font-size:11px; color:var(--ember); letter-spacing:0.1em; margin-bottom:6px;}
+.bts-body h4{font-family:var(--body); font-weight:700; font-size:17px; margin-bottom:6px;}
+.bts-body p{color:var(--steel-light); font-size:14px;}
+
+/* ===== KIT / EQUIPMENT ===== */
+.kit-section{background:var(--panel);}
+.kit-case{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+@media(max-width:760px){.kit-case{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.kit-case{grid-template-columns:1fr;}}
+.kit-group-label{
+  grid-column:1/-1; font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:0.14em;
+  color:var(--steel-light); padding:22px 2px 4px; border-top:1px dashed var(--steel-line);
+}
+.kit-group-label:first-child{border-top:none; padding-top:0;}
+.kit-slot{
+  border:1.5px dashed var(--steel-line); border-radius:8px; padding:22px 20px; background:var(--panel-raised);
+  transition:border-color .25s ease, transform .25s ease;
+}
+.kit-slot:hover{border-color:var(--ember); border-style:solid; transform:translateY(-3px);}
+.kit-icon{margin-bottom:14px; display:block; color:var(--ember);}
+.kit-slot h4{font-family:var(--body); font-weight:700; font-size:15px; margin-bottom:4px;}
+.kit-slot p{font-family:var(--mono); font-size:11.5px; color:var(--steel-light); letter-spacing:0.02em;}
+
+/* ===== SHOP ===== */
+.shop-section{background:var(--ink);}
+.shop-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+@media(max-width:900px){.shop-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.shop-grid{grid-template-columns:1fr;}}
+.shop-card{border:1px solid var(--steel-line); border-radius:6px; overflow:hidden; background:var(--panel); display:flex; flex-direction:column;}
+.grade-compare{position:relative; aspect-ratio:16/10; overflow:hidden; cursor:ew-resize; user-select:none;}
+.grade-layer{position:absolute; inset:0;}
+.grade-before{position:absolute; top:0; left:0; bottom:0; width:50%; overflow:hidden; border-right:2px solid var(--bone);}
+.grade-before > div{position:absolute; inset:0; width:280px; max-width:none;}
+@media(min-width:400px){.grade-before > div{width:340px;}}
+.flat-look{background:linear-gradient(160deg,#4a4d47,#33352f 60%,#2a2c26); filter:saturate(0.35) brightness(0.85);}
+.grade-iron{background: repeating-linear-gradient(115deg, rgba(232,84,44,0.2) 0 2px, transparent 2px 30px), linear-gradient(160deg,#241814,#0c0908 60%,#3a1c12);}
+.grade-golden{background: linear-gradient(160deg,#3a2c18,#140f0a 55%,#5a3f22);}
+.grade-mono{background: linear-gradient(160deg,#3a3d40,#101214 60%,#20242a); filter:grayscale(1) contrast(1.15);}
+.grade-handle{
+  position:absolute; top:0; bottom:0; left:50%; width:2px; background:var(--bone); transform:translateX(-50%); pointer-events:none;
+  box-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+.grade-handle::after{
+  content:'⇔'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:30px; height:30px; border-radius:50%;
+  background:var(--bone); color:var(--ink); display:flex; align-items:center; justify-content:center; font-size:13px;
+}
+.grade-range{position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:ew-resize; margin:0;}
+.grade-tag{
+  position:absolute; font-family:var(--mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase;
+  padding:3px 8px; border-radius:2px; background:rgba(13,14,16,0.6); color:var(--bone); top:10px; z-index:2; pointer-events:none;
+}
+.grade-tag.left{left:10px;} .grade-tag.right{right:10px;}
+.shop-body{padding:20px 22px; display:flex; flex-direction:column; gap:10px; flex:1;}
+.shop-body h4{font-family:var(--body); font-weight:700; font-size:17px;}
+.shop-tags{display:flex; gap:8px; flex-wrap:wrap;}
+.shop-tag{font-family:var(--mono); font-size:10.5px; color:var(--steel-light); border:1px solid var(--steel-line); padding:3px 8px; border-radius:20px;}
+.shop-desc{color:var(--steel-light); font-size:13.5px; flex:1;}
+.shop-footer{display:flex; align-items:center; justify-content:space-between; margin-top:6px;}
+.shop-price{font-family:var(--display); font-size:22px; color:var(--bone);}
+.shop-buy{font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.08em; padding:10px 18px; background:var(--ember); color:var(--ink); border-radius:2px; font-weight:700; transition:all .2s ease;}
+.shop-buy:hover{background:#ff6a3d;}
+.shop-bundle{
+  grid-column:1/-1; border:1px solid var(--ember); border-radius:6px;
+  background:linear-gradient(120deg, rgba(232,84,44,0.1), transparent 60%), var(--panel);
+  padding:32px; display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap;
+}
+.shop-bundle h3{font-size:24px; margin-bottom:8px;}
+.shop-bundle p{color:var(--steel-light); font-size:14px; max-width:440px;}
+.shop-note{font-family:var(--mono); font-size:11.5px; color:var(--steel-light); margin-top:18px;}
+
+/* ===== FOOTER ===== */
+footer{padding:44px 0;}
+.footer-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;}
+.footer-row p{font-family:var(--mono); font-size:12px; color:var(--steel-light); letter-spacing:0.04em;}
+
+@media(max-width:760px){
+  .nav-links{
+    display:none; position:absolute; top:100%; left:0; right:0;
+    flex-direction:column; gap:0; background:var(--ink); border-bottom:1px solid var(--steel-line);
+    padding:6px 32px 14px;
+  }
+  .nav-links.open{display:flex;}
+  .nav-links li{width:100%; border-bottom:1px solid var(--steel-line);}
+  .nav-links li a{display:block; padding:14px 0;}
+  .nav-links li:last-child{border-bottom:none;}
+  header nav{position:relative;}
+  .burger{display:flex;}
+}
+
+/* ===== BOOKING ===== */
+.booking-section{background:var(--panel);}
+.booking-shell{
+  border:1px solid var(--steel-line); border-radius:6px; background:var(--ink);
+  padding:34px; display:grid; grid-template-columns:1.1fr .9fr; gap:34px;
+}
+@media(max-width:860px){.booking-shell{grid-template-columns:1fr; padding:26px 20px;}}
+.booking-options{display:grid; gap:12px;}
+.booking-option{
+  width:100%; text-align:left; border:1px solid var(--steel-line); background:var(--panel);
+  color:var(--bone); padding:18px; cursor:pointer; border-radius:4px; transition:.25s ease;
+}
+.booking-option:hover,.booking-option.active{border-color:var(--ember); transform:translateY(-2px);}
+.booking-option strong{font-family:var(--display); font-size:25px; display:block; text-transform:uppercase;}
+.booking-option span{font-family:var(--mono); font-size:11px; color:var(--steel-light); letter-spacing:.06em;}
+.booking-calendar{
+  border:1px solid var(--steel-line); padding:24px; border-radius:4px; background:var(--panel);
+}
+.booking-calendar h3{font-family:var(--body); font-size:19px; text-transform:none; margin-bottom:8px;}
+.booking-calendar p{font-size:13px; color:var(--steel-light); margin-bottom:18px;}
+.booking-actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;}
+.booking-status{font-family:var(--mono); font-size:11px; color:var(--steel-light); margin-top:14px; line-height:1.6;}
+.booking-mini{font-family:var(--mono); font-size:10px; text-transform:uppercase; color:var(--ember); letter-spacing:.1em; margin-bottom:7px;}
+.booking-modal{
+  position:fixed; inset:0; z-index:300; display:none; align-items:center; justify-content:center;
+  padding:20px; background:rgba(0,0,0,.78); backdrop-filter:blur(10px);
+}
+.booking-modal.open{display:flex;}
+.booking-card{
+  width:min(560px,100%); background:var(--panel); border:1px solid var(--steel);
+  border-radius:6px; padding:30px; position:relative; box-shadow:0 25px 80px rgba(0,0,0,.6);
+}
+.booking-close{
+  position:absolute; right:18px; top:14px; background:none; border:0; color:var(--steel-light);
+  font-size:25px; cursor:pointer;
+}
+.booking-card h2{font-size:38px; margin:5px 0 10px;}
+.booking-card .muted{color:var(--steel-light); font-size:14px; margin-bottom:22px;}
+.booking-fields{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.booking-fields .full{grid-column:1/-1;}
+@media(max-width:520px){.booking-fields{grid-template-columns:1fr;}.booking-fields .full{grid-column:auto;}}
+.booking-card input{
+  width:100%; background:var(--ink); border:1px solid var(--steel-line); color:var(--bone);
+  padding:13px 14px; font-family:var(--body); border-radius:2px; outline:none;
+}
+.booking-card input:focus{border-color:var(--ember);}
+
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div id="flashOverlay"></div>
+
+<header>
+  <nav>
+    <div class="logo"><span class="dot"></span>CINEMATICS BY MO</div>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#bts">BTS</a></li>
+      <li><a href="#kit">Kit</a></li>
+      <li><a href="#shop">Shop</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#booking">Book Call</a></li><li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-social">
+      <a href="https://instagram.com/cinematicsByMo" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1"/></svg>
+      </a>
+      <a href="https://tiktok.com/@cinematicsByMo" target="_blank" rel="noopener" aria-label="TikTok">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.4 2.2 1.9 4 4.4 4.3V10c-1.6.1-3-.4-4.4-1.3v6.6a5.7 5.7 0 1 1-5.7-5.7c.3 0 .6 0 .9.1V12.7a2.7 2.7 0 1 0 1.9 2.6V3h2.9Z"/></svg>
+      </a>
+    </div>
+    <button class="burger" aria-label="menu" onclick="document.querySelector('.nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="wrap viewfinder">
+      <div class="vf-corner vf-tl"></div><div class="vf-corner vf-tr"></div>
+      <div class="vf-corner vf-bl"></div><div class="vf-corner vf-br"></div>
+
+      <div class="hud-row">
+        <div class="hud-rec"><span class="rec-dot"></span> REC <span id="timecode">00:00:00:00</span></div>
+        <div class="hud-settings">
+          <span>F <b>2.8</b></span><span>1/<b>50</b></span><span>ISO <b>400</b></span><span>WB <b>5600K</b></span>
+        </div>
+      </div>
+
+      <h1 class="hero-title">CINEMATICS<br><span class="accent">BY MO</span></h1>
+      <p class="hero-sub">Gym films · Lifestyle films · Travel films — shot like they matter</p>
+
+      <div class="hero-cta">
+        <a href="#work" class="btn btn-primary">▶ View The Reel</a>
+        <a href="#booking" class="btn btn-outline">Book A 30 Min Call</a>
+      </div>
+    </div>
+
+    <div class="ticker-wrap">
+      <div class="ticker">
+        <span>GYM <em>✦</em> LIFESTYLE <em>✦</em> TRAVEL <em>✦</em> CINEMATIC <em>✦</em> GYM <em>✦</em> LIFESTYLE <em>✦</em> TRAVEL <em>✦</em> CINEMATIC <em>✦</em></span>
+        <span aria-hidden="true">GYM <em>✦</em> LIFESTYLE <em>✦</em> TRAVEL <em>✦</em> CINEMATIC <em>✦</em> GYM <em>✦</em> LIFESTYLE <em>✦</em> TRAVEL <em>✦</em> CINEMATIC <em>✦</em></span>
+      </div>
+    </div>
+  </section>
+
+  <div class="film-divider"></div>
+
+  <!-- WORK / DIAL -->
+  <section class="work-section section-pad" id="work">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Selected Work</span>
+        <h2>Turn the dial,<br>pick the look</h2>
+        <p>Every shoot gets its own setting. Rotate the dial to switch between gym, lifestyle, and travel work — or land on the full reel.</p>
+      </div>
+
+      <div class="dial-layout">
+        <div class="dial-outer reveal">
+          <div class="dial-ticks" id="ticks"></div>
+          <button class="dial-label-btn dl-top active" data-mode="gym" data-angle="0">Gym</button>
+          <button class="dial-label-btn dl-right" data-mode="lifestyle" data-angle="90">Lifestyle</button>
+          <button class="dial-label-btn dl-bottom" data-mode="travel" data-angle="180">Travel</button>
+          <button class="dial-label-btn dl-left" data-mode="reel" data-angle="270">Full Reel</button>
+          <div class="dial-face">
+            <div class="dial-pointer" id="pointer"></div>
+            <button class="shutter-btn" id="shutterBtn">Shoot<br>Now</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="mode-readout" style="text-align:left; margin-top:0; margin-bottom:20px;">MODE — <b id="modeLabel">GYM</b></div>
+          <div class="portfolio-grid" id="portfolioGrid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="film-divider"></div>
+
+  <!-- BEHIND THE SCENES -->
+  <section class="bts-section section-pad" id="bts">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Event Coverage</span>
+        <h2>Multi-day fitness<br>documentation</h2>
+        <p>Full-event coverage for bodybuilding shows and powerlifting meets — backstage, platform, and everywhere in between, logged day by day.</p>
+      </div>
+
+      <div class="bts-tabs reveal">
+        <button class="bts-tab active" data-event="bodybuilding">Bodybuilding Show</button>
+        <button class="bts-tab" data-event="powerlifting">Powerlifting Meet</button>
+      </div>
+
+      <div class="bts-log" id="btsLog"></div>
+    </div>
+  </section>
+
+  <div class="film-divider"></div>
+
+  <!-- KIT / EQUIPMENT -->
+  <section class="kit-section section-pad" id="kit">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">The Kit</span>
+        <h2>What's in<br>the bag</h2>
+        <p>A compact setup built around clean image quality, flexible focal lengths, and reliable on-camera audio.</p>
+      </div>
+
+      <div class="kit-case reveal">
+        <div class="kit-group-label">Camera</div>
+        <div class="kit-slot">
+          <svg class="kit-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="20" height="13" rx="2"/><rect x="8" y="4" width="8" height="4" rx="1"/><circle cx="12" cy="13.5" r="4.2"/></svg>
+          <h4>Sony ZV-E10 Mark II</h4><p>Primary camera body</p>
+        </div>
+
+        <div class="kit-group-label">Lens</div>
+        <div class="kit-slot">
+          <svg class="kit-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+          <h4>Tamron 17–70mm f/2.8</h4><p>Everyday zoom — wide to telephoto</p>
+        </div>
+
+        <div class="kit-group-label">Audio</div>
+        <div class="kit-slot">
+          <svg class="kit-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M9 22h6"/></svg>
+          <h4>DJI Mic Mini</h4><p>Wireless audio for talking content</p>
+        </div>
+        <div class="kit-slot">
+          <svg class="kit-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="8" y="3" width="8" height="14" rx="4"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg>
+          <h4>Audio-Technica ATV-SG1</h4><p>Shotgun microphone</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="film-divider on-panel"></div>
+
+  <!-- SETTINGS / SERVICES -->
+  <section class="settings-section section-pad" id="approach">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Camera Settings</span>
+        <h2>How every shoot<br>gets dialed in</h2>
+        <p>Four settings, one crew. This is what's adjusted behind the lens on every project, no matter the category.</p>
+      </div>
+      <div class="settings-grid reveal">
+        <div class="setting-card">
+          <svg class="setting-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8542C" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M19.1 4.9l-4.2 4.2M9.1 14.9l-4.2 4.2"/></svg>
+          <div class="setting-readout">APERTURE</div>
+          <div class="setting-value">f/1.8</div>
+          <p>Wide enough to catch the full story — not just reps or scenery, but the moment before and after.</p>
+        </div>
+        <div class="setting-card">
+          <svg class="setting-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8542C" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 6V4h8v2"/><circle cx="12" cy="12" r="2.6"/></svg>
+          <div class="setting-readout">SHUTTER</div>
+          <div class="setting-value">1/50</div>
+          <p>Standard turnaround is 5–7 days from wrap to delivery, color graded and sound mixed.</p>
+        </div>
+        <div class="setting-card">
+          <svg class="setting-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8542C" stroke-width="1.6"><circle cx="7" cy="8" r="1.4" fill="#E8542C" stroke="none"/><circle cx="14" cy="6" r="1" fill="#E8542C" stroke="none"/><circle cx="17" cy="12" r="1.4" fill="#E8542C" stroke="none"/><circle cx="9" cy="15" r="1" fill="#E8542C" stroke="none"/><circle cx="15" cy="17" r="1.4" fill="#E8542C" stroke="none"/><circle cx="5" cy="17" r="1" fill="#E8542C" stroke="none"/></svg>
+          <div class="setting-readout">ISO</div>
+          <div class="setting-value">3200</div>
+          <p>Comfortable in gym lighting, golden hour, or a moving vehicle at 6am — low light is not a limit.</p>
+        </div>
+        <div class="setting-card">
+          <svg class="setting-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8542C" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.6" fill="#E8542C" stroke="none"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+          <div class="setting-readout">FOCUS</div>
+          <div class="setting-value">Auto</div>
+          <p>Locked onto gym, lifestyle, and travel work — the three lanes this camera knows best.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="film-divider on-panel"></div>
+
+  <!-- SHOP -->
+  <section class="shop-section section-pad" id="shop">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Grading Shop</span>
+        <h2>LUTs &amp;<br>PowerGrades</h2>
+        <p>The exact color looks used across the reel — drag the handle on any preview to see flat log footage next to the finished grade.</p>
+      </div>
+
+      <div class="shop-grid reveal">
+        <div class="shop-card">
+          <div class="grade-compare">
+            <div class="grade-layer grade-iron"></div>
+            <div class="grade-before"><div class="flat-look"></div></div>
+            <span class="grade-tag left">Log</span>
+            <span class="grade-tag right">Graded</span>
+            <div class="grade-handle"></div>
+            <input type="range" class="grade-range" min="0" max="100" value="50" aria-label="Compare before and after">
+          </div>
+          <div class="shop-body">
+            <h4>Iron</h4>
+            <div class="shop-tags"><span class="shop-tag">PowerGrade</span><span class="shop-tag">.cube LUT</span><span class="shop-tag">Resolve · Premiere</span></div>
+            <p class="shop-desc">The gritty, high-contrast look built for gym floors and platform footage — deep shadows, warm skin, controlled highlights.</p>
+            <div class="shop-footer">
+              <span class="shop-price">$19</span>
+              <a class="shop-buy" href="https://cinematicsbymo.gumroad.com/l/iron" target="_blank" rel="noopener">Buy Now</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="shop-card">
+          <div class="grade-compare">
+            <div class="grade-layer grade-golden"></div>
+            <div class="grade-before"><div class="flat-look"></div></div>
+            <span class="grade-tag left">Log</span>
+            <span class="grade-tag right">Graded</span>
+            <div class="grade-handle"></div>
+            <input type="range" class="grade-range" min="0" max="100" value="50" aria-label="Compare before and after">
+          </div>
+          <div class="shop-body">
+            <h4>Golden Hour</h4>
+            <div class="shop-tags"><span class="shop-tag">5-LUT Pack</span><span class="shop-tag">.cube LUT</span><span class="shop-tag">Resolve · Premiere · FCPX</span></div>
+            <p class="shop-desc">Warm, soft-contrast travel and lifestyle looks built for golden hour, city nights, and everyday footage.</p>
+            <div class="shop-footer">
+              <span class="shop-price">$29</span>
+              <a class="shop-buy" href="https://cinematicsbymo.gumroad.com/l/golden-hour" target="_blank" rel="noopener">Buy Now</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="shop-card">
+          <div class="grade-compare">
+            <div class="grade-layer grade-mono"></div>
+            <div class="grade-before"><div class="flat-look"></div></div>
+            <span class="grade-tag left">Log</span>
+            <span class="grade-tag right">Graded</span>
+            <div class="grade-handle"></div>
+            <input type="range" class="grade-range" min="0" max="100" value="50" aria-label="Compare before and after">
+          </div>
+          <div class="shop-body">
+            <h4>Platform Mono</h4>
+            <div class="shop-tags"><span class="shop-tag">PowerGrade</span><span class="shop-tag">.cube LUT</span><span class="shop-tag">Resolve · Premiere</span></div>
+            <p class="shop-desc">A stark black-and-white grade built for powerlifting platform footage — heavy blacks, chalk-white highlights.</p>
+            <div class="shop-footer">
+              <span class="shop-price">$19</span>
+              <a class="shop-buy" href="https://cinematicsbymo.gumroad.com/l/platform-mono" target="_blank" rel="noopener">Buy Now</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="shop-bundle">
+          <div>
+            <h3>Full Grade Vault</h3>
+            <p>Every current pack — Iron, Golden Hour, and Platform Mono — plus every grade released after today, at one price.</p>
+          </div>
+          <div style="display:flex; align-items:center; gap:18px;">
+            <span class="shop-price">$59</span>
+            <a class="shop-buy" href="https://cinematicsbymo.gumroad.com/l/full-vault" target="_blank" rel="noopener">Get The Vault</a>
+          </div>
+        </div>
+      </div>
+      <p class="shop-note reveal">Delivered as digital downloads — .cube LUTs work in Premiere, Final Cut, and Resolve; PowerGrades import directly into DaVinci Resolve.</p>
+    </div>
+  </section>
+
+  <div class="film-divider"></div>
+
+  <!-- ABOUT -->
+  <section class="about-section section-pad" id="about">
+    <div class="wrap about-grid">
+      <div class="about-frame reveal">
+        <div class="vf-grid">
+          <span class="v1"></span><span class="v2"></span><span class="h1"></span><span class="h2"></span>
+        </div>
+        <span class="corner-tag">MO // OPERATOR</span>
+        <span class="corner-tag" style="left:auto; right:16px; top:auto; bottom:16px;">F2.8 · ISO 400</span>
+        <svg viewBox="0 0 100 100" fill="none" stroke="#EDE9E2" stroke-width="2.2" style="filter:drop-shadow(0 8px 24px rgba(0,0,0,0.5));">
+          <rect x="8" y="30" width="84" height="52" rx="6"/>
+          <rect x="34" y="18" width="32" height="16" rx="3"/>
+          <circle cx="50" cy="57" r="19"/>
+          <circle cx="50" cy="57" r="9"/>
+          <circle cx="80" cy="40" r="2.4" fill="#E8542C" stroke="none"/>
+          <line x1="8" y1="42" x2="92" y2="42" stroke-opacity="0.35"/>
+        </svg>
+      </div>
+      <div class="about-copy reveal">
+        <span class="eyebrow">Behind The Lens</span>
+        <h2 style="margin-top:14px;">Mo shoots what<br>moves people</h2>
+        <p>Cinematics by Mo is a one-camera, one-vision operation built around three subjects: the discipline of the gym, the texture of everyday life, and the pull of somewhere new.</p>
+        <p>Every project is shot, cut, and color graded by Mo directly — no hand-offs, no templates. What you see in the reel is the same eye that shows up to your shoot.</p>
+        <div class="about-stats">
+          <div><b>3</b><span>Core Genres</span></div>
+          <div><b>5–7</b><span>Day Turnaround</span></div>
+          <div><b>1</b><span>Editor, Always Mo</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="film-divider"></div>
+
+  <!-- PROCESS -->
+  <section class="process-section section-pad" id="process">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">The Process</span>
+        <h2>From call<br>to final cut</h2>
+      </div>
+      <div class="process-list reveal">
+        <div class="process-item">
+          <div class="process-num">01</div>
+          <div><h3>Discovery call</h3><p>A quick call to talk through the goal — a gym launch reel, a lifestyle brand day, a travel edit — and lock the direction.</p></div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">02</div>
+          <div><h3>Shot list &amp; scouting</h3><p>Mo builds a shot list and checks the location or gym for light, space, and timing before shoot day.</p></div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">03</div>
+          <div><h3>Shoot day</h3><p>On-site with a lean kit built for movement — handheld, gimbal, and long lens work depending on the subject.</p></div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">04</div>
+          <div><h3>Edit &amp; color</h3><p>A cinematic pass on pacing, sound design, and color grade — nothing goes out flat or unedited.</p></div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">05</div>
+          <div><h3>Delivery</h3><p>Final files delivered in whatever cut you need — full film, social edits, and raw selects.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="film-divider on-panel"></div>
+
+
+  <div class="film-divider on-panel"></div>
+
+  <!-- BOOKING -->
+  <section class="booking-section section-pad" id="booking">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Book With Mo</span>
+        <h2>Let's talk<br>before we shoot</h2>
+        <p>Pick a 30-minute video call to talk through your idea, goals, references, location, and what you want the final content to feel like.</p>
+      </div>
+
+      <div class="booking-shell reveal">
+        <div>
+          <div class="booking-mini">Choose your route</div>
+          <div class="booking-options">
+            <button class="booking-option active" type="button" data-booking="call">
+              <strong>30 Min Video Call</strong>
+              <span>Discuss your project · planning · creative direction</span>
+            </button>
+            <button class="booking-option" type="button" data-booking="email">
+              <strong>Email Instead</strong>
+              <span>Send the project details and get a reply directly</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="booking-calendar">
+          <div class="booking-mini">Google Calendar</div>
+          <h3 id="bookingTitle">Book a 30-minute call</h3>
+          <p id="bookingDescription">The booking button opens your Google Calendar appointment schedule, where your real availability can be shown and the call can be added automatically.</p>
+          <div class="booking-actions">
+            <button class="btn btn-primary" type="button" id="openBooking">Choose a Time →</button>
+            <a class="btn btn-outline" href="#contact">Send Project Email</a>
+          </div>
+          <div class="booking-status">
+            <b>30 MIN · VIDEO CALL</b><br>
+            Your calendar booking page should be connected to the Google Calendar you use for shoots.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section section-pad" id="contact">
+    <div class="wrap">
+      <div class="contact-panel reveal">
+        <div class="contact-left">
+          <span class="eyebrow">Work With Mo</span>
+          <h2 style="margin-top:14px;">Let's shoot<br>something</h2>
+          <p>Gym launch, lifestyle content day, or a travel film — tell me what you're building and I'll send back a plan and a quote.</p>
+          <div class="contact-socials">
+            <a class="social-chip" href="https://instagram.com/cinematicsByMo" target="_blank" rel="noopener">IG — @cinematicsByMo</a>
+            <a class="social-chip" href="https://tiktok.com/@cinematicsByMo" target="_blank" rel="noopener">TikTok — @cinematicsByMo</a>
+          </div>
+        </div>
+        <form class="contact-form" onsubmit="return handleSubmit(event)">
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" type="text" placeholder="Your name" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="you@email.com" required>
+          </div>
+          <div class="field">
+            <label for="type">Project type</label>
+            <select id="type">
+              <option>Gym / Fitness</option>
+              <option>Lifestyle</option>
+              <option>Travel</option>
+              <option>Bodybuilding / Powerlifting Event Coverage</option>
+              <option>LUT / PowerGrade Question</option>
+              <option>Something else</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="details">Details</label>
+            <textarea id="details" placeholder="What are we shooting, and when?"></textarea>
+          </div>
+          <div class="submit-row">
+            <button type="submit" class="btn btn-primary">● Send It</button>
+            <span class="form-note" id="formNote">Replies within 24–48 hours</span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="film-divider"></div>
+
+<footer>
+  <div class="wrap footer-row">
+    <p>© <span id="year"></span> Cinematics by Mo — Gym · Lifestyle · Travel</p>
+    <p>IG / TT — @cinematicsByMo</p>
+  </div>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---- timecode ---- */
+let frame=0, sec=0, min=0, hr=0;
+setInterval(()=>{
+  frame+=2;
+  if(frame>=24){frame=0; sec++;}
+  if(sec>=60){sec=0; min++;}
+  if(min>=60){min=0; hr++;}
+  const p=n=>String(n).padStart(2,'0');
+  document.getElementById('timecode').textContent = `${p(hr)}:${p(min)}:${p(sec)}:${p(frame)}`;
+},1000/12);
+
+/* ---- dial ticks ---- */
+const ticksEl=document.getElementById('ticks');
+for(let i=0;i<48;i++){
+  const t=document.createElement('div');
+  t.className='tick'+(i%6===0?' major':'');
+  t.style.transform=`rotate(${i*(360/48)}deg)`;
+  ticksEl.appendChild(t);
+}
+
+/* ---- aperture ring labels (decorative, real click-stop values) ---- */
+const fstops=['f/1.4','f/2','f/2.8','f/4','f/5.6','f/8','f/11','f/16'];
+fstops.forEach((val,i)=>{
+  const angle = i * (360/fstops.length);
+  const label=document.createElement('div');
+  label.className='fstop-label';
+  label.textContent=val;
+  label.style.transform=`translate(-50%,-50%) rotate(${angle}deg) translateY(-138px) rotate(${-angle}deg)`;
+  ticksEl.appendChild(label);
+});
+
+/* ---- portfolio data ---- */
+const projects = {
+  gym: [
+    {t:'Iron & Discipline', d:'Gym Launch Film · 1:30'},
+    {t:'6AM Session', d:'Fitness Brand Reel · 0:45'},
+    {t:'Personal Best', d:'Athlete Profile · 2:10'},
+    {t:'Strength Coach Promo', d:'Social Campaign · 0:30'},
+  ],
+  lifestyle: [
+    {t:'A Day Off', d:'Lifestyle Film · 1:50'},
+    {t:'The Morning Routine', d:'Brand Story · 1:05'},
+    {t:'Studio Sessions', d:'Creator Doc · 2:40'},
+    {t:'City Nights', d:'Social Edit · 0:40'},
+  ],
+  travel: [
+    {t:'Coastline', d:'Travel Film · 3:00'},
+    {t:'Between Flights', d:'Mini Documentary · 2:15'},
+    {t:'Golden Hour, Lisbon', d:'Travel Reel · 0:55'},
+    {t:'Highway North', d:'Road Trip Film · 1:40'},
+  ],
+  reel: [
+    {t:'2025 Showreel', d:'Full Portfolio Cut · 2:30'},
+    {t:'Iron & Discipline', d:'Gym Launch Film · 1:30'},
+    {t:'Coastline', d:'Travel Film · 3:00'},
+    {t:'A Day Off', d:'Lifestyle Film · 1:50'},
+  ]
+};
+
+const grid=document.getElementById('portfolioGrid');
+const modeLabel=document.getElementById('modeLabel');
+const pointer=document.getElementById('pointer');
+const dialBtns=document.querySelectorAll('.dial-label-btn');
+
+function renderMode(mode){
+  const list = projects[mode] || projects.gym;
+  const thumbClass = mode==='reel' ? 'thumb-reel' : 'thumb-'+mode;
+  grid.innerHTML='';
+  list.forEach((p,i)=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.dataset.cat=mode;
+    card.style.animationDelay=(i*0.06)+'s';
+    const dur = p.d.split('·').pop().trim();
+    card.innerHTML=`
+      <div class="card-thumb ${thumbClass}">
+        <span class="card-tag">${mode}</span>
+        <span class="card-time">${dur}</span>
+        <div class="card-play">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#EDE9E2"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+      <div class="card-body"><h4>${p.t}</h4><p>${p.d}</p></div>`;
+    grid.appendChild(card);
+  });
+}
+
+function setMode(mode, angle){
+  pointer.style.setProperty('--angle', angle+'deg');
+  modeLabel.textContent = mode.toUpperCase();
+  dialBtns.forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
+  renderMode(mode);
+}
+
+dialBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=> setMode(btn.dataset.mode, btn.dataset.angle));
+});
+document.getElementById('shutterBtn').addEventListener('click', ()=>{
+  const flash=document.getElementById('flashOverlay');
+  flash.classList.add('fire');
+  setTimeout(()=>{
+    flash.classList.remove('fire');
+    document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+  }, 90);
+});
+
+setMode('gym', 0); // initial
+
+/* ---- scroll reveal ---- */
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---- behind the scenes: event day logs ---- */
+const btsData = {
+  bodybuilding: [
+    {day:'Day 1', tag:'Check-In', title:'Athlete Check-In & Weigh-In', desc:'Arrivals, posing-suit prep, and the quiet before the pump backstage.'},
+    {day:'Day 2', tag:'Prejudging', title:'Callouts Under Stage Light', desc:'Full prejudging round — the comparisons that decide placings.'},
+    {day:'Day 3', tag:'Pump Room', title:'Backstage Before Finals', desc:'Pump-up chaos, last-minute oil and tan touch-ups, minutes before walkout.'},
+    {day:'Day 4', tag:'Finals & Awards', title:'Night Show & Trophy Presentation', desc:'The finals walkout, the callback poses, and the exhale after awards.'},
+  ],
+  powerlifting: [
+    {day:'Day 1', tag:'Weigh-In', title:'Equipment Check & Rack Heights', desc:'Singlet checks, rack height calls, and quiet opener strategy talks.'},
+    {day:'Day 2', tag:'Squat & Bench', title:'First Two Lifts', desc:'Chalk clouds, wrist wraps, and the walk-out to the platform under the lights.'},
+    {day:'Day 3', tag:'Deadlift & Totals', title:'Final Flight & Total Board', desc:'The last pull of the meet and the scramble to the total board.'},
+  ]
+};
+const btsLog = document.getElementById('btsLog');
+const btsTabs = document.querySelectorAll('.bts-tab');
+
+function renderBts(event){
+  const list = btsData[event] || btsData.bodybuilding;
+  const thumbClass = 'thumb-'+event;
+  btsLog.innerHTML='';
+  list.forEach((d,i)=>{
+    const row=document.createElement('div');
+    row.className='bts-day';
+    row.style.animationDelay=(i*0.08)+'s';
+    row.innerHTML=`
+      <div class="bts-thumb ${thumbClass}"><span class="bts-daytag">${d.day}</span></div>
+      <div class="bts-body">
+        <div class="bts-day-label">${d.tag}</div>
+        <h4>${d.title}</h4>
+        <p>${d.desc}</p>
+      </div>`;
+    btsLog.appendChild(row);
+  });
+}
+btsTabs.forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    btsTabs.forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    renderBts(tab.dataset.event);
+  });
+});
+renderBts('bodybuilding');
+
+/* ---- shop: before/after grade sliders ---- */
+document.querySelectorAll('.grade-compare').forEach(comp=>{
+  const before = comp.querySelector('.grade-before');
+  const handle = comp.querySelector('.grade-handle');
+  const range = comp.querySelector('.grade-range');
+  function update(val){
+    before.style.width = val+'%';
+    handle.style.left = val+'%';
+  }
+  range.addEventListener('input', ()=> update(range.value));
+  update(range.value);
+});
+
+/* ---- form ---- */
+const BOOKING_CONFIG = {
+  // Replace this with your Google Calendar appointment-schedule URL.
+  // Example: https://calendar.google.com/calendar/appointments/schedules/...
+  googleCalendarBookingUrl: "https://calendar.app.google/fYY5xuNAnDB3bBqP7",
+  // Inbox for website enquiries.
+  email: "Moritz.kaemmer867@gmail.com"
+};
+
+function openGoogleBooking(){
+  const url = BOOKING_CONFIG.googleCalendarBookingUrl;
+  if(!url || url.includes("PASTE_YOUR_GOOGLE")){
+    document.getElementById('bookingStatus')?.remove();
+    const status = document.createElement('div');
+    status.className='booking-status';
+    status.id='bookingStatus';
+    status.innerHTML='<b>SETUP NEEDED:</b> Add your Google Calendar appointment-schedule URL in <code>BOOKING_CONFIG.googleCalendarBookingUrl</code>.';
+    document.querySelector('.booking-calendar').appendChild(status);
+    return;
+  }
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+document.getElementById('openBooking').addEventListener('click', openGoogleBooking);
+
+document.querySelectorAll('.booking-option').forEach(option=>{
+  option.addEventListener('click', ()=>{
+    document.querySelectorAll('.booking-option').forEach(o=>o.classList.remove('active'));
+    option.classList.add('active');
+    const type=option.dataset.booking;
+    if(type==='email'){
+      document.getElementById('bookingTitle').textContent='Send the project by email';
+      document.getElementById('bookingDescription').textContent='Use the contact form below to send your name, email, project type, and details. The booking option will switch back to a calendar call anytime.';
+      document.getElementById('openBooking').textContent='Go To Email Form ↓';
+      document.getElementById('openBooking').onclick=()=>document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+    }else{
+      document.getElementById('bookingTitle').textContent='Book a 30-minute call';
+      document.getElementById('bookingDescription').textContent='Choose a time through your Google Calendar appointment schedule. Your real availability and booked times stay managed by Google Calendar.';
+      document.getElementById('openBooking').textContent='Choose a Time →';
+      document.getElementById('openBooking').onclick=openGoogleBooking;
+    }
+  });
+});
+
+function handleSubmit(e){
+  e.preventDefault();
+  const name=document.getElementById('name').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const type=document.getElementById('type').value;
+  const details=document.getElementById('details').value.trim();
+
+  if(!BOOKING_CONFIG.email){
+    document.getElementById('formNote').textContent="Add your email address in BOOKING_CONFIG.email to activate email enquiries.";
+    return false;
+  }
+
+  const subject=encodeURIComponent(`Cinematics by Mo enquiry — ${type}`);
+  const body=encodeURIComponent(
+`Hi Mo,
+
+Name: ${name}
+Email: ${email}
+Project type: ${type}
+
+Project details:
+${details || "(No details provided yet)"}
+
+Sent from Cinematics by Mo.`
+  );
+
+  window.location.href=`mailto:${BOOKING_CONFIG.email}?subject=${subject}&body=${body}`;
+  document.getElementById('formNote').textContent="Opening your email app…";
+  return false;
+}
+</script>
+
+</body>
+</html>
