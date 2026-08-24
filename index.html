@@ -254,7 +254,7 @@ nav{
 .dial-label-btn.active, .dial-label-btn:hover{color:var(--ember);}
 .dl-top{top:-34px; left:50%;}
 .dl-right{top:50%; left:100%; margin-left:14px; transform:translate(0,-50%);}
-.dl-bottom{bottom:-34px; left:50%;}
+.dl-bottom{bottom:-50px; left:50%;}
 .dl-left{top:50%; right:100%; margin-right:14px; transform:translate(0,-50%);}
 
 .mode-readout{
@@ -547,9 +547,81 @@ footer{padding:44px 0;}
 }
 .booking-card input:focus{border-color:var(--ember);}
 
+/* ===== GATE (under construction / password) ===== */
+#siteGate{
+  position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232,84,44,0.12), transparent 60%),
+    var(--ink);
+  padding:24px;
+}
+#siteGate.hidden{display:none;}
+body.gate-locked > *:not(#siteGate){display:none !important;}
+.gate-card{
+  width:min(420px,100%); border:1px solid var(--steel-line); border-radius:6px; background:var(--panel);
+  padding:44px 34px; text-align:center; box-shadow:0 25px 80px rgba(0,0,0,0.6);
+}
+.gate-card .logo{justify-content:center; margin-bottom:22px;}
+.gate-eyebrow{justify-content:center; margin-bottom:10px;}
+.gate-card h1{font-size:clamp(26px,6vw,34px); margin-bottom:10px; line-height:1.05;}
+.gate-card p{color:var(--steel-light); font-size:14px; margin-bottom:26px; line-height:1.6;}
+.gate-field{position:relative; margin-bottom:14px;}
+.gate-field input{
+  width:100%; background:var(--ink); border:1px solid var(--steel-line); color:var(--bone);
+  padding:14px 16px; font-family:var(--mono); font-size:15px; letter-spacing:0.1em; border-radius:2px;
+  outline:none; text-align:center; transition:border-color 0.25s ease;
+}
+.gate-field input:focus{border-color:var(--ember);}
+.gate-error{
+  font-family:var(--mono); font-size:12px; color:var(--ember); min-height:18px; margin-bottom:8px;
+  opacity:0; transition:opacity 0.2s ease;
+}
+.gate-error.show{opacity:1;}
+.gate-card .btn{width:100%; justify-content:center; margin-top:6px;}
+.gate-rec{display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:18px; font-family:var(--mono); font-size:11px; letter-spacing:0.14em; color:var(--steel-light); text-transform:uppercase;}
+.gate-rec .rec-dot{width:8px;height:8px;}
+
+/* ===== EDITING LOGIN (used on editing.html) ===== */
+.login-shell{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(62,154,156,0.1), transparent 60%), var(--ink);}
+.login-card{width:min(420px,100%); border:1px solid var(--steel-line); border-radius:6px; background:var(--panel); padding:44px 34px;}
+.login-card .logo{justify-content:center; margin-bottom:18px;}
+.login-card h1{font-size:clamp(24px,6vw,30px); text-align:center; margin-bottom:8px;}
+.login-card > p{color:var(--steel-light); font-size:13.5px; text-align:center; margin-bottom:28px;}
+.login-card label{display:block; font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--steel-light); margin-bottom:8px;}
+.login-card input{
+  width:100%; background:var(--ink); border:1px solid var(--steel-line); color:var(--bone);
+  padding:13px 14px; font-family:var(--body); font-size:14px; border-radius:2px; outline:none; margin-bottom:16px; transition:border-color 0.25s ease;
+}
+.login-card input:focus{border-color:var(--teal);}
+.login-card .btn{width:100%; justify-content:center; background:var(--teal); color:var(--ink); font-weight:700; border:none;}
+.login-card .btn:hover{background:#4fb4b6;}
+.login-error{font-family:var(--mono); font-size:12px; color:var(--ember); min-height:18px; text-align:center; margin-bottom:4px; opacity:0; transition:opacity 0.2s ease;}
+.login-error.show{opacity:1;}
+.login-back{display:block; text-align:center; margin-top:20px; font-family:var(--mono); font-size:12px; color:var(--steel-light);}
+.login-back:hover{color:var(--bone);}
+
 </style>
 </head>
-<body>
+<body class="gate-locked">
+
+<!-- ===== SITE GATE (under construction / password) ===== -->
+<div id="siteGate">
+  <div class="gate-card">
+    <div class="logo"><span class="dot"></span>CINEMATICS BY MO</div>
+    <div class="eyebrow gate-eyebrow">Site status</div>
+    <div class="gate-rec"><span class="rec-dot"></span> Under Construction</div>
+    <h1>Coming Soon</h1>
+    <p>This site is currently being rebuilt. If you know the password, you can preview it below.</p>
+    <form id="gateForm" autocomplete="off">
+      <div class="gate-field">
+        <input type="password" id="gatePassword" placeholder="Password" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="gate-error" id="gateError">Incorrect password. Try again.</div>
+      <button type="submit" class="btn btn-primary">Enter Site →</button>
+    </form>
+  </div>
+</div>
 
 <div class="grain"></div>
 <div id="flashOverlay"></div>
@@ -697,7 +769,7 @@ footer{padding:44px 0;}
         </div>
         <div class="kit-slot">
           <svg class="kit-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="8" y="3" width="8" height="14" rx="4"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg>
-          <h4>RODE VIDEOMIC GO II </h4><p>Shotgun microphone</p>
+          <h4>RODE MIC GO II </h4><p>Shotgun microphone</p>
         </div>
       </div>
     </div>
@@ -932,7 +1004,7 @@ footer{padding:44px 0;}
           <p id="bookingDescription">The booking button opens your Google Calendar appointment schedule, where your real availability can be shown and the call can be added automatically.</p>
           <div class="booking-actions">
             <button class="btn btn-primary" type="button" id="openBooking">Choose a Time →</button>
-            <a class="btn btn-outline" href="#contact">Send Project Email</a>
+            <a class="btn btn-outline" href="#contact" id="sendEmailBtn">Send Project Email</a>
           </div>
           <div class="booking-status">
             <b>30 MIN · VIDEO CALL</b><br>
@@ -956,18 +1028,18 @@ footer{padding:44px 0;}
             <a class="social-chip" href="https://tiktok.com/@cinematicsByMo" target="_blank" rel="noopener">TikTok — @cinematicsByMo</a>
           </div>
         </div>
-        <form class="contact-form" onsubmit="return handleSubmit(event)">
+        <form class="contact-form" method="POST" action="https://formspree.io/f/mwledlrv" onsubmit="return handleSubmit(event)">
           <div class="field">
             <label for="name">Name</label>
-            <input id="name" type="text" placeholder="Your name" required>
+            <input id="name" name="name" type="text" placeholder="Your name" required>
           </div>
           <div class="field">
             <label for="email">Email</label>
-            <input id="email" type="email" placeholder="you@email.com" required>
+            <input id="email" name="email" type="email" placeholder="you@email.com" required>
           </div>
           <div class="field">
             <label for="type">Project type</label>
-            <select id="type">
+            <select id="type" name="project type">
               <option>Gym / Fitness</option>
               <option>Lifestyle</option>
               <option>Travel</option>
@@ -978,7 +1050,7 @@ footer{padding:44px 0;}
           </div>
           <div class="field">
             <label for="details">Details</label>
-            <textarea id="details" placeholder="What are we shooting, and when?"></textarea>
+            <textarea id="details" name="details" placeholder="What are we shooting, and when?"></textarea>
           </div>
           <div class="submit-row">
             <button type="submit" class="btn btn-primary">● Send It</button>
@@ -1000,6 +1072,41 @@ footer{padding:44px 0;}
 </footer>
 
 <script>
+/* =====================================================================
+   SITE GATE — password screen shown before the real site is visible.
+   Change SITE_PASSWORD to whatever you like, any time.
+   ===================================================================== */
+(function(){
+  var SITE_PASSWORD = "1234"; // <-- change this to your own password
+
+  var gate = document.getElementById('siteGate');
+  var form = document.getElementById('gateForm');
+  var input = document.getElementById('gatePassword');
+  var error = document.getElementById('gateError');
+
+  // Stay unlocked on this browser once entered correctly (until cleared).
+  if (localStorage.getItem('cbm_site_unlocked') === 'yes') {
+    unlock();
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (input.value === SITE_PASSWORD) {
+      localStorage.setItem('cbm_site_unlocked', 'yes');
+      unlock();
+    } else {
+      error.classList.add('show');
+      input.value = '';
+      input.focus();
+    }
+  });
+
+  function unlock(){
+    document.body.classList.remove('gate-locked');
+    gate.classList.add('hidden');
+  }
+})();
+
 document.getElementById('year').textContent = new Date().getFullYear();
 
 /* ---- timecode ---- */
@@ -1179,14 +1286,14 @@ const BOOKING_CONFIG = {
   // Example: https://calendar.google.com/calendar/appointments/schedules/...
   googleCalendarBookingUrl: "https://calendar.app.google/fYY5xuNAnDB3bBqP7",
   // Inbox for website enquiries (shown to you as the destination address).
-  email: "Moritz.kaemmer867@gmail.com",
+  email: "contact@cinematicsbymo.com",
   // Formspree endpoint so the contact form sends the message directly —
   // no email app has to open on the visitor's device.
   // 1) Go to https://formspree.io, sign up free, create a form pointed at
-  //    the address above, and copy the endpoint it gives you
-  //    (looks like: https://formspree.io/f/xxxxabcd).
+  //    the address above (contact@cinematicsbymo.com), and copy the
+  //    endpoint it gives you (looks like: https://formspree.io/f/xxxxabcd).
   // 2) Paste that endpoint below.
-  formspreeEndpoint: "https://formspree.io/f/PASTE_YOUR_FORM_ID"
+  formspreeEndpoint: "https://formspree.io/f/mwledlrv"
 };
 
 function openGoogleBooking(){
@@ -1203,7 +1310,17 @@ function openGoogleBooking(){
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
-document.getElementById('openBooking').addEventListener('click', openGoogleBooking);
+const openBookingBtn = document.getElementById('openBooking');
+const sendEmailBtn = document.getElementById('sendEmailBtn');
+
+// Single source of truth for what the primary button does — avoids stacking
+// multiple click handlers (addEventListener + onclick) that used to fire
+// together and open Google Calendar even when "Email Instead" was selected.
+let currentBookingAction = openGoogleBooking;
+openBookingBtn.addEventListener('click', (e)=>{
+  e.preventDefault();
+  currentBookingAction();
+});
 
 document.querySelectorAll('.booking-option').forEach(option=>{
   option.addEventListener('click', ()=>{
@@ -1212,14 +1329,18 @@ document.querySelectorAll('.booking-option').forEach(option=>{
     const type=option.dataset.booking;
     if(type==='email'){
       document.getElementById('bookingTitle').textContent='Send the project by email';
-      document.getElementById('bookingDescription').textContent='Use the contact form below to send your name, email, project type, and details. The booking option will switch back to a calendar call anytime.';
-      document.getElementById('openBooking').textContent='Go To Email Form ↓';
-      document.getElementById('openBooking').onclick=()=>document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+      document.getElementById('bookingDescription').textContent='Use the contact form below to send your name, email, project type, and details.';
+      openBookingBtn.textContent='Go To Email Form ↓';
+      currentBookingAction=()=>document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+      // "Send Project Email" would do the exact same thing as the button
+      // above in this mode, so hide it instead of showing two identical buttons.
+      sendEmailBtn.style.display='none';
     }else{
       document.getElementById('bookingTitle').textContent='Book a 30-minute call';
       document.getElementById('bookingDescription').textContent='Choose a time through your Google Calendar appointment schedule. Your real availability and booked times stay managed by Google Calendar.';
-      document.getElementById('openBooking').textContent='Choose a Time →';
-      document.getElementById('openBooking').onclick=openGoogleBooking;
+      openBookingBtn.textContent='Choose a Time →';
+      currentBookingAction=openGoogleBooking;
+      sendEmailBtn.style.display='';
     }
   });
 });
@@ -1235,7 +1356,7 @@ function handleSubmit(e){
   const details=document.getElementById('details').value.trim();
 
   const endpoint=BOOKING_CONFIG.formspreeEndpoint;
-  if(!endpoint || endpoint.includes("https://formspree.io/f/mwledlrv")){
+  if(!endpoint || endpoint.includes("PASTE_YOUR_FORM_ID")){
     noteEl.textContent="Setup needed: add your Formspree endpoint in BOOKING_CONFIG.formspreeEndpoint to activate sending.";
     noteEl.style.color="var(--ember)";
     return false;
