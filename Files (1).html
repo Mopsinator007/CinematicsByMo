@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Files — CinematicByMo.com</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+.files-app {
+  --bg-0: #0B0A09;
+  --bg-1: #141210;
+  --bg-2: #1C1916;
+  --bg-3: #242019;
+  --border: #2A2621;
+  --border-strong: #3B342C;
+  --text-primary: #EDE8DF;
+  --text-secondary: #A39C8F;
+  --text-tertiary: #6E675C;
+  --rec: #D9483B;
+  --amber: #D99A3B;
+  --green: #4F9E6B;
+  --cyan: #4C8FBF;
+  --muted: #6E675C;
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg-0);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  -webkit-font-smoothing: antialiased;
+}
+.files-app * { box-sizing: border-box; }
+.files-app ::selection { background: var(--rec); color: #fff; }
+.files-app button { font-family: inherit; cursor: pointer; }
+.files-app input, .files-app select, .files-app textarea { font-family: inherit; }
+.files-app .mono { font-family: var(--font-mono); letter-spacing: 0.01em; }
+
+.files-loading { align-items: center; justify-content: center; flex-direction: column; gap: 10px; color: var(--text-secondary); width: 100%; }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+svg.icon { width: 1em; height: 1em; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -2px; flex: 0 0 auto; }
+
+/* ---- sidebar ---- */
+.sidebar {
+  width: 232px; flex: 0 0 232px; background: var(--bg-1); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; padding: 20px 14px; position: sticky; top: 0; height: 100vh;
+}
+.sidebar-brand { padding: 4px 8px 20px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.sidebar-brand-top { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); margin: 0 0 4px; }
+.sidebar-brand-bottom { font-family: var(--font-display); font-size: 20px; font-weight: 600; letter-spacing: 0.02em; display: flex; align-items: center; gap: 7px; margin: 0; }
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow-y: auto; }
+.sidebar-sep { height: 1px; background: var(--border); margin: 8px 6px; }
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; border: none;
+  background: transparent; color: var(--text-secondary); font-size: 13px; text-align: left; width: 100%;
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar-item:hover { background: var(--bg-2); color: var(--text-primary); }
+.sidebar-item.is-active { background: var(--bg-3); color: var(--text-primary); }
+.sidebar-foot { position: relative; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+.settings-drop { position: absolute; bottom: 44px; left: 0; right: 0; background: var(--bg-2); border: 1px solid var(--border-strong); border-radius: 8px; padding: 4px; z-index: 40; }
+.settings-drop button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px; background: none; border: none; color: var(--text-secondary); font-size: 12.5px; border-radius: 5px; }
+.settings-drop button:hover { background: var(--bg-3); color: var(--text-primary); }
+
+/* ---- main column / topbar ---- */
+.main-col { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100vh; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 28px; border-bottom: 1px solid var(--border); background: rgba(11,10,9,0.9); position: sticky; top: 0; z-index: 20; }
+.topbar-search { display: flex; align-items: center; gap: 8px; flex: 1; max-width: 420px; background: var(--bg-1); border: 1px solid var(--border); border-radius: 7px; padding: 7px 10px; color: var(--text-tertiary); font-size: 12.5px; }
+.topbar-search:hover { border-color: var(--border-strong); }
+.topbar-search span { flex: 1; text-align: left; }
+.topbar-search kbd { display: flex; align-items: center; gap: 2px; font-size: 10px; background: var(--bg-2); border: 1px solid var(--border-strong); border-radius: 4px; padding: 2px 5px; color: var(--text-tertiary); }
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.bell-btn { position: relative; background: none; border: 1px solid var(--border); border-radius: 7px; padding: 7px; color: var(--text-secondary); display: flex; }
+.bell-btn:hover { background: var(--bg-1); color: var(--text-primary); }
+.bell-badge { position: absolute; top: -5px; right: -5px; background: var(--rec); color: #fff; font-size: 9px; font-weight: 600; padding: 1px 4px; border-radius: 8px; min-width: 15px; text-align: center; }
+
+.main-scroll { flex: 1; overflow-y: auto; }
+.view-pad { padding: 28px 32px 64px; max-width: 1400px; }
+
+/* ---- brand / dashboard hero ---- */
+.brand-eyebrow { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); margin: 0 0 6px; }
+.dash-hero { margin-bottom: 26px; }
+.dash-hero h1, .view-head h1 { font-family: var(--font-display); font-size: 34px; font-weight: 600; margin: 0; letter-spacing: 0.01em; }
+.dash-tagline { color: var(--text-secondary); font-size: 13.5px; margin: 6px 0 0; }
+
+/* ---- stat grid ---- */
+.stat-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 32px; }
+.stat-grid-compact { grid-template-columns: repeat(6, 1fr); margin-bottom: 24px; }
+.stat-card {
+  background: var(--bg-1); border: 1px solid var(--border); border-radius: 10px; padding: 16px 14px;
+  display: flex; flex-direction: column; gap: 6px; text-align: left; border-left: 2px solid var(--stat-color, var(--border));
+  transition: border-color 0.12s, transform 0.12s;
+}
+.stat-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+.stat-card-static { cursor: default; }
+.stat-card-static:hover { transform: none; }
+.stat-value { font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--stat-color, var(--text-primary)); line-height: 1; }
+.stat-label { font-size: 11.5px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin: 8px 0 12px; }
+.section-head h2 { font-family: var(--font-display); font-size: 17px; font-weight: 500; margin: 0; }
+.link-btn { display: inline-flex; align-items: center; gap: 4px; background: none; border: none; color: var(--text-secondary); font-size: 12.5px; padding: 0; }
+.link-btn:hover { color: var(--text-primary); }
+.link-btn-sm { background: none; border: none; color: var(--text-secondary); font-size: 12px; text-decoration: underline; text-underline-offset: 2px; padding: 0; }
+.link-btn-sm:hover { color: var(--text-primary); }
+.back-btn { margin-bottom: 14px; }
+
+/* ---- recent list ---- */
+.recent-list { display: flex; flex-direction: column; gap: 1px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.recent-row { display: grid; grid-template-columns: 5px 130px 1fr 70px 110px auto auto; align-items: center; gap: 14px; padding: 11px 14px; background: var(--bg-1); border: none; border-bottom: 1px solid var(--border); text-align: left; width: 100%; }
+.recent-row:last-child { border-bottom: none; }
+.recent-row:hover { background: var(--bg-2); }
+.recent-tally { width: 5px; height: 5px; border-radius: 50%; }
+.recent-filename { font-size: 12.5px; color: var(--text-primary); }
+.recent-project { font-size: 12.5px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent-date { font-size: 11.5px; color: var(--text-tertiary); }
+.recent-shot { font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-tertiary); }
+
+/* ---- pills ---- */
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; letter-spacing: 0.03em; color: var(--pill-color); white-space: nowrap; }
+.pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--pill-color); flex: 0 0 auto; }
+
+/* ---- view head / toolbar ---- */
+.view-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 18px; flex-wrap: wrap; }
+.view-head-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.result-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--text-tertiary); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.result-select-actions { display: flex; gap: 12px; }
+
+/* ---- buttons ---- */
+.btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; padding: 8px 13px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg-1); color: var(--text-primary); transition: background 0.12s, border-color 0.12s; }
+.btn:hover { border-color: var(--border-strong); background: var(--bg-2); }
+.btn-sm { padding: 6px 10px; font-size: 12px; }
+.btn-ghost { background: transparent; }
+.btn-primary { background: var(--text-primary); color: var(--bg-0); border-color: var(--text-primary); font-weight: 500; }
+.btn-primary:hover { background: #d8d2c6; border-color: #d8d2c6; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-danger-text { color: var(--rec); }
+.btn-has-badge { position: relative; }
+.count-badge { background: var(--rec); color: #fff; font-size: 9.5px; font-weight: 600; padding: 1px 5px; border-radius: 8px; margin-left: 2px; }
+.icon-btn { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 6px; border: 1px solid transparent; background: transparent; color: var(--text-secondary); }
+.icon-btn:hover { background: var(--bg-2); color: var(--text-primary); }
+.icon-btn-danger:hover { color: var(--rec); }
+
+/* ---- popover / filters ---- */
+.popover-anchor { position: relative; }
+.popover { position: absolute; top: calc(100% + 8px); right: 0; z-index: 50; background: var(--bg-2); border: 1px solid var(--border-strong); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,0.45); }
+.filter-popover { width: 380px; padding: 14px; }
+.popover-head { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; font-weight: 500; margin-bottom: 10px; }
+.filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.filter-full { grid-column: 1 / -1; }
+.filter-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--text-secondary); }
+.filter-clear { width: 100%; margin-top: 12px; justify-content: center; }
+
+/* ---- form controls (global) ---- */
+.files-app input[type="text"], .files-app input[type="date"], .files-app input:not([type]), .files-app select, .files-app textarea {
+  background: var(--bg-1); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; color: var(--text-primary); font-size: 12.5px; width: 100%;
+}
+.files-app input:focus, .files-app select:focus, .files-app textarea:focus { outline: none; border-color: var(--text-tertiary); }
+.files-app textarea { resize: vertical; }
+
+/* ---- clip grid & card ---- */
+.clip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 14px; }
+.clip-card { background: var(--bg-1); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; text-align: left; transition: border-color 0.12s, transform 0.12s; cursor: pointer; }
+.clip-card:hover { border-color: var(--border-strong); }
+.clip-card.is-selected { border-color: var(--cyan); }
+.clip-card-frame { position: relative; }
+.clip-select-toggle { position: absolute; top: 8px; right: 8px; background: rgba(11,10,9,0.6); border: none; border-radius: 5px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+.clip-select-toggle:hover { color: var(--text-primary); }
+.clip-card-meta { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+.clip-card-row1 { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.clip-filename { font-family: var(--font-mono); font-size: 12px; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.clip-date { font-size: 10.5px; color: var(--text-tertiary); flex: 0 0 auto; }
+.clip-project { font-size: 11.5px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.clip-card-row3 { display: flex; align-items: center; gap: 12px; margin-top: 2px; }
+
+/* ---- monitor frame (signature) ---- */
+.monitor { position: relative; aspect-ratio: 16/9; background: linear-gradient(180deg, #17140F 0%, #0D0B08 100%); overflow: hidden; }
+.monitor-grain { position: absolute; inset: 0; background-image: repeating-linear-gradient(180deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 3px); pointer-events: none; }
+.bracket { position: absolute; width: 14px; height: 14px; border-color: rgba(237,232,223,0.28); border-style: solid; border-width: 0; }
+.bracket-tl { top: 8px; left: 8px; border-top-width: 1.5px; border-left-width: 1.5px; }
+.bracket-tr { top: 8px; right: 8px; border-top-width: 1.5px; border-right-width: 1.5px; }
+.bracket-bl { bottom: 8px; left: 8px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.bracket-br { bottom: 8px; right: 8px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+.monitor-top { position: absolute; top: 8px; left: 26px; right: 26px; display: flex; align-items: center; justify-content: space-between; }
+.tally { display: flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--tally); }
+.tally-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tally); box-shadow: 0 0 6px var(--tally); }
+.monitor-shot { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(237,232,223,0.55); border: 1px solid rgba(237,232,223,0.25); border-radius: 3px; padding: 1px 5px; }
+.monitor-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.monitor-exercise { font-family: var(--font-display); font-size: 15px; letter-spacing: 0.03em; color: rgba(237,232,223,0.82); text-transform: uppercase; }
+.monitor-md .monitor-exercise { font-size: 14px; }
+.monitor-lg .monitor-exercise { font-size: 20px; }
+.monitor-bottom { position: absolute; bottom: 7px; left: 26px; right: 26px; display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; color: rgba(237,232,223,0.5); }
+.monitor-lg { aspect-ratio: 16/9; border-radius: 8px; }
+
+/* ---- add modal / detail panel shared ---- */
+.modal-overlay { position: fixed; inset: 0; background: rgba(6,5,4,0.72); z-index: 100; display: flex; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 40px 20px; }
+.modal { background: var(--bg-1); border: 1px solid var(--border-strong); border-radius: 14px; width: 100%; max-width: 640px; margin: auto; }
+.modal-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px 22px 14px; border-bottom: 1px solid var(--border); }
+.modal-head h2 { font-family: var(--font-display); font-size: 22px; font-weight: 500; margin: 2px 0 0; }
+.modal-eyebrow { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary); margin: 0; }
+.modal-body { padding: 18px 22px; display: flex; flex-direction: column; gap: 20px; max-height: 62vh; overflow-y: auto; }
+.modal-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 22px; border-top: 1px solid var(--border); }
+
+.form-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin: 0 0 10px; }
+.form-section-title .optional { text-transform: none; letter-spacing: 0; color: var(--text-tertiary); font-size: 11px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-grid label, .filter-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 11.5px; color: var(--text-secondary); }
+.span-2 { grid-column: 1 / -1; }
+.optional { color: var(--text-tertiary); font-weight: 400; font-size: 10.5px; margin-left: 4px; }
+.inline-new-project { display: flex; gap: 6px; }
+
+.tag-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag-chip { font-size: 11px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-2); color: var(--text-secondary); }
+.tag-chip:hover { border-color: var(--border-strong); }
+.tag-chip.is-active { background: var(--bg-3); border-color: var(--text-primary); color: var(--text-primary); }
+
+/* ---- detail panel ---- */
+.detail-panel { background: var(--bg-1); border: 1px solid var(--border-strong); border-radius: 14px; width: 100%; max-width: 620px; margin: auto; }
+.detail-head { display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--border); }
+.detail-head-title { flex: 1; min-width: 0; }
+.detail-filename-input { background: none; border: none; padding: 0; font-size: 19px; font-weight: 500; color: var(--text-primary); width: 100%; }
+.detail-filename-input:focus { outline: none; }
+.detail-head-actions { display: flex; gap: 4px; }
+.detail-frame-wrap { padding: 18px 18px 0; }
+.detail-body { padding: 18px; display: flex; flex-direction: column; gap: 18px; max-height: 52vh; overflow-y: auto; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.detail-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 11.5px; color: var(--text-secondary); }
+.detail-status-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.status-select-label { display: flex; flex-direction: column; gap: 5px; font-size: 11.5px; color: var(--text-secondary); }
+.status-select { font-weight: 500; }
+.detail-textarea-label { display: flex; flex-direction: column; gap: 5px; font-size: 11.5px; color: var(--text-secondary); }
+
+/* ---- bulk toolbar ---- */
+.bulk-toolbar { position: sticky; bottom: 16px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: var(--bg-2); border: 1px solid var(--border-strong); border-radius: 10px; padding: 10px 16px; box-shadow: 0 12px 32px rgba(0,0,0,0.5); font-size: 12.5px; }
+.bulk-actions { display: flex; align-items: center; gap: 8px; }
+.bulk-actions select { width: auto; padding: 6px 8px; font-size: 12px; }
+
+/* ---- projects ---- */
+.project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.project-card { background: var(--bg-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: left; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.12s, transform 0.12s; cursor: pointer; width: 100%; }
+.project-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+.project-card-head { display: flex; align-items: center; justify-content: space-between; }
+.project-type { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); }
+.project-date { font-size: 10.5px; color: var(--text-tertiary); }
+.project-card h3 { font-family: var(--font-display); font-size: 17px; font-weight: 500; margin: 0; }
+.project-client { font-size: 12px; color: var(--text-secondary); margin: -4px 0 2px; }
+.project-bar { height: 3px; background: var(--bg-3); border-radius: 2px; overflow: hidden; }
+.project-bar-fill { height: 100%; background: var(--green); }
+.project-stats-row { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px; color: var(--text-secondary); }
+.project-stats-row .dim { color: var(--text-tertiary); }
+.project-no-usage { font-size: 10.5px; color: var(--rec); }
+
+/* ---- command palette ---- */
+.palette-overlay { align-items: flex-start; padding-top: 90px; }
+.palette { width: 100%; max-width: 560px; background: var(--bg-2); border: 1px solid var(--border-strong); border-radius: 12px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+.palette-search { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--border); color: var(--text-tertiary); }
+.palette-search input { background: none; border: none; padding: 0; font-size: 14px; }
+.palette-search kbd { font-size: 10px; border: 1px solid var(--border-strong); border-radius: 4px; padding: 2px 5px; }
+.palette-results { max-height: 360px; overflow-y: auto; padding: 6px; }
+.palette-empty { padding: 20px; text-align: center; color: var(--text-tertiary); font-size: 12.5px; }
+.palette-row { display: grid; grid-template-columns: 8px 1fr auto auto; align-items: center; gap: 12px; width: 100%; padding: 9px 10px; background: none; border: none; border-radius: 7px; text-align: left; }
+.palette-row:hover { background: var(--bg-3); }
+.palette-dot { width: 6px; height: 6px; border-radius: 50%; }
+.palette-filename { font-size: 12.5px; color: var(--text-primary); }
+.palette-project { font-size: 11.5px; color: var(--text-secondary); }
+.palette-date { font-size: 10.5px; color: var(--text-tertiary); }
+
+/* ---- toast / warning / empty ---- */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--bg-3); border: 1px solid var(--border-strong); border-radius: 8px; padding: 10px 18px; font-size: 12.5px; z-index: 200; box-shadow: 0 12px 32px rgba(0,0,0,0.5); }
+.storage-warning { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: var(--rec); color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 12px; z-index: 200; }
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 60px 20px; color: var(--text-tertiary); text-align: center; border: 1px dashed var(--border); border-radius: 12px; }
+.empty-title { color: var(--text-secondary); font-size: 13.5px; font-weight: 500; margin: 4px 0 0; }
+.empty-body { font-size: 12px; max-width: 320px; margin: 0; }
+
+/* ---- responsive ---- */
+@media (max-width: 1100px) {
+  .stat-grid, .stat-grid-compact { grid-template-columns: repeat(3, 1fr); }
+  .recent-row { grid-template-columns: 5px 1fr auto; }
+  .recent-project, .recent-date, .recent-shot { display: none; }
+}
+@media (max-width: 820px) {
+  .sidebar { position: fixed; left: -232px; z-index: 60; transition: left 0.2s; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+  .sidebar.is-open { left: 0; }
+  .view-pad { padding: 20px 16px 48px; }
+  .stat-grid, .stat-grid-compact { grid-template-columns: repeat(2, 1fr); }
+  .topbar { padding: 10px 16px; }
+  .topbar-search span { display: none; }
+  .form-grid, .detail-grid, .detail-status-row { grid-template-columns: 1fr; }
+  .filter-grid { grid-template-columns: 1fr; }
+  .filter-popover { width: 88vw; right: -40px; }
+  .sidebar-toggle { display: flex !important; }
+}
+.sidebar-toggle { display: none; }
+.sidebar-scrim { display: none; }
+@media (max-width: 820px) {
+  .sidebar-scrim.is-open { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+(function () {
+"use strict";
+
+/* ================================ constants ================================ */
+
+var EXERCISES = ["Squat","Bench Press","Deadlift","Lat Pulldown","Dumbbell Curl","Walking","Posing","Talking","Product Interaction","Equipment","Other"];
+
+var SHOT_TYPES = ["Extreme Wide","Establishing","Wide","Full Body","Medium","Medium Close-Up","Close-Up","Extreme Close-Up","Detail","Macro","POV","Over-the-Shoulder","Tracking","Low Angle","High Angle","Static","Handheld","Other"];
+
+var PROJECT_TYPES = ["Gym Cinematic","Personal Brand","Client Gig","Instagram Reel","TikTok","YouTube","Commercial","Advertisement","Event","Product Video","Vlog","Short Film","Other"];
+
+var EDITING_STATUSES = ["unedited","editing","finished"];
+var EDITING_LABEL = { unedited: "Unedited", editing: "Editing", finished: "Finished" };
+var EDITING_VAR = { unedited: "var(--rec)", editing: "var(--amber)", finished: "var(--green)" };
+
+var USAGE_STATUSES = ["no_usage","potential","selected","used","archived"];
+var USAGE_LABEL = { no_usage: "No usage", potential: "Potential", selected: "Selected", used: "Used", archived: "Archived" };
+var USAGE_VAR = { no_usage: "var(--text-tertiary)", potential: "var(--amber)", selected: "var(--cyan)", used: "var(--green)", archived: "var(--muted)" };
+
+var NAV_ITEMS = [
+  { id: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
+  { id: "all", label: "All files", icon: "grid" },
+  { id: "projects", label: "Projects", icon: "folder" },
+  { id: "sep1", sep: true },
+  { id: "unedited", label: "Unedited", icon: "circle" },
+  { id: "editing", label: "Editing", icon: "clock" },
+  { id: "finished", label: "Finished", icon: "check-circle" },
+  { id: "sep2", sep: true },
+  { id: "no_usage", label: "No usage", icon: "circle" },
+  { id: "selected", label: "Selected", icon: "circle" },
+  { id: "used", label: "Used", icon: "circle" },
+  { id: "needs_attention", label: "Needs attention", icon: "alert-triangle" },
+];
+
+var VIEW_TITLES = {
+  all: "All files", unedited: "Unedited", editing: "Editing", finished: "Finished",
+  no_usage: "No usage", selected: "Selected", used: "Used", needs_attention: "Needs attention",
+};
+var VIEW_SUBTITLES = {
+  all: "Everything in your footage database.",
+  unedited: "Footage that hasn't been touched yet.",
+  editing: "Everything currently being cut.",
+  finished: "Edits involving this footage are complete.",
+  no_usage: "Clips that haven't found a purpose.",
+  selected: "Clips chosen for a project or edit.",
+  used: "Clips already used in a finished video.",
+  needs_attention: "Missing a project, description, exercise, or shot type.",
+};
+
+/* ================================ icons ================================ */
+
+var ICON_PATHS = {
+  "search": '<circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path>',
+  "plus": '<path d="M12 5v14M5 12h14"></path>',
+  "film": '<rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M7 3v18M17 3v18M3 7.5h4M17 7.5h4M3 12h18M3 16.5h4M17 16.5h4"></path>',
+  "folder": '<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>',
+  "check-circle": '<circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path>',
+  "circle": '<circle cx="12" cy="12" r="9"></circle>',
+  "clock": '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path>',
+  "sliders": '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M2 14h4M10 8h4M18 16h4"></path>',
+  "download": '<path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>',
+  "upload": '<path d="M12 15V3m0 0-4 4m4-4 4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>',
+  "x": '<path d="M18 6 6 18M6 6l12 12"></path>',
+  "chevron-right": '<path d="m9 18 6-6-6-6"></path>',
+  "arrow-left": '<path d="M19 12H5m0 0 6 6m-6-6 6-6"></path>',
+  "alert-triangle": '<path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4M12 17h.01"></path>',
+  "grid": '<rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect>',
+  "loader": '<path d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.4-6.4-2.1 2.1M8.7 15.7l-2.1 2.1m0-11.4 2.1 2.1m8.6 8.6-2.1-2.1"></path>',
+  "rotate-ccw": '<path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"></path><path d="M3 3v5h5"></path>',
+  "users": '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>',
+  "layout-dashboard": '<rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect>',
+  "trash": '<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z"></path>',
+  "copy": '<rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>',
+  "archive": '<rect x="3" y="3" width="18" height="5" rx="1"></rect><path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8M10 13h4"></path>',
+  "command": '<path d="M9 3a3 3 0 0 0-3 3v12a3 3 0 1 0 3-3h6a3 3 0 1 0-3 3V6a3 3 0 1 0 3 3H9a3 3 0 1 0 3-3"></path>',
+};
+function icon(name, size) {
+  size = size || 15;
+  var p = ICON_PATHS[name] || ICON_PATHS["circle"];
+  return '<svg class="icon" style="width:' + size + 'px;height:' + size + 'px" viewBox="0 0 24 24">' + p + '</svg>';
+}
+
+/* ================================ helpers ================================ */
+
+function uid(prefix) {
+  prefix = prefix || "id";
+  return prefix + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function esc(str) {
+  if (str === null || str === undefined) return "";
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function hashStr(str) {
+  var h = 0;
+  for (var i = 0; i < str.length; i++) { h = (h << 5) - h + str.charCodeAt(i); h |= 0; }
+  return Math.abs(h);
+}
+
+function fmtDate(d) {
+  if (!d) return "—";
+  var dt = new Date(d + "T00:00:00");
+  if (isNaN(dt)) return d;
+  return dt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
+function fmtDateShort(d) {
+  if (!d) return "—";
+  var dt = new Date(d + "T00:00:00");
+  if (isNaN(dt)) return d;
+  return dt.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+function timecodeFor(str) {
+  var h = hashStr(str);
+  var hh = String(h % 2).padStart(2, "0");
+  var mm = String((h >> 3) % 60).padStart(2, "0");
+  var ss = String((h >> 7) % 60).padStart(2, "0");
+  var ff = String((h >> 11) % 24).padStart(2, "0");
+  return hh + ":" + mm + ":" + ss + ":" + ff;
+}
+function exifFor(str) {
+  var h = hashStr(str);
+  var fstop = (1.4 + ((h % 14) / 10)).toFixed(1);
+  var shutters = ["1/48", "1/50", "1/60", "1/100", "1/125"];
+  var isos = [200, 400, 800, 1600, 3200];
+  return { fstop: fstop, shutter: shutters[h % shutters.length], iso: isos[(h >> 2) % isos.length] };
+}
+function downloadText(filename, text, mime) {
+  mime = mime || "text/csv";
+  var blob = new Blob([text], { type: mime });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function csvEscape(v) {
+  var s = String(v === null || v === undefined ? "" : v);
+  if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+function parseCsv(text) {
+  var rows = [];
+  var row = [], field = "", inQuotes = false;
+  for (var i = 0; i < text.length; i++) {
+    var c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; } else { inQuotes = false; }
+      } else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ",") { row.push(field); field = ""; }
+      else if (c === "\n" || c === "\r") {
+        if (field.length || row.length) { row.push(field); rows.push(row); row = []; field = ""; }
+        if (c === "\r" && text[i + 1] === "\n") i++;
+      } else field += c;
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  if (!rows.length) return [];
+  var headers = rows[0].map(function (h) { return h.trim(); });
+  return rows.slice(1).filter(function (r) { return r.length > 1 || r[0]; }).map(function (r) {
+    var obj = {};
+    headers.forEach(function (h, idx) { obj[h] = r[idx] !== undefined ? r[idx] : ""; });
+    return obj;
+  });
+}
+function getPath(obj, path) {
+  return path.split(".").reduce(function (o, k) { return o && o[k] !== undefined ? o[k] : undefined; }, obj);
+}
+function setPath(obj, path, value) {
+  var parts = path.split(".");
+  var o = obj;
+  for (var i = 0; i < parts.length - 1; i++) { o = o[parts[i]]; }
+  o[parts[parts.length - 1]] = value;
+}
+
+/* ================================ seed data ================================ */
+
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function buildSeed() {
+  var projects = [
+    { id: "p1", name: "Gym Cinematic #04", client: "Personal", type: "Gym Cinematic", date: "2026-08-20" },
+    { id: "p2", name: "Gym Cinematic #05", client: "Personal", type: "Gym Cinematic", date: "2026-08-24" },
+    { id: "p3", name: "Ferrera Fitness Launch", client: "Ferrera Fitness", type: "Client Gig", date: "2026-08-10" },
+    { id: "p4", name: "Northstar Supplements Ad", client: "Northstar Supplements", type: "Commercial", date: "2026-07-28" },
+    { id: "p5", name: "Reel Roundup Vol. 3", client: "Personal", type: "Instagram Reel", date: "2026-08-15" },
+    { id: "p6", name: "Downtown Loft Walkthrough", client: "Skyline Realty", type: "Product Video", date: "2026-07-05" },
+    { id: "p7", name: "Marcus — Personal Brand", client: "Marcus Reyes", type: "Personal Brand", date: "2026-06-30" },
+    { id: "p8", name: "Coastline Wedding Teaser", client: "Coastline Events", type: "Event", date: "2026-06-14" },
+    { id: "p9", name: "Apex Athletics — Ep. 12", client: "Apex Athletics", type: "YouTube", date: "2026-08-01" },
+    { id: "p10", name: "Studio B-Roll Bank", client: "Personal", type: "Other", date: "2026-05-01" },
+  ];
+
+  var locations = ["Gym", "Home Studio", "Downtown Loft", "Warehouse", "Beach", "Outdoor Trail", "Client Office", "Coastline Venue"];
+  var rand = mulberry32(1337);
+  function pick(arr) { return arr[Math.floor(rand() * arr.length)]; }
+
+  var explicit = [
+    { filename: "A7C_0248.MP4", exercise: "Squat", shotTypes: ["Wide"], editing: "editing", usage: "selected" },
+    { filename: "A7C_0249.MP4", exercise: "Squat", shotTypes: ["Close-Up"], editing: "finished", usage: "used" },
+    { filename: "A7C_0250.MP4", exercise: "Walking", shotTypes: ["Establishing"], editing: "finished", usage: "used" },
+    { filename: "A7C_0251.MP4", exercise: "Equipment", shotTypes: ["Detail"], editing: "unedited", usage: "selected" },
+    { filename: "A7C_0252.MP4", exercise: "Bench Press", shotTypes: ["Medium"], editing: "unedited", usage: "no_usage" },
+    { filename: "A7C_0253.MP4", exercise: "Equipment", shotTypes: ["Close-Up"], editing: "unedited", usage: "potential" },
+    { filename: "A7C_0254.MP4", exercise: "Deadlift", shotTypes: ["Low Angle"], editing: "editing", usage: "selected" },
+    { filename: "A7C_0255.MP4", exercise: "Walking", shotTypes: ["Establishing"], editing: "finished", usage: "used" },
+  ];
+
+  var clips = [];
+  var counter = 200;
+  function projFor(i) { return projects[i % projects.length]; }
+
+  explicit.forEach(function (e, i) {
+    var proj = projFor(i);
+    clips.push({
+      id: uid("clip"), filename: e.filename, date: proj.date, project: proj.id, client: proj.client,
+      location: pick(locations), exercise: e.exercise, description: "", shotTypes: e.shotTypes,
+      usage: e.usage, editing: e.editing, notes: "", createdAt: Date.now() - i * 60000,
+    });
+  });
+
+  var prefixes = ["A7C_0", "C000", "DJI_0", "B_0"];
+  for (var i = 0; i < 58; i++) {
+    var proj = pick(projects);
+    counter += 1 + Math.floor(rand() * 3);
+    var prefix = pick(prefixes);
+    var filename = prefix + String(counter).padStart(prefix.indexOf("C000") === 0 ? 1 : 3, "0") + ".MP4";
+    var exercise = pick(EXERCISES);
+    var nShots = 1 + Math.floor(rand() * 2);
+    var shotSet = {};
+    var shotTypes = [];
+    for (var s = 0; s < nShots; s++) { var st = pick(SHOT_TYPES); if (!shotSet[st]) { shotSet[st] = true; shotTypes.push(st); } }
+    var editing = pick(EDITING_STATUSES);
+    var usage = editing === "finished" ? pick(["used", "used", "archived", "selected"]) : pick(USAGE_STATUSES);
+    clips.push({
+      id: uid("clip"), filename: filename, date: proj.date, project: proj.id, client: proj.client,
+      location: pick(locations), exercise: exercise,
+      description: rand() > 0.5 ? (["Low-angle", "Tracking", "Static", "Handheld"][Math.floor(rand() * 4)] + " shot of " + exercise.toLowerCase() + ".") : "",
+      shotTypes: shotTypes, usage: usage, editing: editing,
+      notes: rand() > 0.8 ? "Could work as opening shot." : "",
+      createdAt: Date.now() - (i + 8) * 60000,
+    });
+  }
+
+  return { projects: projects, clips: clips };
+}
+
+/* ================================ state ================================ */
+
+var state = {
+  clips: [],
+  projects: [],
+  loading: true,
+  storageError: null,
+  view: "dashboard",
+  selectedProjectId: null,
+  selectedClipId: null,
+  showAddModal: false,
+  addForm: null,
+  addCreatingProject: false,
+  showPalette: false,
+  paletteQuery: "",
+  filters: { project: "", client: "", exercise: "", shotType: "", usage: "", editing: "", location: "" },
+  showFiltersPopover: false,
+  selectMode: false,
+  selectedIds: {},
+  toast: "",
+  toastTimer: null,
+  settingsOpen: false,
+  detailDraft: null,
+  mobileSidebarOpen: false,
+};
+
+function defaultAddForm() {
+  return {
+    filename: "", date: new Date().toISOString().slice(0, 10), project: state.projects[0] ? state.projects[0].id : "",
+    newProject: "", client: "", location: "", exercise: EXERCISES[0], description: "",
+    shotTypes: [], usage: "no_usage", editing: "unedited", notes: "",
+  };
+}
+
+/* ---- storage ---- */
+
+function loadData() {
+  var done = function (clips, projects) {
+    state.clips = clips || []; state.projects = projects || []; state.loading = false; render();
+  };
+  try {
+    if (window.storage) {
+      Promise.all([
+        window.storage.get("clips", false).catch(function () { return null; }),
+        window.storage.get("projects", false).catch(function () { return null; }),
+      ]).then(function (res) {
+        var c = res[0], p = res[1];
+        if (c && p) {
+          try { done(JSON.parse(c.value), JSON.parse(p.value)); return; } catch (e) {}
+        }
+        var local = readLocalData();
+        if (local) { done(local.clips, local.projects); return; }
+        var seed = buildSeed();
+        persistAll(seed.clips, seed.projects);
+        done(seed.clips, seed.projects);
+      }).catch(function () {
+        var local = readLocalData();
+        if (local) { done(local.clips, local.projects); return; }
+        state.storageError = "Cloud storage unavailable — using this browser's local storage.";
+        var seed = buildSeed();
+        persistAll(seed.clips, seed.projects);
+        done(seed.clips, seed.projects);
+      });
+      return;
+    }
+    var local = readLocalData();
+    if (local) { done(local.clips, local.projects); return; }
+    var seed = buildSeed();
+    persistAll(seed.clips, seed.projects);
+    done(seed.clips, seed.projects);
+  } catch (e) {
+    var localFallback = readLocalData();
+    if (localFallback) { done(localFallback.clips, localFallback.projects); return; }
+    state.storageError = "Browser storage is unavailable — changes may not persist.";
+    var seedFallback = buildSeed();
+    done(seedFallback.clips, seedFallback.projects);
+  }
+}
+function readLocalData() {
+  try {
+    var c = localStorage.getItem("cbm-files-clips");
+    var p = localStorage.getItem("cbm-files-projects");
+    if (!c || !p) return null;
+    return { clips: JSON.parse(c), projects: JSON.parse(p) };
+  } catch (e) { return null; }
+}
+function persistClips(next) {
+  state.clips = next;
+  try { window.storage && window.storage.set("clips", JSON.stringify(next), false); } catch (e) {}
+  try { localStorage.setItem("cbm-files-clips", JSON.stringify(next)); } catch (e) {}
+}
+function persistProjects(next) {
+  state.projects = next;
+  try { window.storage && window.storage.set("projects", JSON.stringify(next), false); } catch (e) {}
+  try { localStorage.setItem("cbm-files-projects", JSON.stringify(next)); } catch (e) {}
+}
+function persistAll(clips, projects) {
+  try { window.storage && window.storage.set("clips", JSON.stringify(clips), false); } catch (e) {}
+  try { window.storage && window.storage.set("projects", JSON.stringify(projects), false); } catch (e) {}
+  try { localStorage.setItem("cbm-files-clips", JSON.stringify(clips)); localStorage.setItem("cbm-files-projects", JSON.stringify(projects)); } catch (e) {}
+}
+function resetToSample() {
+  var seed = buildSeed();
+  persistClips(seed.clips);
+  persistProjects(seed.projects);
+}
+
+function showToast(msg) {
+  state.toast = msg;
+  if (state.toastTimer) clearTimeout(state.toastTimer);
+  state.toastTimer = setTimeout(function () { state.toast = ""; render(); }, 2600);
+}
+
+/* ================================ derived helpers ================================ */
+
+function viewPredicate(view) {
+  switch (view) {
+    case "unedited": return function (c) { return c.editing === "unedited"; };
+    case "editing": return function (c) { return c.editing === "editing"; };
+    case "finished": return function (c) { return c.editing === "finished"; };
+    case "no_usage": return function (c) { return c.usage === "no_usage"; };
+    case "selected": return function (c) { return c.usage === "selected"; };
+    case "used": return function (c) { return c.usage === "used"; };
+    case "needs_attention": return function (c) { return !c.project || !c.description || !c.shotTypes.length || !c.exercise; };
+    default: return function () { return true; };
+  }
+}
+function projectStats(projectId, clips) {
+  var inProj = clips.filter(function (c) { return c.project === projectId; });
+  return {
+    count: inProj.length,
+    unedited: inProj.filter(function (c) { return c.editing === "unedited"; }).length,
+    editing: inProj.filter(function (c) { return c.editing === "editing"; }).length,
+    finished: inProj.filter(function (c) { return c.editing === "finished"; }).length,
+    noUsage: inProj.filter(function (c) { return c.usage === "no_usage"; }).length,
+    selected: inProj.filter(function (c) { return c.usage === "selected"; }).length,
+    used: inProj.filter(function (c) { return c.usage === "used"; }).length,
+  };
+}
+function findProject(id) {
+  for (var i = 0; i < state.projects.length; i++) if (state.projects[i].id === id) return state.projects[i];
+  return null;
+}
+function findClip(id) {
+  for (var i = 0; i < state.clips.length; i++) if (state.clips[i].id === id) return state.clips[i];
+  return null;
+}
+function selectedCount() { return Object.keys(state.selectedIds).filter(function (k) { return state.selectedIds[k]; }).length; }
+
+/* ================================ small render atoms ================================ */
+
+function Pill(colorVar, label) {
+  return '<span class="pill" style="--pill-color:' + colorVar + '"><span class="pill-dot"></span>' + esc(label) + "</span>";
+}
+function EmptyState(iconName, title, body) {
+  return '<div class="empty-state">' + icon(iconName, 28) + '<p class="empty-title">' + esc(title) + '</p><p class="empty-body">' + esc(body) + "</p></div>";
+}
+function MonitorFrame(clip, size) {
+  size = size || "md";
+  var tc = timecodeFor(clip.filename + clip.id);
+  var exif = exifFor(clip.filename);
+  var color = EDITING_VAR[clip.editing] || "var(--rec)";
+  var primaryShot = clip.shotTypes && clip.shotTypes[0];
+  return (
+    '<div class="monitor monitor-' + size + '" style="--tally:' + color + '">' +
+      '<div class="monitor-grain"></div>' +
+      '<span class="bracket bracket-tl"></span><span class="bracket bracket-tr"></span>' +
+      '<span class="bracket bracket-bl"></span><span class="bracket bracket-br"></span>' +
+      '<div class="monitor-top"><span class="tally"><span class="tally-dot"></span>' + esc(EDITING_LABEL[clip.editing]) + '</span>' +
+        (primaryShot ? '<span class="monitor-shot">' + esc(primaryShot) + '</span>' : "") +
+      '</div>' +
+      '<div class="monitor-center"><span class="monitor-exercise">' + esc(clip.exercise || "Untagged") + '</span></div>' +
+      '<div class="monitor-bottom"><span class="monitor-tc">' + tc + '</span><span class="monitor-exif">\u0192' + exif.fstop + ' \u00B7 ' + exif.shutter + ' \u00B7 ISO ' + exif.iso + '</span></div>' +
+    '</div>'
+  );
+}
+function ClipCard(clip, project, selected, selectMode) {
+  return (
+    '<div class="clip-card ' + (selected ? "is-selected" : "") + '" data-action="' + (selectMode ? "toggle-select" : "open-clip") + '" data-id="' + clip.id + '">' +
+      '<div class="clip-card-frame">' + MonitorFrame(clip) +
+        '<button class="clip-select-toggle" data-action="toggle-select" data-id="' + clip.id + '" aria-label="Select file">' +
+          icon(selected ? "check-circle" : "circle", 16) +
+        '</button>' +
+      '</div>' +
+      '<div class="clip-card-meta">' +
+        '<div class="clip-card-row1"><span class="clip-filename mono">' + esc(clip.filename) + '</span><span class="clip-date">' + fmtDateShort(clip.date) + '</span></div>' +
+        '<div class="clip-card-row2"><span class="clip-project">' + esc(project ? project.name : "No project") + '</span></div>' +
+        '<div class="clip-card-row3">' + Pill(EDITING_VAR[clip.editing], EDITING_LABEL[clip.editing]) + Pill(USAGE_VAR[clip.usage], USAGE_LABEL[clip.usage]) + '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function optionsHtml(list, selected, labelMap) {
+  return list.map(function (v) {
+    var label = labelMap ? labelMap[v] : v;
+    return '<option value="' + esc(v) + '" ' + (v === selected ? "selected" : "") + '>' + esc(label) + '</option>';
+  }).join("");
+}
+
+/* ================================ filter panel ================================ */
+
+function FilterPanelHtml() {
+  var f = state.filters;
+  var clientList = [];
+  state.projects.forEach(function (p) { if (p.client && clientList.indexOf(p.client) === -1) clientList.push(p.client); });
+  return (
+    '<div class="popover filter-popover" onclick="event.stopPropagation()">' +
+      '<div class="popover-head"><span>Filters</span><button class="icon-btn" data-action="toggle-filters">' + icon("x", 14) + '</button></div>' +
+      '<div class="filter-grid">' +
+        '<label>Project<select data-bind="filters.project"><option value="">Any project</option>' + optionsHtml(state.projects.map(function (p) { return p.id; }), f.project, (function () { var m = {}; state.projects.forEach(function (p) { m[p.id] = p.name; }); return m; })()) + '</select></label>' +
+        '<label>Client<select data-bind="filters.client"><option value="">Any client</option>' + optionsHtml(clientList, f.client) + '</select></label>' +
+        '<label>Exercise<select data-bind="filters.exercise"><option value="">Any activity</option>' + optionsHtml(EXERCISES, f.exercise) + '</select></label>' +
+        '<label>Shot type<select data-bind="filters.shotType"><option value="">Any shot type</option>' + optionsHtml(SHOT_TYPES, f.shotType) + '</select></label>' +
+        '<label>Usage<select data-bind="filters.usage"><option value="">Any usage</option>' + optionsHtml(USAGE_STATUSES, f.usage, USAGE_LABEL) + '</select></label>' +
+        '<label>Editing<select data-bind="filters.editing"><option value="">Any editing status</option>' + optionsHtml(EDITING_STATUSES, f.editing, EDITING_LABEL) + '</select></label>' +
+        '<label class="filter-full">Location<input data-bind="filters.location" value="' + esc(f.location) + '" placeholder="Any location" /></label>' +
+      '</div>' +
+      '<button class="btn btn-ghost filter-clear" data-action="clear-filters">Clear all filters</button>' +
+    '</div>'
+  );
+}
+
+/* ================================ add file modal ================================ */
+
+function AddModalHtml() {
+  var f = state.addForm;
+  var canSubmit = f.filename.trim().length > 0 && (state.addCreatingProject ? f.newProject.trim().length > 0 : true);
+  return (
+    '<div class="modal-overlay" data-action="close-add-modal">' +
+      '<div class="modal add-modal" onclick="event.stopPropagation()">' +
+        '<div class="modal-head"><div><p class="modal-eyebrow">Cinematicbymo.com / Files</p><h2>Add file</h2></div>' +
+          '<button class="icon-btn" data-action="close-add-modal">' + icon("x", 16) + '</button></div>' +
+        '<div class="modal-body">' +
+          '<section class="form-section"><p class="form-section-title">File information</p>' +
+            '<div class="form-grid">' +
+              '<label class="span-2">Filename<input autofocus id="af-filename" class="mono" data-bind="addForm.filename" value="' + esc(f.filename) + '" placeholder="C0000.MP4" /></label>' +
+              '<label>Date filmed<input type="date" data-bind="addForm.date" value="' + esc(f.date) + '" /></label>' +
+              '<label>Project' +
+                (!state.addCreatingProject ?
+                  '<select data-action="add-project-select">' + state.projects.map(function (p) { return '<option value="' + p.id + '" ' + (p.id === f.project ? "selected" : "") + '>' + esc(p.name) + '</option>'; }).join("") + '<option value="__new">+ Create new project…</option></select>'
+                  : '<div class="inline-new-project"><input data-bind="addForm.newProject" value="' + esc(f.newProject) + '" placeholder="New project name" /><button class="btn btn-ghost btn-sm" data-action="cancel-new-project">Cancel</button></div>') +
+              '</label>' +
+              '<label>Client <span class="optional">Optional</span><input data-bind="addForm.client" value="' + esc(f.client) + '" placeholder="Personal" /></label>' +
+              '<label>Location <span class="optional">Optional</span><input data-bind="addForm.location" value="' + esc(f.location) + '" placeholder="Gym" /></label>' +
+            '</div></section>' +
+          '<section class="form-section"><p class="form-section-title">Content information</p>' +
+            '<div class="form-grid">' +
+              '<label>Exercise / activity<select data-bind="addForm.exercise">' + optionsHtml(EXERCISES, f.exercise) + '</select></label>' +
+              '<label class="span-2">Description<input data-bind="addForm.description" value="' + esc(f.description) + '" placeholder="Low-angle shot of athlete walking toward squat rack." /></label>' +
+              '<label class="span-2">Notes<textarea rows="2" data-bind="addForm.notes" placeholder="Free-text notes">' + esc(f.notes) + '</textarea></label>' +
+            '</div></section>' +
+          '<section class="form-section"><p class="form-section-title">Shot type <span class="optional">Select all that apply</span></p>' +
+            '<div class="tag-grid">' + SHOT_TYPES.map(function (s) { return '<button type="button" class="tag-chip ' + (f.shotTypes.indexOf(s) > -1 ? "is-active" : "") + '" data-action="toggle-shot" data-scope="addForm" data-shot="' + esc(s) + '">' + esc(s) + '</button>'; }).join("") + '</div></section>' +
+          '<section class="form-section"><p class="form-section-title">Workflow status</p>' +
+            '<div class="form-grid">' +
+              '<label>Usage<select data-bind="addForm.usage">' + optionsHtml(USAGE_STATUSES, f.usage, USAGE_LABEL) + '</select></label>' +
+              '<label>Editing<select data-bind="addForm.editing">' + optionsHtml(EDITING_STATUSES, f.editing, EDITING_LABEL) + '</select></label>' +
+            '</div></section>' +
+        '</div>' +
+        '<div class="modal-foot"><button class="btn btn-ghost" data-action="close-add-modal">Cancel</button>' +
+          '<button class="btn btn-primary" data-action="submit-add-modal" ' + (canSubmit ? "" : "disabled") + '>Add file</button></div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ================================ detail panel ================================ */
+
+function DetailPanelHtml() {
+  var d = state.detailDraft;
+  if (!d) return "";
+  var project = null;
+  return (
+    '<div class="modal-overlay" data-action="close-detail">' +
+      '<div class="detail-panel" onclick="event.stopPropagation()">' +
+        '<div class="detail-head">' +
+          '<button class="icon-btn" data-action="close-detail">' + icon("arrow-left", 16) + '</button>' +
+          '<div class="detail-head-title"><p class="modal-eyebrow">Cinematicbymo.com / Files</p>' +
+            '<input class="detail-filename-input mono" data-bind="detailDraft.filename" value="' + esc(d.filename) + '" /></div>' +
+          '<div class="detail-head-actions">' +
+            '<button class="icon-btn" title="Duplicate" data-action="duplicate-clip" data-id="' + d.id + '">' + icon("copy", 15) + '</button>' +
+            '<button class="icon-btn" title="Archive" data-action="archive-clip" data-id="' + d.id + '">' + icon("archive", 15) + '</button>' +
+            '<button class="icon-btn icon-btn-danger" title="Delete" data-action="delete-clip" data-id="' + d.id + '">' + icon("trash", 15) + '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="detail-frame-wrap">' + MonitorFrame(d, "lg") + '</div>' +
+        '<div class="detail-body">' +
+          '<div class="detail-grid">' +
+            '<label>Date filmed<input type="date" data-bind="detailDraft.date" value="' + esc(d.date) + '" /></label>' +
+            '<label>Project<select data-bind="detailDraft.project"><option value="">No project</option>' + optionsHtml(state.projects.map(function (p) { return p.id; }), d.project, (function () { var m = {}; state.projects.forEach(function (p) { m[p.id] = p.name; }); return m; })()) + '</select></label>' +
+            '<label>Client<input data-bind="detailDraft.client" value="' + esc(d.client) + '" /></label>' +
+            '<label>Location<input data-bind="detailDraft.location" value="' + esc(d.location) + '" /></label>' +
+            '<label>Exercise / activity<select data-bind="detailDraft.exercise">' + optionsHtml(EXERCISES, d.exercise) + '</select></label>' +
+          '</div>' +
+          '<div class="detail-status-row">' +
+            '<label class="status-select-label">Usage<select class="status-select" style="color:' + USAGE_VAR[d.usage] + '" data-bind="detailDraft.usage">' + optionsHtml(USAGE_STATUSES, d.usage, USAGE_LABEL) + '</select></label>' +
+            '<label class="status-select-label">Editing<select class="status-select" style="color:' + EDITING_VAR[d.editing] + '" data-bind="detailDraft.editing">' + optionsHtml(EDITING_STATUSES, d.editing, EDITING_LABEL) + '</select></label>' +
+          '</div>' +
+          '<section class="form-section"><p class="form-section-title">Shot type</p>' +
+            '<div class="tag-grid">' + SHOT_TYPES.map(function (s) { return '<button type="button" class="tag-chip ' + (d.shotTypes.indexOf(s) > -1 ? "is-active" : "") + '" data-action="toggle-shot" data-scope="detailDraft" data-shot="' + esc(s) + '">' + esc(s) + '</button>'; }).join("") + '</div></section>' +
+          '<label class="detail-textarea-label">Description<textarea rows="2" data-bind="detailDraft.description" placeholder="Low-angle tracking shot following the athlete toward the squat rack.">' + esc(d.description) + '</textarea></label>' +
+          '<label class="detail-textarea-label">Notes<textarea rows="2" data-bind="detailDraft.notes" placeholder="Could work as opening shot.">' + esc(d.notes) + '</textarea></label>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ================================ command palette ================================ */
+
+function CommandPaletteHtml() {
+  var q = state.paletteQuery;
+  var results;
+  if (!q.trim()) results = state.clips.slice(0, 8);
+  else {
+    var query = q.toLowerCase();
+    results = state.clips.filter(function (c) {
+      var proj = findProject(c.project);
+      var fields = [c.filename, proj ? proj.name : "", c.client, c.exercise, c.description, c.notes, c.location];
+      return fields.some(function (f) { return f && f.toLowerCase().indexOf(query) > -1; });
+    }).slice(0, 20);
+  }
+  return (
+    '<div class="modal-overlay palette-overlay" data-action="close-palette">' +
+      '<div class="palette" onclick="event.stopPropagation()">' +
+        '<div class="palette-search">' + icon("search", 16) +
+          '<input id="palette-input" data-bind="paletteQuery" value="' + esc(q) + '" placeholder="Search filename, project, client, exercise, notes…" /><kbd>ESC</kbd>' +
+        '</div>' +
+        '<div class="palette-results">' +
+          (results.length === 0 ? '<div class="palette-empty">No files match “' + esc(q) + '”.</div>' : results.map(function (c) {
+            var proj = findProject(c.project);
+            return '<button class="palette-row" data-action="open-clip-from-palette" data-id="' + c.id + '">' +
+              '<span class="palette-dot" style="background:' + EDITING_VAR[c.editing] + '"></span>' +
+              '<span class="palette-filename mono">' + esc(c.filename) + '</span>' +
+              '<span class="palette-project">' + esc(proj ? proj.name : "No project") + '</span>' +
+              '<span class="palette-date">' + fmtDateShort(c.date) + '</span>' +
+            '</button>';
+          }).join("")) +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ================================ dashboard ================================ */
+
+function DashboardHtml() {
+  var clips = state.clips, projects = state.projects;
+  var stats = {
+    total: clips.length,
+    unedited: clips.filter(function (c) { return c.editing === "unedited"; }).length,
+    editing: clips.filter(function (c) { return c.editing === "editing"; }).length,
+    finished: clips.filter(function (c) { return c.editing === "finished"; }).length,
+    noUsage: clips.filter(function (c) { return c.usage === "no_usage"; }).length,
+    projects: projects.length,
+  };
+  var recent = clips.slice().sort(function (a, b) { return b.createdAt - a.createdAt; }).slice(0, 6);
+  var cards = [
+    { label: "Total clips", value: stats.total, nav: "all", color: null },
+    { label: "Unedited", value: stats.unedited, nav: "unedited", color: "var(--rec)" },
+    { label: "Editing", value: stats.editing, nav: "editing", color: "var(--amber)" },
+    { label: "Finished", value: stats.finished, nav: "finished", color: "var(--green)" },
+    { label: "No usage", value: stats.noUsage, nav: "no_usage", color: "var(--text-tertiary)" },
+    { label: "Projects", value: stats.projects, nav: "projects", color: null },
+  ];
+  return (
+    '<div class="view-pad">' +
+      '<div class="dash-hero"><p class="brand-eyebrow">Cinematicbymo.com / Files</p><h1>Files</h1><p class="dash-tagline">Your footage. Your workflow. One place.</p></div>' +
+      '<div class="stat-grid">' + cards.map(function (c) {
+        return '<button class="stat-card" data-action="navigate" data-view="' + c.nav + '" style="--stat-color:' + (c.color || "var(--text-primary)") + '"><span class="stat-value">' + c.value.toLocaleString() + '</span><span class="stat-label">' + esc(c.label) + '</span></button>';
+      }).join("") + '</div>' +
+      '<div class="section-head"><h2>Recently added</h2><button class="link-btn" data-action="navigate" data-view="all">View all files ' + icon("chevron-right", 14) + '</button></div>' +
+      '<div class="recent-list">' +
+        (recent.length === 0 ? EmptyState("film", "No footage yet", "Add your first file to start building your database.") :
+          recent.map(function (c) {
+            var proj = findProject(c.project);
+            return '<button class="recent-row" data-action="open-clip" data-id="' + c.id + '">' +
+              '<span class="recent-tally" style="background:' + EDITING_VAR[c.editing] + '"></span>' +
+              '<span class="recent-filename mono">' + esc(c.filename) + '</span>' +
+              '<span class="recent-project">' + esc(proj ? proj.name : "No project") + '</span>' +
+              '<span class="recent-date">' + fmtDateShort(c.date) + '</span>' +
+              '<span class="recent-shot">' + esc(c.shotTypes[0] || "—") + '</span>' +
+              Pill(USAGE_VAR[c.usage], USAGE_LABEL[c.usage]) + Pill(EDITING_VAR[c.editing], EDITING_LABEL[c.editing]) +
+            '</button>';
+          }).join("")) +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ================================ all files / smart views ================================ */
+
+function AllFilesHtml(view) {
+  var clips = state.clips, projects = state.projects, filters = state.filters;
+  var filtered = clips.filter(viewPredicate(view));
+  if (filters.project) filtered = filtered.filter(function (c) { return c.project === filters.project; });
+  if (filters.client) filtered = filtered.filter(function (c) { return c.client === filters.client; });
+  if (filters.exercise) filtered = filtered.filter(function (c) { return c.exercise === filters.exercise; });
+  if (filters.shotType) filtered = filtered.filter(function (c) { return c.shotTypes.indexOf(filters.shotType) > -1; });
+  if (filters.usage) filtered = filtered.filter(function (c) { return c.usage === filters.usage; });
+  if (filters.editing) filtered = filtered.filter(function (c) { return c.editing === filters.editing; });
+  if (filters.location) filtered = filtered.filter(function (c) { return (c.location || "").toLowerCase().indexOf(filters.location.toLowerCase()) > -1; });
+  filtered = filtered.slice().sort(function (a, b) { return b.createdAt - a.createdAt; });
+
+  var activeFilterCount = Object.keys(filters).filter(function (k) { return filters[k]; }).length;
+  var selCount = selectedCount();
+
+  return (
+    '<div class="view-pad">' +
+      '<div class="view-head"><div><p class="brand-eyebrow">Cinematicbymo.com / Files</p><h1>' + esc(VIEW_TITLES[view] || "All files") + '</h1><p class="dash-tagline">' + esc(VIEW_SUBTITLES[view] || "") + '</p></div>' +
+        '<div class="view-head-actions">' +
+          '<button class="btn btn-ghost" data-action="toggle-select-mode">' + (state.selectMode ? "Done" : "Select") + '</button>' +
+          '<div class="popover-anchor">' +
+            '<button class="btn btn-ghost ' + (activeFilterCount ? "btn-has-badge" : "") + '" data-action="toggle-filters">' + icon("sliders", 14) + ' Filters ' + (activeFilterCount ? '<span class="count-badge">' + activeFilterCount + '</span>' : "") + '</button>' +
+            (state.showFiltersPopover ? FilterPanelHtml() : "") +
+          '</div>' +
+          '<button class="btn btn-ghost" data-action="export-csv">' + icon("download", 14) + ' Export CSV</button>' +
+          '<button class="btn btn-ghost" data-action="trigger-import">' + icon("upload", 14) + ' Import CSV</button>' +
+          '<input id="csvFileInput" type="file" accept=".csv" style="display:none" />' +
+          '<button class="btn btn-primary" data-action="open-add-modal">' + icon("plus", 14) + ' Add file</button>' +
+        '</div></div>' +
+      '<div class="result-row"><span>' + filtered.length.toLocaleString() + ' matching ' + (filtered.length === 1 ? "file" : "files") + '</span>' +
+        (state.selectMode ? '<span class="result-select-actions"><button class="link-btn-sm" data-action="select-all-filtered" data-view="' + view + '">Select all</button><button class="link-btn-sm" data-action="clear-selection">Clear</button></span>' : "") +
+      '</div>' +
+      (filtered.length === 0 ? EmptyState("film", "No files match", "Try adjusting your filters, or add a new file to your library.") :
+        '<div class="clip-grid">' + filtered.map(function (c) {
+          return ClipCard(c, findProject(c.project), !!state.selectedIds[c.id], state.selectMode);
+        }).join("") + '</div>') +
+      (selCount > 0 ? BulkToolbarHtml(selCount) : "") +
+    '</div>'
+  );
+}
+
+function BulkToolbarHtml(selCount) {
+  return (
+    '<div class="bulk-toolbar"><span>' + selCount + ' selected</span>' +
+      '<div class="bulk-actions">' +
+        '<select data-action="bulk-select" data-field="editing"><option value="" disabled selected>Set editing status…</option>' + EDITING_STATUSES.map(function (c) { return '<option value="' + c + '">' + EDITING_LABEL[c] + '</option>'; }).join("") + '</select>' +
+        '<select data-action="bulk-select" data-field="usage"><option value="" disabled selected>Set usage…</option>' + USAGE_STATUSES.map(function (c) { return '<option value="' + c + '">' + USAGE_LABEL[c] + '</option>'; }).join("") + '</select>' +
+        '<button class="btn btn-ghost btn-sm" data-action="bulk-archive">' + icon("archive", 13) + ' Archive</button>' +
+        '<button class="btn btn-ghost btn-sm btn-danger-text" data-action="bulk-delete">' + icon("trash", 13) + ' Delete</button>' +
+        '<button class="icon-btn" data-action="clear-selection">' + icon("x", 14) + '</button>' +
+      '</div></div>'
+  );
+}
+
+/* ================================ projects ================================ */
+
+function ProjectsHtml() {
+  var projects = state.projects, clips = state.clips;
+  return (
+    '<div class="view-pad">' +
+      '<div class="view-head"><div><p class="brand-eyebrow">Cinematicbymo.com / Files</p><h1>Projects</h1><p class="dash-tagline">Every shoot, campaign, and edit you\'re tracking.</p></div></div>' +
+      '<div class="project-grid">' +
+        (projects.length === 0 ? EmptyState("folder", "No projects yet", "Projects are created automatically when you add a file.") :
+          projects.map(function (p) {
+            var s = projectStats(p.id, clips);
+            var pct = s.count ? Math.round((s.finished / s.count) * 100) : 0;
+            return '<button class="project-card" data-action="open-project" data-id="' + p.id + '">' +
+              '<div class="project-card-head"><span class="project-type">' + esc(p.type) + '</span><span class="project-date">' + fmtDateShort(p.date) + '</span></div>' +
+              '<h3>' + esc(p.name) + '</h3><p class="project-client">' + esc(p.client) + '</p>' +
+              '<div class="project-bar"><div class="project-bar-fill" style="width:' + pct + '%"></div></div>' +
+              '<div class="project-stats-row"><span><strong>' + s.count + '</strong> clips</span><span class="dim">' + s.unedited + ' unedited</span><span class="dim">' + s.editing + ' editing</span><span class="dim">' + s.finished + ' finished</span></div>' +
+              (s.noUsage > 0 ? '<span class="project-no-usage">' + s.noUsage + ' no usage</span>' : "") +
+            '</button>';
+          }).join("")) +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function ProjectDetailHtml(project) {
+  var clips = state.clips;
+  var s = projectStats(project.id, clips);
+  var projClips = clips.filter(function (c) { return c.project === project.id; }).sort(function (a, b) { return b.createdAt - a.createdAt; });
+  var selCount = selectedCount();
+  return (
+    '<div class="view-pad">' +
+      '<button class="link-btn back-btn" data-action="back-to-projects">' + icon("arrow-left", 14) + ' All projects</button>' +
+      '<div class="view-head"><div><p class="brand-eyebrow">' + esc(project.type) + ' \u00B7 ' + esc(project.client) + '</p><h1>' + esc(project.name) + '</h1><p class="dash-tagline">' + fmtDate(project.date) + '</p></div>' +
+        '<div class="view-head-actions">' +
+          '<button class="btn btn-ghost" data-action="toggle-select-mode">' + (state.selectMode ? "Done" : "Select") + '</button>' +
+          '<button class="btn btn-ghost" data-action="export-project-csv" data-id="' + project.id + '">' + icon("download", 14) + ' Export CSV</button>' +
+          '<button class="btn btn-primary" data-action="open-add-modal">' + icon("plus", 14) + ' Add file</button>' +
+        '</div></div>' +
+      '<div class="stat-grid stat-grid-compact">' +
+        '<div class="stat-card stat-card-static"><span class="stat-value">' + s.count + '</span><span class="stat-label">Clips</span></div>' +
+        '<div class="stat-card stat-card-static" style="--stat-color:var(--rec)"><span class="stat-value">' + s.unedited + '</span><span class="stat-label">Unedited</span></div>' +
+        '<div class="stat-card stat-card-static" style="--stat-color:var(--amber)"><span class="stat-value">' + s.editing + '</span><span class="stat-label">Editing</span></div>' +
+        '<div class="stat-card stat-card-static" style="--stat-color:var(--green)"><span class="stat-value">' + s.finished + '</span><span class="stat-label">Finished</span></div>' +
+        '<div class="stat-card stat-card-static"><span class="stat-value">' + s.noUsage + '</span><span class="stat-label">No usage</span></div>' +
+        '<div class="stat-card stat-card-static" style="--stat-color:var(--cyan)"><span class="stat-value">' + s.selected + '</span><span class="stat-label">Selected</span></div>' +
+      '</div>' +
+      (projClips.length === 0 ? EmptyState("film", "No clips yet", "Add a file to this project to get started.") :
+        '<div class="clip-grid">' + projClips.map(function (c) { return ClipCard(c, project, !!state.selectedIds[c.id], state.selectMode); }).join("") + '</div>') +
+      (selCount > 0 ? BulkToolbarHtml(selCount) : "") +
+    '</div>'
+  );
+}
+
+/* ================================ shell: sidebar / topbar ================================ */
+
+function SidebarHtml() {
+  var activeView = state.selectedProjectId ? "" : state.view;
+  return (
+    '<aside class="sidebar ' + (state.mobileSidebarOpen ? "is-open" : "") + '">' +
+      '<div class="sidebar-brand"><p class="sidebar-brand-top">CinematicByMo.com</p><p class="sidebar-brand-bottom">' + icon("film", 17) + ' Files</p></div>' +
+      '<nav class="sidebar-nav">' +
+        NAV_ITEMS.map(function (item) {
+          if (item.sep) return '<div class="sidebar-sep"></div>';
+          return '<button class="sidebar-item ' + (activeView === item.id ? "is-active" : "") + '" data-action="navigate" data-view="' + item.id + '">' + icon(item.icon, 15) + esc(item.label) + '</button>';
+        }).join("") +
+      '</nav>' +
+      '<div class="sidebar-foot">' +
+        '<button class="sidebar-item" data-action="toggle-settings">' + icon("users", 15) + ' Editor workspace</button>' +
+        (state.settingsOpen ? '<div class="settings-drop"><button data-action="restore-sample">' + icon("rotate-ccw", 13) + ' Restore sample data</button></div>' : "") +
+      '</div>' +
+    '</aside>'
+  );
+}
+
+function TopbarHtml() {
+  var count = state.clips.filter(viewPredicate("needs_attention")).length;
+  return (
+    '<header class="topbar">' +
+      '<button class="topbar-search" data-action="open-palette">' + icon("search", 14) + '<span>Search filename, project, client, exercise…</span><kbd>' + icon("command", 11) + 'K</kbd></button>' +
+      '<div class="topbar-actions">' +
+        '<button class="bell-btn" data-action="navigate" data-view="needs_attention" aria-label="Needs attention">' + icon("alert-triangle", 15) + (count > 0 ? '<span class="bell-badge">' + (count > 99 ? "99+" : count) + '</span>' : "") + '</button>' +
+        '<button class="btn btn-primary btn-sm" data-action="open-add-modal">' + icon("plus", 14) + ' Add file</button>' +
+      '</div>' +
+    '</header>'
+  );
+}
+
+/* ================================ master render ================================ */
+
+var root = document.getElementById("root");
+
+function buildAppHtml() {
+  if (state.loading) {
+    return '<div class="files-app files-loading">' + icon("loader", 22) + '<p>Loading your footage database…</p></div>';
+  }
+
+  var selectedProject = state.selectedProjectId ? findProject(state.selectedProjectId) : null;
+  var mainHtml;
+  if (selectedProject) mainHtml = ProjectDetailHtml(selectedProject);
+  else if (state.view === "dashboard") mainHtml = DashboardHtml();
+  else if (state.view === "projects") mainHtml = ProjectsHtml();
+  else mainHtml = AllFilesHtml(state.view);
+
+  var overlays = "";
+  if (state.showAddModal) overlays += AddModalHtml();
+  if (state.selectedClipId && state.detailDraft) overlays += DetailPanelHtml();
+  if (state.showPalette) overlays += CommandPaletteHtml();
+
+  return (
+    '<div class="files-app">' +
+      SidebarHtml() +
+      '<div class="sidebar-scrim ' + (state.mobileSidebarOpen ? "is-open" : "") + '" data-action="close-mobile-sidebar"></div>' +
+      '<div class="main-col">' + TopbarHtml() + '<main class="main-scroll">' + mainHtml + '</main></div>' +
+      overlays +
+      (state.storageError ? '<div class="storage-warning">' + esc(state.storageError) + '</div>' : "") +
+      (state.toast ? '<div class="toast">' + esc(state.toast) + '</div>' : "") +
+    '</div>'
+  );
+}
+
+function render() {
+  var active = document.activeElement;
+  var restoreBind = null, restoreSel = null;
+  if (active && active.getAttribute && active.getAttribute("data-bind")) {
+    restoreBind = active.getAttribute("data-bind");
+    if (typeof active.selectionStart === "number") { try { restoreSel = [active.selectionStart, active.selectionEnd]; } catch (e) {} }
+  }
+  var scrollTop = null;
+  var mainScrollEl = root.querySelector(".main-scroll");
+  if (mainScrollEl) scrollTop = mainScrollEl.scrollTop;
+
+  root.innerHTML = buildAppHtml();
+
+  var newMainScroll = root.querySelector(".main-scroll");
+  if (newMainScroll && scrollTop !== null) newMainScroll.scrollTop = scrollTop;
+
+  if (restoreBind) {
+    var el = root.querySelector('[data-bind="' + restoreBind + '"]');
+    if (el) {
+      el.focus();
+      if (restoreSel && el.setSelectionRange) { try { el.setSelectionRange(restoreSel[0], restoreSel[1]); } catch (e) {} }
+    }
+  }
+}
+
+/* ================================ actions ================================ */
+
+function handleCreate() {
+  var f = state.addForm;
+  var filename = f.filename.trim();
+  if (!filename) return;
+  if (state.addCreatingProject && !f.newProject.trim()) return;
+  var duplicate = state.clips.filter(function (c) { return c.filename.trim().toLowerCase() === filename.toLowerCase(); })[0];
+  if (duplicate) {
+    showToast("That filename already exists in Files.");
+    return;
+  }
+  var projectId = f.project;
+  if (state.addCreatingProject && f.newProject.trim()) {
+    var newProj = { id: uid("proj"), name: f.newProject.trim(), client: f.client || "—", type: "Other", date: f.date };
+    var nextProjects = [newProj].concat(state.projects);
+    persistProjects(nextProjects);
+    projectId = newProj.id;
+  }
+  var proj = findProject(projectId);
+  var clip = {
+    id: uid("clip"), filename: filename, date: f.date, project: projectId || "",
+    client: f.client || (proj ? proj.client : ""), location: f.location, exercise: f.exercise,
+    description: f.description, shotTypes: f.shotTypes, usage: f.usage, editing: f.editing,
+    notes: f.notes, createdAt: Date.now(),
+  };
+  persistClips([clip].concat(state.clips));
+  state.showAddModal = false;
+  showToast(clip.filename + " added to your library.");
+  render();
+}
+
+function commitDetailDraft() {
+  if (!state.detailDraft) return;
+  var draft = state.detailDraft;
+  persistClips(state.clips.map(function (c) { return c.id === draft.id ? draft : c; }));
+}
+
+function handleDeleteClip(id) {
+  var c = findClip(id);
+  if (!c) return;
+  if (!confirm("Delete " + c.filename + "? This can't be undone.")) return;
+  persistClips(state.clips.filter(function (c2) { return c2.id !== id; }));
+  state.selectedClipId = null; state.detailDraft = null;
+  showToast("File deleted.");
+  render();
+}
+function handleDuplicateClip(id) {
+  var src = findClip(id);
+  if (!src) return;
+  var copy = Object.assign({}, src, { id: uid("clip"), filename: src.filename.replace(/(\.[A-Za-z0-9]+)?$/, "_copy$1"), createdAt: Date.now() });
+  persistClips([copy].concat(state.clips));
+  showToast("File duplicated.");
+  render();
+}
+function handleArchiveClip(id) {
+  persistClips(state.clips.map(function (c) { return c.id === id ? Object.assign({}, c, { usage: "archived" }) : c; }));
+  if (state.detailDraft && state.detailDraft.id === id) state.detailDraft.usage = "archived";
+  showToast("File archived.");
+  render();
+}
+
+function handleBulk(action, value) {
+  var ids = state.selectedIds;
+  var count = selectedCount();
+  if (action === "delete") {
+    if (!confirm("Delete " + count + " file(s)? This can't be undone.")) return;
+    persistClips(state.clips.filter(function (c) { return !ids[c.id]; }));
+    showToast(count + " files deleted.");
+  } else if (action === "archive") {
+    persistClips(state.clips.map(function (c) { return ids[c.id] ? Object.assign({}, c, { usage: "archived" }) : c; }));
+    showToast(count + " files archived.");
+  } else {
+    var patch = {}; patch[action] = value;
+    persistClips(state.clips.map(function (c) { return ids[c.id] ? Object.assign({}, c, patch) : c; }));
+    showToast("Updated " + count + " files.");
+  }
+  state.selectedIds = {};
+  render();
+}
+
+function handleExport(scopeClips) {
+  var rows = scopeClips || state.clips;
+  var headers = ["filename", "date", "project", "client", "location", "exercise", "description", "shot_type", "usage_status", "editing_status", "notes"];
+  var lines = [headers.join(",")];
+  rows.forEach(function (c) {
+    var proj = findProject(c.project);
+    lines.push([c.filename, c.date, proj ? proj.name : "", c.client, c.location, c.exercise, c.description, c.shotTypes.join(" | "), c.usage, c.editing, c.notes].map(csvEscape).join(","));
+  });
+  downloadText("files-export.csv", lines.join("\n"));
+  showToast("Exported metadata to CSV.");
+}
+
+function handleImportFile(file) {
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function () {
+    var text = String(reader.result);
+    var rows = parseCsv(text);
+    if (!rows.length) { showToast("That CSV didn't contain any rows."); return; }
+    var nextProjects = state.projects.slice();
+    function findOrCreateProject(name, client) {
+      if (!name) return "";
+      var p = nextProjects.filter(function (p2) { return p2.name.toLowerCase() === name.toLowerCase(); })[0];
+      if (!p) { p = { id: uid("proj"), name: name, client: client || "—", type: "Other", date: new Date().toISOString().slice(0, 10) }; nextProjects.push(p); }
+      return p.id;
+    }
+    var existingNames = {};
+    state.clips.forEach(function (c) { existingNames[c.filename.trim().toLowerCase()] = true; });
+    var imported = rows.map(function (r) {
+      var baseName = (r.filename || "UNTITLED.MP4").trim();
+      var filename = baseName || "UNTITLED.MP4";
+      var n = 2;
+      while (existingNames[filename.toLowerCase()]) {
+        var dot = filename.lastIndexOf(".");
+        filename = (dot > -1 ? filename.slice(0, dot) : filename) + "_" + n + (dot > -1 ? filename.slice(dot) : "");
+        n++;
+      }
+      existingNames[filename.toLowerCase()] = true;
+      return {
+        id: uid("clip"), filename: filename, date: r.date || new Date().toISOString().slice(0, 10),
+        project: findOrCreateProject(r.project, r.client), client: r.client || "", location: r.location || "",
+        exercise: r.exercise || "Other", description: r.description || "",
+        shotTypes: r.shot_type ? r.shot_type.split("|").map(function (s) { return s.trim(); }).filter(Boolean) : [],
+        usage: USAGE_STATUSES.indexOf(r.usage_status) > -1 ? r.usage_status : "no_usage",
+        editing: EDITING_STATUSES.indexOf(r.editing_status) > -1 ? r.editing_status : "unedited",
+        notes: r.notes || "", createdAt: Date.now(),
+      };
+    });
+    persistProjects(nextProjects);
+    persistClips(imported.concat(state.clips));
+    showToast("Imported " + imported.length + " files.");
+    render();
+  };
+  reader.readAsText(file);
+}
+
+/* ================================ event delegation ================================ */
+
+function handleAction(action, el, e) {
+  switch (action) {
+    case "navigate":
+      state.view = el.getAttribute("data-view");
+      state.selectedProjectId = null;
+      state.selectMode = false; state.selectedIds = {};
+      state.mobileSidebarOpen = false;
+      render();
+      break;
+    case "open-add-modal":
+      state.showAddModal = true; state.addForm = defaultAddForm(); state.addCreatingProject = false;
+      render();
+      setTimeout(function () { var f = document.getElementById("af-filename"); if (f) f.focus(); }, 0);
+      break;
+    case "close-add-modal":
+      state.showAddModal = false; render();
+      break;
+    case "submit-add-modal":
+      handleCreate();
+      break;
+    case "add-project-select":
+      if (el.value === "__new") { state.addCreatingProject = true; } else { state.addForm.project = el.value; }
+      render();
+      break;
+    case "cancel-new-project":
+      state.addCreatingProject = false; render();
+      break;
+    case "toggle-shot": {
+      var scope = el.getAttribute("data-scope");
+      var shot = el.getAttribute("data-shot");
+      var obj = scope === "addForm" ? state.addForm : state.detailDraft;
+      var idx = obj.shotTypes.indexOf(shot);
+      if (idx > -1) obj.shotTypes.splice(idx, 1); else obj.shotTypes.push(shot);
+      if (scope === "detailDraft") commitDetailDraft();
+      render();
+      break;
+    }
+    case "open-clip": {
+      var id = el.getAttribute("data-id");
+      var c = findClip(id);
+      if (!c) return;
+      state.selectedClipId = id;
+      state.detailDraft = Object.assign({}, c, { shotTypes: c.shotTypes.slice() });
+      render();
+      break;
+    }
+    case "open-clip-from-palette": {
+      var id2 = el.getAttribute("data-id");
+      var c2 = findClip(id2);
+      if (!c2) return;
+      state.selectedClipId = id2;
+      state.detailDraft = Object.assign({}, c2, { shotTypes: c2.shotTypes.slice() });
+      state.showPalette = false;
+      render();
+      break;
+    }
+    case "close-detail":
+      commitDetailDraft();
+      state.selectedClipId = null; state.detailDraft = null;
+      render();
+      break;
+    case "delete-clip":
+      handleDeleteClip(el.getAttribute("data-id"));
+      break;
+    case "duplicate-clip":
+      handleDuplicateClip(el.getAttribute("data-id"));
+      break;
+    case "archive-clip":
+      handleArchiveClip(el.getAttribute("data-id"));
+      break;
+    case "toggle-select": {
+      var cid = el.getAttribute("data-id");
+      if (state.selectedIds[cid]) delete state.selectedIds[cid]; else state.selectedIds[cid] = true;
+      render();
+      break;
+    }
+    case "toggle-select-mode":
+      state.selectMode = !state.selectMode; state.selectedIds = {};
+      render();
+      break;
+    case "select-all-filtered": {
+      var view = el.getAttribute("data-view");
+      var clips = state.clips.filter(viewPredicate(view));
+      var f = state.filters;
+      if (f.project) clips = clips.filter(function (c) { return c.project === f.project; });
+      if (f.client) clips = clips.filter(function (c) { return c.client === f.client; });
+      if (f.exercise) clips = clips.filter(function (c) { return c.exercise === f.exercise; });
+      if (f.shotType) clips = clips.filter(function (c) { return c.shotTypes.indexOf(f.shotType) > -1; });
+      if (f.usage) clips = clips.filter(function (c) { return c.usage === f.usage; });
+      if (f.editing) clips = clips.filter(function (c) { return c.editing === f.editing; });
+      if (f.location) clips = clips.filter(function (c) { return (c.location || "").toLowerCase().indexOf(f.location.toLowerCase()) > -1; });
+      var ids = {}; clips.forEach(function (c) { ids[c.id] = true; });
+      state.selectedIds = ids;
+      render();
+      break;
+    }
+    case "clear-selection":
+      state.selectedIds = {}; render();
+      break;
+    case "toggle-filters":
+      state.showFiltersPopover = !state.showFiltersPopover; render();
+      break;
+    case "clear-filters":
+      state.filters = { project: "", client: "", exercise: "", shotType: "", usage: "", editing: "", location: "" };
+      render();
+      break;
+    case "export-csv":
+      handleExport();
+      break;
+    case "export-project-csv": {
+      var pid = el.getAttribute("data-id");
+      handleExport(state.clips.filter(function (c) { return c.project === pid; }));
+      break;
+    }
+    case "trigger-import": {
+      var inp = document.getElementById("csvFileInput");
+      if (inp) inp.click();
+      break;
+    }
+    case "bulk-archive":
+      handleBulk("archive");
+      break;
+    case "bulk-delete":
+      handleBulk("delete");
+      break;
+    case "open-project":
+      state.selectedProjectId = el.getAttribute("data-id");
+      state.selectMode = false; state.selectedIds = {};
+      render();
+      break;
+    case "back-to-projects":
+      state.selectedProjectId = null; render();
+      break;
+    case "open-palette":
+      state.showPalette = true; state.paletteQuery = "";
+      render();
+      setTimeout(function () { var p = document.getElementById("palette-input"); if (p) p.focus(); }, 0);
+      break;
+    case "close-palette":
+      state.showPalette = false; render();
+      break;
+    case "toggle-settings":
+      state.settingsOpen = !state.settingsOpen; render();
+      break;
+    case "restore-sample":
+      resetToSample();
+      state.settingsOpen = false;
+      showToast("Restored sample data.");
+      render();
+      break;
+    case "toggle-mobile-sidebar":
+      state.mobileSidebarOpen = !state.mobileSidebarOpen; render();
+      break;
+    case "close-mobile-sidebar":
+      state.mobileSidebarOpen = false; render();
+      break;
+  }
+}
+
+document.addEventListener("click", function (e) {
+  var el = e.target.closest("[data-action]");
+  if (!el) {
+    // close open popovers when clicking outside
+    if (state.showFiltersPopover && !e.target.closest(".filter-popover")) { state.showFiltersPopover = false; render(); }
+    if (state.settingsOpen && !e.target.closest(".sidebar-foot")) { state.settingsOpen = false; render(); }
+    return;
+  }
+  var action = el.getAttribute("data-action");
+  if (action === "bulk-select") return; // handled by change
+  handleAction(action, el, e);
+});
+
+document.addEventListener("input", function (e) {
+  var el = e.target.closest("[data-bind]");
+  if (!el) return;
+  setPath(state, el.getAttribute("data-bind"), el.value);
+  render();
+});
+
+document.addEventListener("change", function (e) {
+  var el = e.target;
+  if (el.id === "csvFileInput") {
+    var file = el.files && el.files[0];
+    handleImportFile(file);
+    return;
+  }
+  var bindEl = el.closest("[data-bind]");
+  if (bindEl) {
+    setPath(state, bindEl.getAttribute("data-bind"), bindEl.value);
+    if (bindEl.getAttribute("data-bind").indexOf("detailDraft.") === 0) commitDetailDraft();
+    render();
+    return;
+  }
+  var actionEl = el.closest('[data-action="bulk-select"]');
+  if (actionEl) {
+    var field = actionEl.getAttribute("data-field");
+    if (actionEl.value) { handleBulk(field, actionEl.value); }
+    return;
+  }
+  var projEl = el.closest('[data-action="add-project-select"]');
+  if (projEl) { handleAction("add-project-select", projEl, e); return; }
+});
+
+document.addEventListener("keydown", function (e) {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault();
+    state.showPalette = true; state.paletteQuery = "";
+    render();
+    setTimeout(function () { var p = document.getElementById("palette-input"); if (p) p.focus(); }, 0);
+  }
+  if (e.key === "Escape") {
+    if (state.showPalette) { state.showPalette = false; render(); }
+    else if (state.showAddModal) { state.showAddModal = false; render(); }
+    else if (state.selectedClipId) { commitDetailDraft(); state.selectedClipId = null; state.detailDraft = null; render(); }
+    else if (state.settingsOpen) { state.settingsOpen = false; render(); }
+  }
+});
+
+/* ================================ init ================================ */
+
+render();
+loadData();
+
+})();
+</script>
+</body>
+</html>
