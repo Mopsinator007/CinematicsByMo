@@ -192,13 +192,13 @@ nav{
 
 /* ===== DIAL / WORK SECTION ===== */
 .work-section{background:var(--ink);}
-.dial-layout{display:grid; grid-template-columns:340px 1fr; gap:64px; align-items:start;}
+.dial-layout{display:grid; grid-template-columns:340px 1fr; gap:90px; align-items:start;}
 @media(max-width:900px){.dial-layout{grid-template-columns:1fr; justify-items:center;}}
 @media(max-width:480px){
   .dial-outer, .dial-ticks{width:250px; height:250px;}
   .dial-face{width:190px; height:190px;}
-  .dl-right{right:-52px;} .dl-left{left:-52px;}
-  .dial-label-btn{font-size:10px;}
+  .dl-right{margin-left:8px;} .dl-left{margin-right:8px;}
+  .dial-label-btn{font-size:10px; padding:4px 6px;}
   .fstop-label{font-size:8px;}
 }
 
@@ -208,6 +208,8 @@ nav{
     radial-gradient(circle at 35% 30%, #23262a, #101113 70%);
   box-shadow:inset 0 0 0 1px var(--steel-line), 0 20px 60px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.6);
   display:flex; align-items:center; justify-content:center;
+  margin:0 auto;
+  z-index:2;
 }
 @media(max-width:900px){.dial-outer{position:static;}}
 .dial-ticks{position:absolute; width:300px; height:300px; border-radius:50%;}
@@ -245,14 +247,15 @@ nav{
 .dial-label-btn{
   position:absolute; transform:translate(-50%,-50%);
   font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:0.1em;
-  color:var(--steel-light); background:none; border:none; cursor:pointer; padding:6px 8px;
+  color:var(--steel-light); background:rgba(13,14,16,0.75); border:none; cursor:pointer; padding:6px 8px;
+  border-radius:3px; white-space:nowrap; z-index:3;
   transition:color 0.25s ease;
 }
 .dial-label-btn.active, .dial-label-btn:hover{color:var(--ember);}
-.dl-top{top:-30px; left:50%;}
-.dl-right{top:50%; right:-70px;}
-.dl-bottom{bottom:-30px; left:50%;}
-.dl-left{top:50%; left:-70px;}
+.dl-top{top:-34px; left:50%;}
+.dl-right{top:50%; left:100%; margin-left:14px; transform:translate(0,-50%);}
+.dl-bottom{bottom:-34px; left:50%;}
+.dl-left{top:50%; right:100%; margin-right:14px; transform:translate(0,-50%);}
 
 .mode-readout{
   margin-top:26px; font-family:var(--mono); font-size:12px; color:var(--steel-light);
@@ -584,7 +587,7 @@ footer{padding:44px 0;}
       <div class="hud-row">
         <div class="hud-rec"><span class="rec-dot"></span> REC <span id="timecode">00:00:00:00</span></div>
         <div class="hud-settings">
-          <span>F <b>2.8</b></span><span>1/<b>50</b></span><span>ISO <b>400</b></span><span>WB <b>5600K</b></span>
+          <span>F <b>2.8</b></span><span>1/<b>50</b></span><span>ISO <b>800</b></span><span>WB <b>5600K</b></span>
         </div>
       </div>
 
@@ -674,6 +677,12 @@ footer{padding:44px 0;}
           <svg class="kit-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="20" height="13" rx="2"/><rect x="8" y="4" width="8" height="4" rx="1"/><circle cx="12" cy="13.5" r="4.2"/></svg>
           <h4>Sony ZV-E10 Mark II</h4><p>Primary camera body</p>
         </div>
+        <div class="kit-slot">
+          <svg class="kit-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="20" height="13" rx="2"/><rect x="8" y="4" width="8" height="4" rx="1"/><circle cx="12" cy="13.5" r="4.2"/></svg>
+          <h4>Sony A6700 </h4><p>Secondary Camera Body</p>
+        </div>
+
+        
 
         <div class="kit-group-label">Lens</div>
         <div class="kit-slot">
@@ -684,11 +693,11 @@ footer{padding:44px 0;}
         <div class="kit-group-label">Audio</div>
         <div class="kit-slot">
           <svg class="kit-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M9 22h6"/></svg>
-          <h4>DJI Mic Mini</h4><p>Wireless audio for talking content</p>
+          <h4>DJI MIC 3</h4><p>Wireless audio for talking content</p>
         </div>
         <div class="kit-slot">
           <svg class="kit-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="8" y="3" width="8" height="14" rx="4"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg>
-          <h4>Audio-Technica ATV-SG1</h4><p>Shotgun microphone</p>
+          <h4>RODE VIDEOMIC GO II </h4><p>Shotgun microphone</p>
         </div>
       </div>
     </div>
@@ -708,7 +717,7 @@ footer{padding:44px 0;}
         <div class="setting-card">
           <svg class="setting-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8542C" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M19.1 4.9l-4.2 4.2M9.1 14.9l-4.2 4.2"/></svg>
           <div class="setting-readout">APERTURE</div>
-          <div class="setting-value">f/1.8</div>
+          <div class="setting-value">f/2.8</div>
           <p>Wide enough to catch the full story — not just reps or scenery, but the moment before and after.</p>
         </div>
         <div class="setting-card">
@@ -720,7 +729,7 @@ footer{padding:44px 0;}
         <div class="setting-card">
           <svg class="setting-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8542C" stroke-width="1.6"><circle cx="7" cy="8" r="1.4" fill="#E8542C" stroke="none"/><circle cx="14" cy="6" r="1" fill="#E8542C" stroke="none"/><circle cx="17" cy="12" r="1.4" fill="#E8542C" stroke="none"/><circle cx="9" cy="15" r="1" fill="#E8542C" stroke="none"/><circle cx="15" cy="17" r="1.4" fill="#E8542C" stroke="none"/><circle cx="5" cy="17" r="1" fill="#E8542C" stroke="none"/></svg>
           <div class="setting-readout">ISO</div>
-          <div class="setting-value">3200</div>
+          <div class="setting-value">2500</div>
           <p>Comfortable in gym lighting, golden hour, or a moving vehicle at 6am — low light is not a limit.</p>
         </div>
         <div class="setting-card">
@@ -1169,8 +1178,15 @@ const BOOKING_CONFIG = {
   // Replace this with your Google Calendar appointment-schedule URL.
   // Example: https://calendar.google.com/calendar/appointments/schedules/...
   googleCalendarBookingUrl: "https://calendar.app.google/fYY5xuNAnDB3bBqP7",
-  // Inbox for website enquiries.
-  email: "Moritz.kaemmer867@gmail.com"
+  // Inbox for website enquiries (shown to you as the destination address).
+  email: "Moritz.kaemmer867@gmail.com",
+  // Formspree endpoint so the contact form sends the message directly —
+  // no email app has to open on the visitor's device.
+  // 1) Go to https://formspree.io, sign up free, create a form pointed at
+  //    the address above, and copy the endpoint it gives you
+  //    (looks like: https://formspree.io/f/xxxxabcd).
+  // 2) Paste that endpoint below.
+  formspreeEndpoint: "https://formspree.io/f/PASTE_YOUR_FORM_ID"
 };
 
 function openGoogleBooking(){
@@ -1210,32 +1226,60 @@ document.querySelectorAll('.booking-option').forEach(option=>{
 
 function handleSubmit(e){
   e.preventDefault();
+
+  const form=e.target;
+  const noteEl=document.getElementById('formNote');
   const name=document.getElementById('name').value.trim();
   const email=document.getElementById('email').value.trim();
   const type=document.getElementById('type').value;
   const details=document.getElementById('details').value.trim();
 
-  if(!BOOKING_CONFIG.email){
-    document.getElementById('formNote').textContent="Add your email address in BOOKING_CONFIG.email to activate email enquiries.";
+  const endpoint=BOOKING_CONFIG.formspreeEndpoint;
+  if(!endpoint || endpoint.includes("https://formspree.io/f/mwledlrv")){
+    noteEl.textContent="Setup needed: add your Formspree endpoint in BOOKING_CONFIG.formspreeEndpoint to activate sending.";
+    noteEl.style.color="var(--ember)";
     return false;
   }
 
-  const subject=encodeURIComponent(`Cinematics by Mo enquiry — ${type}`);
-  const body=encodeURIComponent(
-`Hi Mo,
+  const submitBtn=form.querySelector('button[type="submit"]');
+  const originalBtnText=submitBtn.textContent;
+  submitBtn.disabled=true;
+  submitBtn.textContent="Sending…";
+  noteEl.style.color="";
+  noteEl.textContent="Sending your message…";
 
-Name: ${name}
-Email: ${email}
-Project type: ${type}
+  fetch(endpoint, {
+    method:"POST",
+    headers:{ "Accept":"application/json", "Content-Type":"application/json" },
+    body: JSON.stringify({
+      name,
+      email,
+      "project type": type,
+      details: details || "(No details provided yet)",
+      subject: `Cinematics by Mo enquiry — ${type}`
+    })
+  })
+  .then(res=>{
+    if(res.ok){
+      noteEl.textContent="Message sent — I'll reply within 24–48 hours.";
+      form.reset();
+    } else {
+      return res.json().then(data=>{
+        const msg = (data && data.errors && data.errors.map(x=>x.message).join(", ")) || "Something went wrong.";
+        throw new Error(msg);
+      });
+    }
+  })
+  .catch(err=>{
+    noteEl.style.color="var(--ember)";
+    noteEl.textContent="Couldn't send that — please try again, or reach out on Instagram/TikTok.";
+    console.error("Form send failed:", err);
+  })
+  .finally(()=>{
+    submitBtn.disabled=false;
+    submitBtn.textContent=originalBtnText;
+  });
 
-Project details:
-${details || "(No details provided yet)"}
-
-Sent from Cinematics by Mo.`
-  );
-
-  window.location.href=`mailto:${BOOKING_CONFIG.email}?subject=${subject}&body=${body}`;
-  document.getElementById('formNote').textContent="Opening your email app…";
   return false;
 }
 </script>
