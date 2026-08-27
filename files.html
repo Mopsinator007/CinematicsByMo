@@ -327,6 +327,61 @@ svg.icon { width: 1em; height: 1em; stroke: currentColor; fill: none; stroke-wid
 @media (max-width: 820px) {
   .sidebar-scrim.is-open { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
 }
+
+/* ---- content calendar ---- */
+.cal-month-label { font-family: var(--font-display); font-size: 18px; font-weight: 500; margin: 4px 0 12px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 14px; }
+.cal-weekday { font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); text-align: center; padding-bottom: 4px; }
+.cal-cell { background: var(--bg-1); border: 1px solid var(--border); border-radius: 8px; min-height: 92px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+.cal-cell-empty { background: transparent; border-color: transparent; }
+.cal-cell.is-today { border-color: var(--rec); }
+.cal-cell-head { display: flex; align-items: center; justify-content: space-between; }
+.cal-daynum { font-size: 11px; color: var(--text-secondary); }
+.is-today .cal-daynum { color: var(--rec); font-weight: 600; }
+.cal-add-btn { background: none; border: none; color: var(--text-tertiary); display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 4px; opacity: 0; transition: opacity 0.12s; }
+.cal-cell:hover .cal-add-btn { opacity: 1; }
+.cal-add-btn:hover { background: var(--bg-2); color: var(--text-primary); }
+.cal-events { display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
+.cal-event { display: block; width: 100%; text-align: left; background: none; border: none; padding: 2px 4px; border-radius: 4px; font-size: 10px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cal-event-shoot { background: rgba(217,72,59,0.14); color: var(--rec); }
+.cal-event-publish { background: rgba(79,158,107,0.14); color: var(--green); }
+.cal-more { font-size: 9.5px; color: var(--text-tertiary); padding: 0 4px; }
+.cal-legend { display: flex; gap: 16px; margin: 4px 0 24px; }
+.cal-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-secondary); }
+.cal-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+.cal-legend-shoot { background: var(--rec); }
+.cal-legend-publish { background: var(--green); }
+@media (max-width: 820px) {
+  .cal-grid { grid-template-columns: repeat(7, minmax(0,1fr)); gap: 3px; }
+  .cal-cell { min-height: 60px; padding: 4px; }
+  .cal-event { font-size: 9px; }
+}
+
+/* ---- shot list ---- */
+.tab-count { display: inline-block; background: var(--bg-3); color: var(--text-secondary); font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
+.shotlist { display: flex; flex-direction: column; gap: 6px; }
+.shotlist-row { display: grid; grid-template-columns: 26px 1fr 160px 30px; align-items: center; gap: 8px; padding: 6px; background: var(--bg-1); border: 1px solid var(--border); border-radius: 7px; }
+.shotlist-row.is-shot { opacity: 0.55; }
+.shotlist-row.is-shot .shotlist-desc { text-decoration: line-through; }
+.shotlist-check { color: var(--text-secondary); }
+.shotlist-row.is-shot .shotlist-check { color: var(--green); }
+.shotlist-desc, .shotlist-type { margin: 0; }
+@media (max-width: 640px) {
+  .shotlist-row { grid-template-columns: 26px 1fr 30px; }
+  .shotlist-type { grid-column: 2 / 3; }
+}
+
+/* ---- sync modal ---- */
+.sync-modal { width: 420px; }
+.sync-status-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; background: var(--bg-1); border: 1px solid var(--border); font-size: 12.5px; margin-bottom: 16px; }
+.sync-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+.sync-dot.is-on { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.sync-dot.is-off { background: var(--text-tertiary); }
+.sync-dot.is-error { background: var(--rec); }
+.sync-code-box { display: flex; align-items: center; gap: 8px; background: var(--bg-1); border: 1px solid var(--border-strong); border-radius: 7px; padding: 10px 12px; font-family: var(--font-mono); font-size: 15px; letter-spacing: 0.03em; margin: 10px 0 4px; word-break: break-all; }
+.sync-note { font-size: 11.5px; color: var(--text-tertiary); line-height: 1.5; margin: 6px 0 18px; }
+.sync-join-row { display: flex; gap: 8px; margin-top: 6px; }
+.sync-join-row input { flex: 1; }
 </style>
 </head>
 <body>
@@ -352,10 +407,15 @@ var USAGE_STATUSES = ["no_usage","potential","selected","used","archived"];
 var USAGE_LABEL = { no_usage: "No usage", potential: "Potential", selected: "Selected", used: "Used", archived: "Archived" };
 var USAGE_VAR = { no_usage: "var(--text-tertiary)", potential: "var(--amber)", selected: "var(--cyan)", used: "var(--green)", archived: "var(--muted)" };
 
+var BACKUP_STATUSES = ["not_backed_up", "backed_up_local", "backed_up_cloud", "archived_offsite"];
+var BACKUP_LABEL = { not_backed_up: "Not backed up", backed_up_local: "Backed up (local)", backed_up_cloud: "Backed up (cloud)", archived_offsite: "Archived off-site" };
+var BACKUP_VAR = { not_backed_up: "var(--rec)", backed_up_local: "var(--amber)", backed_up_cloud: "var(--green)", archived_offsite: "var(--cyan)" };
+
 var NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
   { id: "all", label: "All files", icon: "grid" },
   { id: "projects", label: "Projects", icon: "folder" },
+  { id: "calendar", label: "Content calendar", icon: "calendar" },
   { id: "sep1", sep: true },
   { id: "unedited", label: "Unedited", icon: "circle" },
   { id: "editing", label: "Editing", icon: "clock" },
@@ -365,11 +425,13 @@ var NAV_ITEMS = [
   { id: "selected", label: "Selected", icon: "circle" },
   { id: "used", label: "Used", icon: "circle" },
   { id: "needs_attention", label: "Needs attention", icon: "alert-triangle" },
+  { id: "not_backed_up", label: "Not backed up", icon: "hard-drive" },
 ];
 
 var VIEW_TITLES = {
   all: "All files", unedited: "Unedited", editing: "Editing", finished: "Finished",
   no_usage: "No usage", selected: "Selected", used: "Used", needs_attention: "Needs attention",
+  not_backed_up: "Not backed up",
 };
 var VIEW_SUBTITLES = {
   all: "Everything in your footage database.",
@@ -380,6 +442,7 @@ var VIEW_SUBTITLES = {
   selected: "Clips chosen for a project or edit.",
   used: "Clips already used in a finished video.",
   needs_attention: "Missing a project, description, exercise, or shot type.",
+  not_backed_up: "Footage that only exists in one place. Back it up before you format a card.",
 };
 
 /* ================================ icons ================================ */
@@ -409,6 +472,11 @@ var ICON_PATHS = {
   "archive": '<rect x="3" y="3" width="18" height="5" rx="1"></rect><path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8M10 13h4"></path>',
   "command": '<path d="M9 3a3 3 0 0 0-3 3v12a3 3 0 1 0 3-3h6a3 3 0 1 0-3 3V6a3 3 0 1 0 3 3H9a3 3 0 1 0 3-3"></path>',
   "menu": '<path d="M4 6h16M4 12h16M4 18h16"></path>',
+  "calendar": '<rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path>',
+  "hard-drive": '<path d="M22 12H2"></path><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"></path><path d="M6 16h.01M10 16h.01"></path>',
+  "refresh-cw": '<path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5M3 21v-5h5"></path>',
+  "link": '<path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 1 1 0 10h-2M8 12h8"></path>',
+  "cloud-off": '<path d="M22.61 16.95A5 5 0 0 0 18 10h-1.26a8 8 0 0 0-7.05-6M5 5 2 2M2 8.35A5.5 5.5 0 0 0 6.5 18H18M2 2l20 20"></path>',
 };
 function icon(name, size) {
   size = size || 15;
@@ -610,7 +678,7 @@ var state = {
   addCreatingProject: false,
   showPalette: false,
   paletteQuery: "",
-  filters: { project: "", client: "", exercise: "", shotType: "", usage: "", editing: "", location: "" },
+  filters: { project: "", client: "", exercise: "", shotType: "", usage: "", editing: "", location: "", backup: "" },
   showFiltersPopover: false,
   selectMode: false,
   selectedIds: {},
@@ -619,13 +687,20 @@ var state = {
   settingsOpen: false,
   detailDraft: null,
   mobileSidebarOpen: false,
+  calendarMonth: new Date().toISOString().slice(0, 7),
+  showSyncModal: false,
+  syncCodeInput: "",
+  syncStatus: "off",
+  syncBucket: null,
+  syncLastAt: 0,
+  dataUpdatedAt: 0,
 };
 
 function defaultAddForm() {
   return {
     filename: "", date: new Date().toISOString().slice(0, 10), project: state.projects[0] ? state.projects[0].id : "",
     newProject: "", client: "", location: "", exercise: EXERCISES[0], description: "",
-    shotTypes: [], usage: "no_usage", editing: "unedited", notes: "",
+    shotTypes: [], usage: "no_usage", editing: "unedited", backup: "not_backed_up", notes: "",
   };
 }
 function defaultNewProjectForm() {
@@ -634,15 +709,19 @@ function defaultNewProjectForm() {
 function projectDraftFrom(p) {
   return Object.assign({
     name: "", client: "", type: PROJECT_TYPES[0], date: "",
-    hook: "", script: "", caption: "", hashtags: "", publishDate: "",
-  }, p);
+    hook: "", script: "", caption: "", hashtags: "", publishDate: "", gear: "",
+    shotList: [],
+  }, p, { shotList: (p && p.shotList) ? p.shotList.slice() : [] });
 }
 
 /* ---- storage ---- */
 
 function loadData() {
   var done = function (clips, projects) {
-    state.clips = clips || []; state.projects = projects || []; state.loading = false; render();
+    state.clips = clips || []; state.projects = projects || []; state.loading = false;
+    try { state.dataUpdatedAt = parseInt(localStorage.getItem("cbm-files-updated-at"), 10) || Date.now(); } catch (e) { state.dataUpdatedAt = Date.now(); }
+    render();
+    initSync();
   };
   try {
     if (window.storage) {
@@ -690,21 +769,208 @@ function readLocalData() {
     return { clips: JSON.parse(c), projects: JSON.parse(p) };
   } catch (e) { return null; }
 }
+function bumpUpdatedAt() {
+  state.dataUpdatedAt = Date.now();
+  try { localStorage.setItem("cbm-files-updated-at", String(state.dataUpdatedAt)); } catch (e) {}
+}
 function persistClips(next) {
   state.clips = next;
   try { window.storage && window.storage.set("clips", JSON.stringify(next), false); } catch (e) {}
   try { localStorage.setItem("cbm-files-clips", JSON.stringify(next)); } catch (e) {}
+  bumpUpdatedAt();
+  scheduleCloudPush();
 }
 function persistProjects(next) {
   state.projects = next;
   try { window.storage && window.storage.set("projects", JSON.stringify(next), false); } catch (e) {}
   try { localStorage.setItem("cbm-files-projects", JSON.stringify(next)); } catch (e) {}
+  bumpUpdatedAt();
+  scheduleCloudPush();
 }
 function persistAll(clips, projects) {
   try { window.storage && window.storage.set("clips", JSON.stringify(clips), false); } catch (e) {}
   try { window.storage && window.storage.set("projects", JSON.stringify(projects), false); } catch (e) {}
   try { localStorage.setItem("cbm-files-clips", JSON.stringify(clips)); localStorage.setItem("cbm-files-projects", JSON.stringify(projects)); } catch (e) {}
+  bumpUpdatedAt();
+  scheduleCloudPush();
 }
+
+/* ---- cross-device sync (kvdb.io — free, no-signup key/value store) ----
+   All data for a "sync code" lives at https://kvdb.io/{bucket}/data as one
+   JSON blob { clips, projects, updatedAt }. Every local change pushes that
+   blob to the cloud (debounced); every device polls it periodically and on
+   focus, and applies whichever copy — local or cloud — is newer. This is a
+   free community service with no account system: good for a solo shooter
+   or small team, but it can go down, and it isn't a substitute for the
+   "Download full backup" option in the sidebar. */
+
+var SYNC_BUCKET_KEY = "cbm-files-sync-bucket";
+var syncPushTimer = null;
+var syncPollTimer = null;
+
+function getSyncBucket() {
+  try { return localStorage.getItem(SYNC_BUCKET_KEY) || null; } catch (e) { return null; }
+}
+function setSyncBucket(id) {
+  try {
+    if (id) localStorage.setItem(SYNC_BUCKET_KEY, id);
+    else localStorage.removeItem(SYNC_BUCKET_KEY);
+  } catch (e) {}
+  state.syncBucket = id;
+}
+
+function initSync() {
+  state.syncBucket = getSyncBucket();
+  if (!state.syncBucket) { state.syncStatus = "off"; return; }
+  state.syncStatus = "connected";
+  cloudPull(true);
+  if (syncPollTimer) clearInterval(syncPollTimer);
+  syncPollTimer = setInterval(function () {
+    if (state.syncBucket && document.visibilityState !== "hidden") cloudPull(false);
+  }, 8000);
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible" && state.syncBucket) cloudPull(false);
+  });
+  window.addEventListener("focus", function () {
+    if (state.syncBucket) cloudPull(false);
+  });
+}
+
+function scheduleCloudPush() {
+  if (!state.syncBucket) return;
+  if (syncPushTimer) clearTimeout(syncPushTimer);
+  syncPushTimer = setTimeout(function () { cloudPush(); }, 700);
+}
+
+function cloudPush() {
+  if (!state.syncBucket) return;
+  var payload = JSON.stringify({ clips: state.clips, projects: state.projects, updatedAt: state.dataUpdatedAt || Date.now() });
+  fetch("https://kvdb.io/" + state.syncBucket + "/data", { method: "PUT", body: payload })
+    .then(function (res) {
+      if (!res.ok) throw new Error("push failed");
+      state.syncStatus = "connected"; state.syncLastAt = Date.now();
+      render();
+    })
+    .catch(function () {
+      state.syncStatus = "error";
+      render();
+    });
+}
+
+function cloudPull(isInitial) {
+  if (!state.syncBucket) return;
+  fetch("https://kvdb.io/" + state.syncBucket + "/data")
+    .then(function (res) {
+      if (res.status === 404) { state.syncStatus = "connected"; return null; } // bucket exists, no data yet
+      if (!res.ok) throw new Error("pull failed");
+      return res.text();
+    })
+    .then(function (text) {
+      if (!text) { state.syncStatus = "connected"; render(); return; }
+      var remote;
+      try { remote = JSON.parse(text); } catch (e) { state.syncStatus = "connected"; render(); return; }
+      var localUpdatedAt = state.dataUpdatedAt || 0;
+      if (remote && remote.updatedAt && (isInitial || remote.updatedAt > localUpdatedAt)) {
+        state.clips = remote.clips || [];
+        state.projects = remote.projects || [];
+        state.dataUpdatedAt = remote.updatedAt;
+        try {
+          localStorage.setItem("cbm-files-clips", JSON.stringify(state.clips));
+          localStorage.setItem("cbm-files-projects", JSON.stringify(state.projects));
+          localStorage.setItem("cbm-files-updated-at", String(state.dataUpdatedAt));
+        } catch (e) {}
+        try { window.storage && window.storage.set("clips", JSON.stringify(state.clips), false); } catch (e) {}
+        try { window.storage && window.storage.set("projects", JSON.stringify(state.projects), false); } catch (e) {}
+      }
+      state.syncStatus = "connected"; state.syncLastAt = Date.now();
+      render();
+    })
+    .catch(function () {
+      state.syncStatus = "error";
+      render();
+    });
+}
+
+function createSync() {
+  state.syncStatus = "connecting";
+  render();
+  fetch("https://kvdb.io/", { method: "POST" })
+    .then(function (res) {
+      if (!res.ok) throw new Error("create failed");
+      return res.text();
+    })
+    .then(function (bucketId) {
+      bucketId = bucketId.trim();
+      setSyncBucket(bucketId);
+      state.syncStatus = "connected";
+      bumpUpdatedAt();
+      cloudPush();
+      showToast("Sync started — enter this code on your other devices.");
+      render();
+    })
+    .catch(function () {
+      state.syncStatus = "off";
+      showToast("Couldn't reach the sync service. Check your connection and try again.");
+      render();
+    });
+}
+
+function joinSync(code) {
+  code = (code || "").trim();
+  if (!code) return;
+  setSyncBucket(code);
+  state.syncStatus = "connecting";
+  render();
+  fetch("https://kvdb.io/" + code + "/data")
+    .then(function (res) {
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error("join failed");
+      return res.text();
+    })
+    .then(function (text) {
+      if (text) {
+        var remote;
+        try { remote = JSON.parse(text); } catch (e) { remote = null; }
+        if (remote) {
+          state.clips = remote.clips || [];
+          state.projects = remote.projects || [];
+          state.dataUpdatedAt = remote.updatedAt || Date.now();
+          try {
+            localStorage.setItem("cbm-files-clips", JSON.stringify(state.clips));
+            localStorage.setItem("cbm-files-projects", JSON.stringify(state.projects));
+            localStorage.setItem("cbm-files-updated-at", String(state.dataUpdatedAt));
+          } catch (e) {}
+        }
+      } else {
+        // Empty bucket — push what we have so the other device(s) can pick it up.
+        bumpUpdatedAt();
+        cloudPush();
+      }
+      state.syncStatus = "connected";
+      state.showSyncModal = false;
+      state.syncCodeInput = "";
+      showToast("Synced with code " + code + ".");
+      if (syncPollTimer) clearInterval(syncPollTimer);
+      syncPollTimer = setInterval(function () {
+        if (state.syncBucket && document.visibilityState !== "hidden") cloudPull(false);
+      }, 8000);
+      render();
+    })
+    .catch(function () {
+      state.syncStatus = "error";
+      showToast("Couldn't reach that sync code. Check it and try again.");
+      render();
+    });
+}
+
+function leaveSync() {
+  setSyncBucket(null);
+  state.syncStatus = "off";
+  if (syncPollTimer) { clearInterval(syncPollTimer); syncPollTimer = null; }
+  showToast("This device is no longer syncing.");
+  render();
+}
+
 function commitProjectDraft() {
   if (!state.projectDraft) return;
   var draft = state.projectDraft;
@@ -716,7 +982,7 @@ function handleCreateProject() {
   if (!name) return;
   var proj = {
     id: uid("proj"), name: name, client: f.client.trim() || "—", type: f.type, date: f.date,
-    hook: "", script: "", caption: "", hashtags: "", publishDate: "",
+    hook: "", script: "", caption: "", hashtags: "", publishDate: "", gear: "", shotList: [],
   };
   persistProjects([proj].concat(state.projects));
   state.showNewProjectModal = false;
@@ -763,6 +1029,7 @@ function viewPredicate(view) {
     case "selected": return function (c) { return c.usage === "selected"; };
     case "used": return function (c) { return c.usage === "used"; };
     case "needs_attention": return function (c) { return !c.project || !c.description || !c.shotTypes.length || !c.exercise; };
+    case "not_backed_up": return function (c) { return !c.backup || c.backup === "not_backed_up"; };
     default: return function () { return true; };
   }
 }
@@ -827,6 +1094,7 @@ function ClipCard(clip, project, selected, selectMode) {
         '<div class="clip-card-row1"><span class="clip-filename mono">' + esc(clip.filename) + '</span><span class="clip-date">' + fmtDateShort(clip.date) + '</span></div>' +
         '<div class="clip-card-row2"><span class="clip-project">' + esc(project ? project.name : "No project") + '</span></div>' +
         '<div class="clip-card-row3">' + Pill(EDITING_VAR[clip.editing], EDITING_LABEL[clip.editing]) + Pill(USAGE_VAR[clip.usage], USAGE_LABEL[clip.usage]) + '</div>' +
+        ((!clip.backup || clip.backup === "not_backed_up") ? '<div class="clip-card-row3">' + Pill(BACKUP_VAR.not_backed_up, "Not backed up") + '</div>' : "") +
       '</div>' +
     '</div>'
   );
@@ -855,6 +1123,7 @@ function FilterPanelHtml() {
         '<label>Shot type<select data-bind="filters.shotType"><option value="">Any shot type</option>' + optionsHtml(SHOT_TYPES, f.shotType) + '</select></label>' +
         '<label>Usage<select data-bind="filters.usage"><option value="">Any usage</option>' + optionsHtml(USAGE_STATUSES, f.usage, USAGE_LABEL) + '</select></label>' +
         '<label>Editing<select data-bind="filters.editing"><option value="">Any editing status</option>' + optionsHtml(EDITING_STATUSES, f.editing, EDITING_LABEL) + '</select></label>' +
+        '<label>Backup<select data-bind="filters.backup"><option value="">Any backup status</option>' + optionsHtml(BACKUP_STATUSES, f.backup, BACKUP_LABEL) + '</select></label>' +
         '<label class="filter-full">Location<input data-bind="filters.location" value="' + esc(f.location) + '" placeholder="Any location" /></label>' +
       '</div>' +
       '<button class="btn btn-ghost filter-clear" data-action="clear-filters">Clear all filters</button>' +
@@ -897,6 +1166,7 @@ function AddModalHtml() {
             '<div class="form-grid">' +
               '<label>Usage<select data-bind="addForm.usage">' + optionsHtml(USAGE_STATUSES, f.usage, USAGE_LABEL) + '</select></label>' +
               '<label>Editing<select data-bind="addForm.editing">' + optionsHtml(EDITING_STATUSES, f.editing, EDITING_LABEL) + '</select></label>' +
+              '<label>Backup<select data-bind="addForm.backup">' + optionsHtml(BACKUP_STATUSES, f.backup, BACKUP_LABEL) + '</select></label>' +
             '</div></section>' +
         '</div>' +
         '<div class="modal-foot"><button class="btn btn-ghost" data-action="close-add-modal">Cancel</button>' +
@@ -937,6 +1207,7 @@ function DetailPanelHtml() {
           '<div class="detail-status-row">' +
             '<label class="status-select-label">Usage<select class="status-select" style="color:' + USAGE_VAR[d.usage] + '" data-bind="detailDraft.usage">' + optionsHtml(USAGE_STATUSES, d.usage, USAGE_LABEL) + '</select></label>' +
             '<label class="status-select-label">Editing<select class="status-select" style="color:' + EDITING_VAR[d.editing] + '" data-bind="detailDraft.editing">' + optionsHtml(EDITING_STATUSES, d.editing, EDITING_LABEL) + '</select></label>' +
+            '<label class="status-select-label">Backup<select class="status-select" style="color:' + BACKUP_VAR[d.backup || "not_backed_up"] + '" data-bind="detailDraft.backup">' + optionsHtml(BACKUP_STATUSES, d.backup || "not_backed_up", BACKUP_LABEL) + '</select></label>' +
           '</div>' +
           '<section class="form-section"><p class="form-section-title">Shot type</p>' +
             '<div class="tag-grid">' + SHOT_TYPES.map(function (s) { return '<button type="button" class="tag-chip ' + (d.shotTypes.indexOf(s) > -1 ? "is-active" : "") + '" data-action="toggle-shot" data-scope="detailDraft" data-shot="' + esc(s) + '">' + esc(s) + '</button>'; }).join("") + '</div></section>' +
@@ -978,6 +1249,43 @@ function CommandPaletteHtml() {
               '<span class="palette-date">' + fmtDateShort(c.date) + '</span>' +
             '</button>';
           }).join("")) +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ================================ sync modal ================================ */
+
+function SyncModalHtml() {
+  var connected = !!state.syncBucket;
+  var statusLabel = state.syncStatus === "connected" ? "Synced" : state.syncStatus === "connecting" ? "Connecting…" : state.syncStatus === "error" ? "Sync error — retrying" : "Not syncing";
+  var dotClass = state.syncStatus === "connected" ? "is-on" : state.syncStatus === "error" ? "is-error" : "is-off";
+  return (
+    '<div class="modal-overlay" data-action="close-sync-modal">' +
+      '<div class="modal sync-modal" data-action="noop">' +
+        '<div class="modal-head"><div><p class="modal-eyebrow">Cinematicbymo.com / Files</p><h2>Sync across devices</h2></div>' +
+          '<button class="icon-btn" data-action="close-sync-modal">' + icon("x", 16) + '</button></div>' +
+        '<div class="modal-body">' +
+          '<div class="sync-status-row"><span class="sync-dot ' + dotClass + '"></span><span>' + esc(statusLabel) + (connected ? " · code " + esc(state.syncBucket) : "") + '</span></div>' +
+          (!connected ?
+            '<section class="form-section"><p class="form-section-title">Start syncing</p>' +
+              '<p class="sync-note">Generates a short code for this library. Enter that same code on your other devices to keep everything — clips, projects, calendar — in sync.</p>' +
+              '<button class="btn btn-primary" data-action="sync-create">' + icon("refresh-cw", 14) + ' Start syncing this device</button>' +
+            '</section>' +
+            '<section class="form-section"><p class="form-section-title">Already have a code?</p>' +
+              '<div class="sync-join-row"><input data-bind="syncCodeInput" value="' + esc(state.syncCodeInput) + '" placeholder="Paste sync code…" />' +
+                '<button class="btn btn-ghost" data-action="sync-join">Join</button></div>' +
+              '<p class="sync-note">Joining replaces this device\u2019s library with whatever is already in that sync group.</p>' +
+            '</section>'
+            :
+            '<section class="form-section"><p class="form-section-title">Your sync code</p>' +
+              '<div class="sync-code-box"><span style="flex:1">' + esc(state.syncBucket) + '</span>' +
+                '<button class="icon-btn" title="Copy code" data-action="sync-copy-code">' + icon("copy", 15) + '</button></div>' +
+              '<p class="sync-note">Enter this code on another device (Settings → Sync devices → Join) to keep it in step with this one. Changes sync automatically, roughly every few seconds.</p>' +
+              '<button class="btn btn-ghost btn-danger-text" data-action="sync-leave">' + icon("cloud-off", 14) + ' Stop syncing this device</button>' +
+            '</section>') +
+          '<p class="sync-note">Sync uses a free, no-signup community service (kvdb.io). It\u2019s convenient for keeping a solo or small-team library in step, but don\u2019t rely on it as your only backup — use \u201CDownload full backup\u201D periodically too.</p>' +
         '</div>' +
       '</div>' +
     '</div>'
@@ -1041,6 +1349,7 @@ function AllFilesHtml(view) {
   if (filters.shotType) filtered = filtered.filter(function (c) { return c.shotTypes.indexOf(filters.shotType) > -1; });
   if (filters.usage) filtered = filtered.filter(function (c) { return c.usage === filters.usage; });
   if (filters.editing) filtered = filtered.filter(function (c) { return c.editing === filters.editing; });
+  if (filters.backup) filtered = filtered.filter(function (c) { return (c.backup || "not_backed_up") === filters.backup; });
   if (filters.location) filtered = filtered.filter(function (c) { return (c.location || "").toLowerCase().indexOf(filters.location.toLowerCase()) > -1; });
   filtered = filtered.slice().sort(function (a, b) { return b.createdAt - a.createdAt; });
 
@@ -1079,6 +1388,7 @@ function BulkToolbarHtml(selCount) {
       '<div class="bulk-actions">' +
         '<select data-action="bulk-select" data-field="editing"><option value="" disabled selected>Set editing status…</option>' + EDITING_STATUSES.map(function (c) { return '<option value="' + c + '">' + EDITING_LABEL[c] + '</option>'; }).join("") + '</select>' +
         '<select data-action="bulk-select" data-field="usage"><option value="" disabled selected>Set usage…</option>' + USAGE_STATUSES.map(function (c) { return '<option value="' + c + '">' + USAGE_LABEL[c] + '</option>'; }).join("") + '</select>' +
+        '<select data-action="bulk-select" data-field="backup"><option value="" disabled selected>Set backup…</option>' + BACKUP_STATUSES.map(function (c) { return '<option value="' + c + '">' + BACKUP_LABEL[c] + '</option>'; }).join("") + '</select>' +
         '<button class="btn btn-ghost btn-sm" data-action="bulk-archive">' + icon("archive", 13) + ' Archive</button>' +
         '<button class="btn btn-ghost btn-sm btn-danger-text" data-action="bulk-delete">' + icon("trash", 13) + ' Delete</button>' +
         '<button class="icon-btn" data-action="clear-selection">' + icon("x", 14) + '</button>' +
@@ -1138,6 +1448,83 @@ function NewProjectModalHtml() {
   );
 }
 
+function CalendarHtml() {
+  var monthStr = state.calendarMonth; // "YYYY-MM"
+  var parts = monthStr.split("-").map(Number);
+  var year = parts[0], month = parts[1] - 1;
+  var firstOfMonth = new Date(year, month, 1);
+  var startWeekday = firstOfMonth.getDay(); // 0=Sun
+  var daysInMonth = new Date(year, month + 1, 0).getDate();
+  var todayStr = new Date().toISOString().slice(0, 10);
+
+  var eventsByDate = {};
+  state.projects.forEach(function (p) {
+    if (p.date) {
+      (eventsByDate[p.date] = eventsByDate[p.date] || []).push({ kind: "shoot", project: p });
+    }
+    if (p.publishDate) {
+      (eventsByDate[p.publishDate] = eventsByDate[p.publishDate] || []).push({ kind: "publish", project: p });
+    }
+  });
+
+  var monthLabel = firstOfMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  var cells = "";
+  for (var i = 0; i < startWeekday; i++) cells += '<div class="cal-cell cal-cell-empty"></div>';
+  for (var day = 1; day <= daysInMonth; day++) {
+    var dateStr = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+    var events = eventsByDate[dateStr] || [];
+    var isToday = dateStr === todayStr;
+    cells += '<div class="cal-cell ' + (isToday ? "is-today" : "") + '">' +
+      '<div class="cal-cell-head"><span class="cal-daynum">' + day + '</span>' +
+        '<button type="button" class="cal-add-btn" data-action="new-project-on-date" data-date="' + dateStr + '" title="New project on this date">' + icon("plus", 12) + '</button>' +
+      '</div>' +
+      '<div class="cal-events">' +
+        events.slice(0, 3).map(function (ev) {
+          var cls = ev.kind === "shoot" ? "cal-event-shoot" : "cal-event-publish";
+          var label = (ev.kind === "shoot" ? "Shoot: " : "Publish: ") + ev.project.name;
+          return '<button type="button" class="cal-event ' + cls + '" data-action="open-project" data-id="' + ev.project.id + '" title="' + esc(label) + '">' + esc(label) + '</button>';
+        }).join("") +
+        (events.length > 3 ? '<span class="cal-more">+' + (events.length - 3) + ' more</span>' : "") +
+      '</div>' +
+    '</div>';
+  }
+
+  var upcoming = [];
+  state.projects.forEach(function (p) {
+    if (p.publishDate && p.publishDate >= todayStr) upcoming.push({ kind: "publish", date: p.publishDate, project: p });
+    if (p.date && p.date >= todayStr) upcoming.push({ kind: "shoot", date: p.date, project: p });
+  });
+  upcoming.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  upcoming = upcoming.slice(0, 6);
+
+  return (
+    '<div class="view-pad">' +
+      '<div class="view-head"><div><p class="brand-eyebrow">Cinematicbymo.com / Files</p><h1>Content calendar</h1><p class="dash-tagline">Shoot dates and publish dates across every project.</p></div>' +
+        '<div class="view-head-actions">' +
+          '<button class="btn btn-ghost" data-action="calendar-prev">' + icon("arrow-left", 14) + '</button>' +
+          '<button class="btn btn-ghost" data-action="calendar-today">Today</button>' +
+          '<button class="btn btn-ghost" data-action="calendar-next">' + icon("chevron-right", 14) + '</button>' +
+        '</div></div>' +
+      '<h2 class="cal-month-label">' + monthLabel + '</h2>' +
+      '<div class="cal-grid">' +
+        ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(function (d) { return '<div class="cal-weekday">' + d + '</div>'; }).join("") +
+        cells +
+      '</div>' +
+      '<div class="cal-legend"><span class="cal-legend-item"><span class="cal-legend-dot cal-legend-shoot"></span>Shoot day</span><span class="cal-legend-item"><span class="cal-legend-dot cal-legend-publish"></span>Publish day</span></div>' +
+      (upcoming.length ? '<div class="section-head"><h2>Coming up</h2></div><div class="recent-list">' +
+        upcoming.map(function (u) {
+          return '<button class="recent-row" style="grid-template-columns:5px 1fr 110px auto" data-action="open-project" data-id="' + u.project.id + '">' +
+            '<span class="recent-tally" style="background:' + (u.kind === "shoot" ? "var(--rec)" : "var(--green)") + '"></span>' +
+            '<span class="recent-filename">' + (u.kind === "shoot" ? "Shoot" : "Publish") + ' \u2014 ' + esc(u.project.name) + '</span>' +
+            '<span class="recent-date">' + fmtDate(u.date) + '</span>' +
+            '<span></span>' +
+          '</button>';
+        }).join("") +
+      '</div>' : "") +
+    '</div>'
+  );
+}
+
 function ProjectDetailHtml(project) {
   var clips = state.clips;
   var d = state.projectDraft || projectDraftFrom(project);
@@ -1167,9 +1554,11 @@ function ProjectDetailHtml(project) {
       '</div>' +
       '<div class="project-tabs">' +
         '<button class="project-tab ' + (tab === "clips" ? "is-active" : "") + '" data-action="project-tab" data-tab="clips">Clips</button>' +
+        '<button class="project-tab ' + (tab === "shotlist" ? "is-active" : "") + '" data-action="project-tab" data-tab="shotlist">Shot list' + (d.shotList && d.shotList.length ? ' <span class="tab-count">' + d.shotList.filter(function (s) { return s.status !== "shot"; }).length + '</span>' : "") + '</button>' +
         '<button class="project-tab ' + (tab === "script" ? "is-active" : "") + '" data-action="project-tab" data-tab="script">Script &amp; caption</button>' +
       '</div>' +
       (tab === "script" ? ScriptFormHtml(d, project) :
+        tab === "shotlist" ? ShotListHtml(d) :
         (projClips.length === 0 ? EmptyState("film", "No clips yet", "Add a file to this project to get started.") :
           '<div class="clip-grid">' + projClips.map(function (c) { return ClipCard(c, project, !!state.selectedIds[c.id], state.selectMode); }).join("") + '</div>')) +
       (tab === "clips" && selCount > 0 ? BulkToolbarHtml(selCount) : "") +
@@ -1199,7 +1588,34 @@ function ScriptFormHtml(d, project) {
       '</section>' +
       '<section class="form-section"><p class="form-section-title">Hashtags</p>' +
         '<label><input data-bind="projectDraft.hashtags" value="' + esc(d.hashtags) + '" placeholder="#gymtok #cinematography #fitness" /></label>' +
+      '</section>' +
+      '<section class="form-section"><p class="form-section-title">Gear &amp; equipment <span class="optional">Camera bodies, lenses, gimbal, audio, lighting…</span></p>' +
+        '<label><textarea rows="3" data-bind="projectDraft.gear" placeholder="A7C III + 24-70mm f/2.8&#10;DJI RS3 gimbal&#10;Rode Wireless GO II&#10;2x ND filters, reflector">' + esc(d.gear) + '</textarea></label>' +
         '<p class="script-hint">Changes here save automatically to this project.</p>' +
+      '</section>' +
+    '</div>'
+  );
+}
+
+function ShotListHtml(d) {
+  var list = d.shotList || [];
+  var shotCount = list.filter(function (s) { return s.status === "shot"; }).length;
+  return (
+    '<div class="script-form">' +
+      '<section class="form-section">' +
+        '<p class="form-section-title">Pre-production shot list <span class="optional">' + shotCount + ' of ' + list.length + ' captured</span></p>' +
+        (list.length === 0 ? '<p class="script-hint" style="margin:0 0 12px">Plan the shots you need before you get to set — check them off as you capture them.</p>' : '') +
+        '<div class="shotlist">' +
+          list.map(function (s, idx) {
+            return '<div class="shotlist-row ' + (s.status === "shot" ? "is-shot" : "") + '">' +
+              '<button type="button" class="icon-btn shotlist-check" data-action="shotlist-toggle" data-idx="' + idx + '" title="Mark as captured">' + icon(s.status === "shot" ? "check-circle" : "circle", 17) + '</button>' +
+              '<input class="shotlist-desc" data-bind="projectDraft.shotList.' + idx + '.description" value="' + esc(s.description) + '" placeholder="e.g. Wide establishing shot of gym floor at sunrise" />' +
+              '<select class="shotlist-type" data-bind="projectDraft.shotList.' + idx + '.shotType">' + optionsHtml(SHOT_TYPES, s.shotType) + '</select>' +
+              '<button type="button" class="icon-btn icon-btn-danger" data-action="shotlist-remove" data-idx="' + idx + '" title="Remove shot">' + icon("trash", 14) + '</button>' +
+            '</div>';
+          }).join("") +
+        '</div>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-action="shotlist-add" style="margin-top:10px">' + icon("plus", 13) + ' Add shot</button>' +
       '</section>' +
     '</div>'
   );
@@ -1221,6 +1637,7 @@ function SidebarHtml() {
       '<div class="sidebar-foot">' +
         '<button class="sidebar-item" data-action="toggle-settings">' + icon("users", 15) + ' Editor workspace</button>' +
         (state.settingsOpen ? '<div class="settings-drop">' +
+          '<button data-action="open-sync-modal">' + icon("refresh-cw", 13) + ' Sync devices' + (state.syncBucket ? ' <span class="sync-dot ' + (state.syncStatus === "connected" ? "is-on" : state.syncStatus === "error" ? "is-error" : "is-off") + '" style="margin-left:auto"></span>' : "") + '</button>' +
           '<button data-action="export-backup">' + icon("download", 13) + ' Download full backup</button>' +
           '<button data-action="trigger-import-backup">' + icon("upload", 13) + ' Restore from backup</button>' +
           '<input id="backupFileInput" type="file" accept="application/json,.json" style="display:none" />' +
@@ -1259,6 +1676,7 @@ function buildAppHtml() {
   if (selectedProject) mainHtml = ProjectDetailHtml(selectedProject);
   else if (state.view === "dashboard") mainHtml = DashboardHtml();
   else if (state.view === "projects") mainHtml = ProjectsHtml();
+  else if (state.view === "calendar") mainHtml = CalendarHtml();
   else mainHtml = AllFilesHtml(state.view);
 
   var overlays = "";
@@ -1266,6 +1684,7 @@ function buildAppHtml() {
   if (state.showNewProjectModal) overlays += NewProjectModalHtml();
   if (state.selectedClipId && state.detailDraft) overlays += DetailPanelHtml();
   if (state.showPalette) overlays += CommandPaletteHtml();
+  if (state.showSyncModal) overlays += SyncModalHtml();
 
   return (
     '<div class="files-app">' +
@@ -1334,7 +1753,7 @@ function handleCreate() {
     id: uid("clip"), filename: filename, date: f.date, project: projectId || "",
     client: f.client || (proj ? proj.client : ""), location: f.location, exercise: f.exercise,
     description: f.description, shotTypes: f.shotTypes, usage: f.usage, editing: f.editing,
-    notes: f.notes, createdAt: Date.now(),
+    backup: f.backup || "not_backed_up", notes: f.notes, createdAt: Date.now(),
   };
   persistClips([clip].concat(state.clips));
   state.showAddModal = false;
@@ -1393,11 +1812,11 @@ function handleBulk(action, value) {
 
 function handleExport(scopeClips) {
   var rows = scopeClips || state.clips;
-  var headers = ["filename", "date", "project", "client", "location", "exercise", "description", "shot_type", "usage_status", "editing_status", "notes"];
+  var headers = ["filename", "date", "project", "client", "location", "exercise", "description", "shot_type", "usage_status", "editing_status", "backup_status", "notes"];
   var lines = [headers.join(",")];
   rows.forEach(function (c) {
     var proj = findProject(c.project);
-    lines.push([c.filename, c.date, proj ? proj.name : "", c.client, c.location, c.exercise, c.description, c.shotTypes.join(" | "), c.usage, c.editing, c.notes].map(csvEscape).join(","));
+    lines.push([c.filename, c.date, proj ? proj.name : "", c.client, c.location, c.exercise, c.description, c.shotTypes.join(" | "), c.usage, c.editing, c.backup || "not_backed_up", c.notes].map(csvEscape).join(","));
   });
   downloadText("files-export.csv", lines.join("\n"));
   showToast("Exported metadata to CSV.");
@@ -1436,6 +1855,7 @@ function handleImportFile(file) {
         shotTypes: r.shot_type ? r.shot_type.split("|").map(function (s) { return s.trim(); }).filter(Boolean) : [],
         usage: USAGE_STATUSES.indexOf(r.usage_status) > -1 ? r.usage_status : "no_usage",
         editing: EDITING_STATUSES.indexOf(r.editing_status) > -1 ? r.editing_status : "unedited",
+        backup: BACKUP_STATUSES.indexOf(r.backup_status) > -1 ? r.backup_status : "not_backed_up",
         notes: r.notes || "", createdAt: Date.now(),
       };
     });
@@ -1574,6 +1994,7 @@ function handleAction(action, el, e) {
       if (f.shotType) clips = clips.filter(function (c) { return c.shotTypes.indexOf(f.shotType) > -1; });
       if (f.usage) clips = clips.filter(function (c) { return c.usage === f.usage; });
       if (f.editing) clips = clips.filter(function (c) { return c.editing === f.editing; });
+      if (f.backup) clips = clips.filter(function (c) { return (c.backup || "not_backed_up") === f.backup; });
       if (f.location) clips = clips.filter(function (c) { return (c.location || "").toLowerCase().indexOf(f.location.toLowerCase()) > -1; });
       var ids = {}; clips.forEach(function (c) { ids[c.id] = true; });
       state.selectedIds = ids;
@@ -1587,7 +2008,7 @@ function handleAction(action, el, e) {
       state.showFiltersPopover = !state.showFiltersPopover; render();
       break;
     case "clear-filters":
-      state.filters = { project: "", client: "", exercise: "", shotType: "", usage: "", editing: "", location: "" };
+      state.filters = { project: "", client: "", exercise: "", shotType: "", usage: "", editing: "", location: "", backup: "" };
       render();
       break;
     case "export-csv":
@@ -1629,6 +2050,27 @@ function handleAction(action, el, e) {
       state.projectTab = el.getAttribute("data-tab");
       render();
       break;
+    case "shotlist-add":
+      if (!state.projectDraft.shotList) state.projectDraft.shotList = [];
+      state.projectDraft.shotList.push({ description: "", shotType: SHOT_TYPES[0], status: "planned" });
+      commitProjectDraft();
+      render();
+      break;
+    case "shotlist-remove": {
+      var rmIdx = parseInt(el.getAttribute("data-idx"), 10);
+      state.projectDraft.shotList.splice(rmIdx, 1);
+      commitProjectDraft();
+      render();
+      break;
+    }
+    case "shotlist-toggle": {
+      var tgIdx = parseInt(el.getAttribute("data-idx"), 10);
+      var item = state.projectDraft.shotList[tgIdx];
+      item.status = item.status === "shot" ? "planned" : "shot";
+      commitProjectDraft();
+      render();
+      break;
+    }
     case "open-new-project-modal":
       state.showNewProjectModal = true; state.newProjectForm = defaultNewProjectForm();
       render();
@@ -1643,6 +2085,26 @@ function handleAction(action, el, e) {
     case "delete-project":
       handleDeleteProject(el.getAttribute("data-id"));
       break;
+    case "calendar-prev":
+    case "calendar-next": {
+      var cparts = state.calendarMonth.split("-").map(Number);
+      var cd = new Date(cparts[0], cparts[1] - 1, 1);
+      cd.setMonth(cd.getMonth() + (action === "calendar-next" ? 1 : -1));
+      state.calendarMonth = cd.getFullYear() + "-" + String(cd.getMonth() + 1).padStart(2, "0");
+      render();
+      break;
+    }
+    case "calendar-today":
+      state.calendarMonth = new Date().toISOString().slice(0, 7);
+      render();
+      break;
+    case "new-project-on-date":
+      state.showNewProjectModal = true;
+      state.newProjectForm = defaultNewProjectForm();
+      state.newProjectForm.date = el.getAttribute("data-date");
+      render();
+      setTimeout(function () { var f = document.getElementById("np-name"); if (f) f.focus(); }, 0);
+      break;
     case "open-palette":
       state.showPalette = true; state.paletteQuery = "";
       render();
@@ -1653,6 +2115,27 @@ function handleAction(action, el, e) {
       break;
     case "toggle-settings":
       state.settingsOpen = !state.settingsOpen; render();
+      break;
+    case "open-sync-modal":
+      state.showSyncModal = true; state.settingsOpen = false; state.syncCodeInput = "";
+      render();
+      break;
+    case "close-sync-modal":
+      state.showSyncModal = false; render();
+      break;
+    case "sync-create":
+      createSync();
+      break;
+    case "sync-join":
+      joinSync(state.syncCodeInput);
+      break;
+    case "sync-leave":
+      if (confirm("Stop syncing this device? Your data stays here, but it will no longer update from — or push to — your other devices.")) leaveSync();
+      break;
+    case "sync-copy-code":
+      if (state.syncBucket && navigator.clipboard) {
+        navigator.clipboard.writeText(state.syncBucket).then(function () { showToast("Sync code copied."); });
+      }
       break;
     case "export-backup":
       handleExportBackup();
@@ -1738,6 +2221,7 @@ document.addEventListener("keydown", function (e) {
   }
   if (e.key === "Escape") {
     if (state.showPalette) { state.showPalette = false; render(); }
+    else if (state.showSyncModal) { state.showSyncModal = false; render(); }
     else if (state.showAddModal) { state.showAddModal = false; render(); }
     else if (state.selectedClipId) { commitDetailDraft(); state.selectedClipId = null; state.detailDraft = null; render(); }
     else if (state.settingsOpen) { state.settingsOpen = false; render(); }
