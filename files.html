@@ -328,60 +328,46 @@ svg.icon { width: 1em; height: 1em; stroke: currentColor; fill: none; stroke-wid
   .sidebar-scrim.is-open { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
 }
 
-/* ---- content calendar ---- */
-.cal-month-label { font-family: var(--font-display); font-size: 18px; font-weight: 500; margin: 4px 0 12px; }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 14px; }
-.cal-weekday { font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); text-align: center; padding-bottom: 4px; }
-.cal-cell { background: var(--bg-1); border: 1px solid var(--border); border-radius: 8px; min-height: 92px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
-.cal-cell-empty { background: transparent; border-color: transparent; }
-.cal-cell.is-today { border-color: var(--rec); }
-.cal-cell-head { display: flex; align-items: center; justify-content: space-between; }
-.cal-daynum { font-size: 11px; color: var(--text-secondary); }
-.is-today .cal-daynum { color: var(--rec); font-weight: 600; }
-.cal-add-btn { background: none; border: none; color: var(--text-tertiary); display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 4px; opacity: 0; transition: opacity 0.12s; }
-.cal-cell:hover .cal-add-btn { opacity: 1; }
-.cal-add-btn:hover { background: var(--bg-2); color: var(--text-primary); }
+/* ---- calendar ---- */
+.cal-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+.cal-nav { display: flex; align-items: center; gap: 6px; }
+.cal-month-label { font-family: var(--font-display); font-size: 17px; font-weight: 500; min-width: 150px; text-align: center; }
+.cal-legend { display: flex; align-items: center; gap: 14px; font-size: 11.5px; color: var(--text-secondary); }
+.cal-legend-item { display: flex; align-items: center; gap: 6px; }
+.cal-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-dow { font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); text-align: left; padding: 0 2px 4px; }
+.cal-daycell { position: relative; background: var(--bg-1); border: 1px solid var(--border); border-radius: 8px; min-height: 96px; padding: 6px 6px 8px; display: flex; flex-direction: column; gap: 4px; text-align: left; }
+.cal-daycell.is-outside { opacity: 0.38; }
+.cal-daycell.is-today { border-color: var(--cyan); }
+.cal-daynum { font-size: 11.5px; color: var(--text-secondary); font-weight: 500; }
+.cal-daycell.is-today .cal-daynum { color: var(--cyan); }
+.cal-day-add { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 5px; border: none; background: transparent; color: var(--text-tertiary); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.12s; }
+.cal-daycell:hover .cal-day-add { opacity: 1; }
+.cal-day-add:hover { background: var(--bg-3); color: var(--text-primary); }
 .cal-events { display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
-.cal-event { display: block; width: 100%; text-align: left; background: none; border: none; padding: 2px 4px; border-radius: 4px; font-size: 10px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cal-event-shoot { background: rgba(217,72,59,0.14); color: var(--rec); }
-.cal-event-publish { background: rgba(79,158,107,0.14); color: var(--green); }
-.cal-more { font-size: 9.5px; color: var(--text-tertiary); padding: 0 4px; }
-.cal-legend { display: flex; gap: 16px; margin: 4px 0 24px; }
-.cal-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-secondary); }
-.cal-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-.cal-legend-shoot { background: var(--rec); }
-.cal-legend-publish { background: var(--green); }
+.cal-event-pill { display: flex; align-items: center; gap: 5px; font-size: 10.5px; padding: 3px 6px; border-radius: 5px; background: var(--bg-2); border: none; color: var(--text-primary); text-align: left; width: 100%; overflow: hidden; }
+.cal-event-pill:hover { background: var(--bg-3); }
+.cal-event-pill span.evt-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--evt-color); flex: 0 0 auto; }
+.cal-event-pill .evt-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 820px) {
-  .cal-grid { grid-template-columns: repeat(7, minmax(0,1fr)); gap: 3px; }
-  .cal-cell { min-height: 60px; padding: 4px; }
-  .cal-event { font-size: 9px; }
+  .cal-daycell { min-height: 68px; }
+  .cal-legend { display: none; }
 }
 
-/* ---- shot list ---- */
-.tab-count { display: inline-block; background: var(--bg-3); color: var(--text-secondary); font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
-.shotlist { display: flex; flex-direction: column; gap: 6px; }
-.shotlist-row { display: grid; grid-template-columns: 26px 1fr 160px 30px; align-items: center; gap: 8px; padding: 6px; background: var(--bg-1); border: 1px solid var(--border); border-radius: 7px; }
-.shotlist-row.is-shot { opacity: 0.55; }
-.shotlist-row.is-shot .shotlist-desc { text-decoration: line-through; }
-.shotlist-check { color: var(--text-secondary); }
-.shotlist-row.is-shot .shotlist-check { color: var(--green); }
-.shotlist-desc, .shotlist-type { margin: 0; }
-@media (max-width: 640px) {
-  .shotlist-row { grid-template-columns: 26px 1fr 30px; }
-  .shotlist-type { grid-column: 2 / 3; }
-}
-
-/* ---- sync modal ---- */
-.sync-modal { width: 420px; }
-.sync-status-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; background: var(--bg-1); border: 1px solid var(--border); font-size: 12.5px; margin-bottom: 16px; }
-.sync-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
-.sync-dot.is-on { background: var(--green); box-shadow: 0 0 6px var(--green); }
-.sync-dot.is-off { background: var(--text-tertiary); }
-.sync-dot.is-error { background: var(--rec); }
-.sync-code-box { display: flex; align-items: center; gap: 8px; background: var(--bg-1); border: 1px solid var(--border-strong); border-radius: 7px; padding: 10px 12px; font-family: var(--font-mono); font-size: 15px; letter-spacing: 0.03em; margin: 10px 0 4px; word-break: break-all; }
-.sync-note { font-size: 11.5px; color: var(--text-tertiary); line-height: 1.5; margin: 6px 0 18px; }
-.sync-join-row { display: flex; gap: 8px; margin-top: 6px; }
-.sync-join-row input { flex: 1; }
+/* ---- sync status ---- */
+.sync-status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-tertiary); padding: 8px 10px 2px; }
+.sync-status svg { width: 12px; height: 12px; }
+.sync-synced { color: var(--green); }
+.sync-connecting { color: var(--amber); }
+.sync-error { color: var(--rec); }
+.sync-modal-body p { margin: 0 0 10px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; }
+.sync-modal-body ol { margin: 0 0 14px; padding-left: 18px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.7; }
+.sync-modal-body code { font-family: var(--font-mono); background: var(--bg-2); padding: 1px 5px; border-radius: 4px; font-size: 11.5px; }
+.sync-modal-body textarea { min-height: 120px; font-family: var(--font-mono); font-size: 11.5px; }
+.sync-modal { max-width: 640px; }
+.sync-modal-body textarea[readonly] { min-height: 220px; font-size: 11px; line-height: 1.5; white-space: pre; overflow-x: auto; background: var(--bg-2); color: var(--text-secondary); }
+.sync-connected-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--green); background: rgba(79,158,107,0.12); border: 1px solid rgba(79,158,107,0.35); border-radius: 7px; padding: 8px 10px; margin-bottom: 12px; }
 </style>
 </head>
 <body>
@@ -407,9 +393,10 @@ var USAGE_STATUSES = ["no_usage","potential","selected","used","archived"];
 var USAGE_LABEL = { no_usage: "No usage", potential: "Potential", selected: "Selected", used: "Used", archived: "Archived" };
 var USAGE_VAR = { no_usage: "var(--text-tertiary)", potential: "var(--amber)", selected: "var(--cyan)", used: "var(--green)", archived: "var(--muted)" };
 
-var BACKUP_STATUSES = ["not_backed_up", "backed_up_local", "backed_up_cloud", "archived_offsite"];
-var BACKUP_LABEL = { not_backed_up: "Not backed up", backed_up_local: "Backed up (local)", backed_up_cloud: "Backed up (cloud)", archived_offsite: "Archived off-site" };
-var BACKUP_VAR = { not_backed_up: "var(--rec)", backed_up_local: "var(--amber)", backed_up_cloud: "var(--green)", archived_offsite: "var(--cyan)" };
+var EVENT_TYPES = ["shoot", "upload"];
+var EVENT_TYPE_LABEL = { shoot: "Shoot day", upload: "Upload day" };
+var EVENT_TYPE_VAR = { shoot: "var(--cyan)", upload: "var(--green)" };
+var DOW_LABELS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
 var NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
@@ -425,13 +412,11 @@ var NAV_ITEMS = [
   { id: "selected", label: "Selected", icon: "circle" },
   { id: "used", label: "Used", icon: "circle" },
   { id: "needs_attention", label: "Needs attention", icon: "alert-triangle" },
-  { id: "not_backed_up", label: "Not backed up", icon: "hard-drive" },
 ];
 
 var VIEW_TITLES = {
   all: "All files", unedited: "Unedited", editing: "Editing", finished: "Finished",
   no_usage: "No usage", selected: "Selected", used: "Used", needs_attention: "Needs attention",
-  not_backed_up: "Not backed up",
 };
 var VIEW_SUBTITLES = {
   all: "Everything in your footage database.",
@@ -442,7 +427,6 @@ var VIEW_SUBTITLES = {
   selected: "Clips chosen for a project or edit.",
   used: "Clips already used in a finished video.",
   needs_attention: "Missing a project, description, exercise, or shot type.",
-  not_backed_up: "Footage that only exists in one place. Back it up before you format a card.",
 };
 
 /* ================================ icons ================================ */
@@ -473,10 +457,10 @@ var ICON_PATHS = {
   "command": '<path d="M9 3a3 3 0 0 0-3 3v12a3 3 0 1 0 3-3h6a3 3 0 1 0-3 3V6a3 3 0 1 0 3 3H9a3 3 0 1 0 3-3"></path>',
   "menu": '<path d="M4 6h16M4 12h16M4 18h16"></path>',
   "calendar": '<rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path>',
-  "hard-drive": '<path d="M22 12H2"></path><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"></path><path d="M6 16h.01M10 16h.01"></path>',
-  "refresh-cw": '<path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5M3 21v-5h5"></path>',
-  "link": '<path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 1 1 0 10h-2M8 12h8"></path>',
-  "cloud-off": '<path d="M22.61 16.95A5 5 0 0 0 18 10h-1.26a8 8 0 0 0-7.05-6M5 5 2 2M2 8.35A5.5 5.5 0 0 0 6.5 18H18M2 2l20 20"></path>',
+  "chevron-left": '<path d="m15 18-6-6 6-6"></path>',
+  "cloud": '<path d="M17.5 19H9a5 5 0 1 1 1.3-9.83A6 6 0 0 1 22 12.5a4.5 4.5 0 0 1-4.5 4.5Z"></path>',
+  "cloud-off": '<path d="M22.6 16.9A5 5 0 0 0 18 9h-1.26A8 8 0 0 0 5 5.3M5 5 2 2m3 3-2.5 2.5A5.002 5.002 0 0 0 6 19h12"></path><path d="m2 2 20 20"></path>',
+  "camera": '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"></path><circle cx="12" cy="13" r="3.5"></circle>',
 };
 function icon(name, size) {
   size = size || 15;
@@ -664,9 +648,18 @@ function buildSeed() {
 var state = {
   clips: [],
   projects: [],
+  calendarEvents: [],
   loading: true,
   storageError: null,
   view: "dashboard",
+  calendarMonth: new Date().toISOString().slice(0, 7),
+  showEventModal: false,
+  eventForm: null,
+  editingEventId: null,
+  syncStatus: "local",
+  showSyncModal: false,
+  syncWorkerUrl: "",
+  syncAuthKey: "",
   selectedProjectId: null,
   projectDraft: null,
   projectTab: "clips",
@@ -678,7 +671,7 @@ var state = {
   addCreatingProject: false,
   showPalette: false,
   paletteQuery: "",
-  filters: { project: "", client: "", exercise: "", shotType: "", usage: "", editing: "", location: "", backup: "" },
+  filters: { project: "", client: "", exercise: "", shotType: "", usage: "", editing: "", location: "" },
   showFiltersPopover: false,
   selectMode: false,
   selectedIds: {},
@@ -687,21 +680,13 @@ var state = {
   settingsOpen: false,
   detailDraft: null,
   mobileSidebarOpen: false,
-  calendarMonth: new Date().toISOString().slice(0, 7),
-  showSyncModal: false,
-  p2pStatus: "off",
-  p2pMode: null,
-  p2pPhase: null,
-  p2pLocalCode: "",
-  p2pRemoteInput: "",
-  dataUpdatedAt: 0,
 };
 
 function defaultAddForm() {
   return {
     filename: "", date: new Date().toISOString().slice(0, 10), project: state.projects[0] ? state.projects[0].id : "",
     newProject: "", client: "", location: "", exercise: EXERCISES[0], description: "",
-    shotTypes: [], usage: "no_usage", editing: "unedited", backup: "not_backed_up", notes: "",
+    shotTypes: [], usage: "no_usage", editing: "unedited", notes: "",
   };
 }
 function defaultNewProjectForm() {
@@ -710,298 +695,179 @@ function defaultNewProjectForm() {
 function projectDraftFrom(p) {
   return Object.assign({
     name: "", client: "", type: PROJECT_TYPES[0], date: "",
-    hook: "", script: "", caption: "", hashtags: "", publishDate: "", gear: "",
-    shotList: [],
-  }, p, { shotList: (p && p.shotList) ? p.shotList.slice() : [] });
+    hook: "", script: "", caption: "", hashtags: "", publishDate: "",
+  }, p);
+}
+function defaultEventForm(dateStr) {
+  return {
+    date: dateStr || new Date().toISOString().slice(0, 10),
+    type: "shoot",
+    projectId: state.projects[0] ? state.projects[0].id : "",
+    title: "", notes: "",
+  };
 }
 
 /* ---- storage ---- */
 
 function loadData() {
-  var done = function (clips, projects) {
-    state.clips = clips || []; state.projects = projects || []; state.loading = false;
-    try { state.dataUpdatedAt = parseInt(localStorage.getItem("cbm-files-updated-at"), 10) || Date.now(); } catch (e) { state.dataUpdatedAt = Date.now(); }
-    render();
+  var done = function (clips, projects, events) {
+    state.clips = clips || []; state.projects = projects || []; state.calendarEvents = events || [];
+    state.loading = false; render();
+    initSync();
   };
   try {
-    if (window.storage) {
-      Promise.all([
-        window.storage.get("clips", false).catch(function () { return null; }),
-        window.storage.get("projects", false).catch(function () { return null; }),
-      ]).then(function (res) {
-        var c = res[0], p = res[1];
-        if (c && p) {
-          try { done(JSON.parse(c.value), JSON.parse(p.value)); return; } catch (e) {}
-        }
-        var local = readLocalData();
-        if (local) { done(local.clips, local.projects); return; }
-        var seed = buildSeed();
-        persistAll(seed.clips, seed.projects);
-        done(seed.clips, seed.projects);
-      }).catch(function () {
-        var local = readLocalData();
-        if (local) { done(local.clips, local.projects); return; }
-        state.storageError = "Cloud storage unavailable — using this browser's local storage.";
-        var seed = buildSeed();
-        persistAll(seed.clips, seed.projects);
-        done(seed.clips, seed.projects);
-      });
-      return;
-    }
     var local = readLocalData();
-    if (local) { done(local.clips, local.projects); return; }
+    if (local) { done(local.clips, local.projects, local.events); return; }
     var seed = buildSeed();
-    persistAll(seed.clips, seed.projects);
-    done(seed.clips, seed.projects);
+    persistAll(seed.clips, seed.projects, []);
+    done(seed.clips, seed.projects, []);
   } catch (e) {
-    var localFallback = readLocalData();
-    if (localFallback) { done(localFallback.clips, localFallback.projects); return; }
     state.storageError = "Browser storage is unavailable — changes may not persist.";
     var seedFallback = buildSeed();
-    done(seedFallback.clips, seedFallback.projects);
+    done(seedFallback.clips, seedFallback.projects, []);
   }
 }
 function readLocalData() {
   try {
     var c = localStorage.getItem("cbm-files-clips");
     var p = localStorage.getItem("cbm-files-projects");
+    var ev = localStorage.getItem("cbm-files-events");
     if (!c || !p) return null;
-    return { clips: JSON.parse(c), projects: JSON.parse(p) };
+    return { clips: JSON.parse(c), projects: JSON.parse(p), events: ev ? JSON.parse(ev) : [] };
   } catch (e) { return null; }
-}
-function bumpUpdatedAt() {
-  state.dataUpdatedAt = Date.now();
-  try { localStorage.setItem("cbm-files-updated-at", String(state.dataUpdatedAt)); } catch (e) {}
 }
 function persistClips(next) {
   state.clips = next;
-  try { window.storage && window.storage.set("clips", JSON.stringify(next), false); } catch (e) {}
   try { localStorage.setItem("cbm-files-clips", JSON.stringify(next)); } catch (e) {}
-  bumpUpdatedAt();
-  scheduleP2PPush();
+  schedulePush();
 }
 function persistProjects(next) {
   state.projects = next;
-  try { window.storage && window.storage.set("projects", JSON.stringify(next), false); } catch (e) {}
   try { localStorage.setItem("cbm-files-projects", JSON.stringify(next)); } catch (e) {}
-  bumpUpdatedAt();
-  scheduleP2PPush();
+  schedulePush();
 }
-function persistAll(clips, projects) {
-  try { window.storage && window.storage.set("clips", JSON.stringify(clips), false); } catch (e) {}
-  try { window.storage && window.storage.set("projects", JSON.stringify(projects), false); } catch (e) {}
-  try { localStorage.setItem("cbm-files-clips", JSON.stringify(clips)); localStorage.setItem("cbm-files-projects", JSON.stringify(projects)); } catch (e) {}
-  bumpUpdatedAt();
-  scheduleP2PPush();
+function persistCalendarEvents(next) {
+  state.calendarEvents = next;
+  try { localStorage.setItem("cbm-files-events", JSON.stringify(next)); } catch (e) {}
+  schedulePush();
 }
-
-/* ---- cross-device sync (WebRTC, peer-to-peer, no server) ----
-   Two browsers connect directly to each other over a WebRTC DataChannel.
-   There's no backend involved in moving your data — but WebRTC still needs
-   a one-time "signaling" handshake to find the peer, and with no server to
-   carry that handshake, it happens manually: device A generates a short
-   pairing code, you copy it to device B, device B generates a reply code,
-   you copy that back to device A. After that the channel is open and both
-   sides push their state to each other automatically, live, for as long as
-   both tabs stay open and connected.
-
-   Trade-offs to know:
-   - Both devices must have this page open at the same time to sync — there's
-     no server to hold messages for an offline device.
-   - Closing either tab drops the connection; you'll pair again next time.
-   - NAT traversal uses a public STUN server (Google's) to help the two
-     devices find each other across networks. It only relays connection
-     info, never your data — data flows directly between the two browsers
-     once connected. On the same Wi-Fi/LAN it likely isn't even needed.
-   - This is a convenience layer, not a backup. Use "Download full backup"
-     periodically too. */
-
-var P2P_STUN_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
-var p2pPC = null;
-var p2pDC = null;
-var p2pPushTimer = null;
-
-function b64EncodeObj(obj) {
-  return btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
-}
-function b64DecodeObj(str) {
-  return JSON.parse(decodeURIComponent(escape(atob((str || "").trim()))));
+function persistAll(clips, projects, events) {
+  try {
+    localStorage.setItem("cbm-files-clips", JSON.stringify(clips));
+    localStorage.setItem("cbm-files-projects", JSON.stringify(projects));
+    localStorage.setItem("cbm-files-events", JSON.stringify(events || []));
+  } catch (e) {}
+  schedulePush();
 }
 
-function waitIceGatheringComplete(pc) {
-  return new Promise(function (resolve) {
-    if (pc.iceGatheringState === "complete") { resolve(); return; }
-    function check() {
-      if (pc.iceGatheringState === "complete") {
-        pc.removeEventListener("icegatheringstatechange", check);
-        resolve();
-      }
-    }
-    pc.addEventListener("icegatheringstatechange", check);
-    setTimeout(resolve, 4000); // don't block forever on flaky networks
-  });
+/* ---- cross-device sync (Cloudflare Worker + KV) ----
+   A static page can't talk to Cloudflare KV directly (that would expose your
+   API token to anyone viewing the page source), so a tiny Worker sits in
+   front of the KV namespace and this app talks to that Worker over plain
+   HTTP: GET /data to read, PUT /data to write. See SyncModalHtml() for the
+   exact Worker code + setup steps shown to the user in the app. */
+
+var pollTimer = null, pushTimer = null, pushInFlight = false, pushAgainAfter = false;
+
+function loadSyncConfig() {
+  try { return JSON.parse(localStorage.getItem("cbm-kv-sync-config") || "null"); } catch (e) { return null; }
 }
-
-function p2pWatchConnectionState(pc) {
-  pc.oniceconnectionstatechange = function () {
-    var s = pc.iceConnectionState;
-    if (s === "failed" || s === "disconnected" || s === "closed") {
-      if (state.p2pStatus !== "off") {
-        state.p2pStatus = "error";
-        render();
-      }
-    }
-  };
+function saveSyncConfig(cfg) {
+  try { localStorage.setItem("cbm-kv-sync-config", JSON.stringify(cfg)); } catch (e) {}
 }
-
-function p2pAttachChannel(dc) {
-  p2pDC = dc;
-  dc.onopen = function () {
-    state.p2pStatus = "connected";
-    showToast("Paired \u2014 syncing live with this device.");
-    render();
-    p2pSendState();
-  };
-  dc.onclose = function () {
-    p2pDC = null;
-    if (state.p2pStatus !== "off") { state.p2pStatus = "off"; render(); }
-  };
-  dc.onerror = function () {
-    state.p2pStatus = "error";
-    render();
-  };
-  dc.onmessage = function (e) {
-    var remote;
-    try { remote = JSON.parse(e.data); } catch (err) { return; }
-    if (!remote) return;
-    var localUpdatedAt = state.dataUpdatedAt || 0;
-    if (remote.updatedAt && remote.updatedAt > localUpdatedAt) {
-      state.clips = remote.clips || [];
-      state.projects = remote.projects || [];
-      state.dataUpdatedAt = remote.updatedAt;
-      try {
-        localStorage.setItem("cbm-files-clips", JSON.stringify(state.clips));
-        localStorage.setItem("cbm-files-projects", JSON.stringify(state.projects));
-        localStorage.setItem("cbm-files-updated-at", String(state.dataUpdatedAt));
-      } catch (e) {}
-      try { window.storage && window.storage.set("clips", JSON.stringify(state.clips), false); } catch (e) {}
-      try { window.storage && window.storage.set("projects", JSON.stringify(state.projects), false); } catch (e) {}
-      render();
-    } else if (remote.updatedAt && remote.updatedAt < localUpdatedAt) {
-      // We're ahead of the peer — tell them so they catch up too.
-      p2pSendState();
-    }
-  };
+function clearSyncConfig() {
+  try { localStorage.removeItem("cbm-kv-sync-config"); } catch (e) {}
 }
-
-function p2pSendState() {
-  if (!p2pDC || p2pDC.readyState !== "open") return;
-  var payload = JSON.stringify({
-    clips: state.clips,
-    projects: state.projects,
-    updatedAt: state.dataUpdatedAt || Date.now()
-  });
-  try { p2pDC.send(payload); } catch (e) {}
+function workerEndpoint(cfg) {
+  return cfg.workerUrl.replace(/\/+$/, "") + "/data";
 }
-
-function scheduleP2PPush() {
-  if (!p2pDC || p2pDC.readyState !== "open") return;
-  if (p2pPushTimer) clearTimeout(p2pPushTimer);
-  p2pPushTimer = setTimeout(function () { p2pSendState(); }, 400);
+function workerHeaders(cfg, withContentType) {
+  var h = {};
+  if (withContentType) h["Content-Type"] = "application/json";
+  if (cfg.authKey) h["X-Auth-Key"] = cfg.authKey;
+  return h;
 }
-
-function p2pReset() {
-  if (p2pPC) { try { p2pPC.close(); } catch (e) {} }
-  p2pPC = null; p2pDC = null;
-  state.p2pMode = null;
-  state.p2pPhase = null;
-  state.p2pLocalCode = "";
-  state.p2pRemoteInput = "";
+function fetchRemote() {
+  var cfg = loadSyncConfig();
+  if (!cfg || !cfg.workerUrl) return Promise.resolve(null);
+  return fetch(workerEndpoint(cfg), { headers: workerHeaders(cfg, false) }).then(function (r) {
+    if (!r.ok) throw new Error("sync GET failed: " + r.status);
+    return r.json();
+  }).then(function (j) { return j && j.data ? j.data : null; });
 }
-
-function pairAsHost() {
-  p2pReset();
-  var pc = new RTCPeerConnection({ iceServers: P2P_STUN_SERVERS });
-  p2pPC = pc;
-  p2pWatchConnectionState(pc);
-  p2pAttachChannel(pc.createDataChannel("sync"));
-
-  state.p2pMode = "host";
-  state.p2pPhase = "creating";
-  state.p2pStatus = "connecting";
-  render();
-
-  pc.createOffer()
-    .then(function (offer) { return pc.setLocalDescription(offer); })
-    .then(function () { return waitIceGatheringComplete(pc); })
-    .then(function () {
-      state.p2pLocalCode = b64EncodeObj(pc.localDescription);
-      state.p2pPhase = "offer-ready";
-      render();
+function applyRemote(remote) {
+  if (!remote) return;
+  if (Array.isArray(remote.clips)) { state.clips = remote.clips; try { localStorage.setItem("cbm-files-clips", JSON.stringify(remote.clips)); } catch (e) {} }
+  if (Array.isArray(remote.projects)) { state.projects = remote.projects; try { localStorage.setItem("cbm-files-projects", JSON.stringify(remote.projects)); } catch (e) {} }
+  if (Array.isArray(remote.calendarEvents)) { state.calendarEvents = remote.calendarEvents; try { localStorage.setItem("cbm-files-events", JSON.stringify(remote.calendarEvents)); } catch (e) {} }
+}
+function pushAllNow() {
+  var cfg = loadSyncConfig();
+  if (!cfg || !cfg.workerUrl) return;
+  if (pushInFlight) { pushAgainAfter = true; return; }
+  pushInFlight = true;
+  var payload = { clips: state.clips, projects: state.projects, calendarEvents: state.calendarEvents, updatedAt: Date.now() };
+  fetch(workerEndpoint(cfg), { method: "PUT", headers: workerHeaders(cfg, true), body: JSON.stringify(payload) })
+    .then(function (r) {
+      pushInFlight = false;
+      if (!r.ok) throw new Error("sync PUT failed: " + r.status);
+      state.syncStatus = "synced"; render();
+      if (pushAgainAfter) { pushAgainAfter = false; pushAllNow(); }
     })
     .catch(function () {
-      state.p2pStatus = "error";
-      showToast("Couldn't create a pairing code.");
-      render();
+      pushInFlight = false;
+      state.syncStatus = "error"; render();
     });
 }
-
-function pairCompleteHost(answerCode) {
-  if (!p2pPC) return;
-  var desc;
-  try { desc = b64DecodeObj(answerCode); } catch (e) {
-    showToast("That code doesn't look right.");
-    return;
-  }
-  state.p2pStatus = "connecting";
-  render();
-  p2pPC.setRemoteDescription(desc).catch(function () {
-    state.p2pStatus = "error";
-    showToast("Couldn't complete pairing with that code.");
-    render();
+function schedulePush() {
+  var cfg = loadSyncConfig();
+  if (!cfg || !cfg.workerUrl) return;
+  if (pushTimer) clearTimeout(pushTimer);
+  pushTimer = setTimeout(pushAllNow, 500);
+}
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(function () {
+    fetchRemote().then(function (remote) {
+      applyRemote(remote);
+      state.syncStatus = "synced"; render();
+    }).catch(function () {
+      state.syncStatus = "error"; render();
+    });
+  }, 6000);
+}
+function initSync() {
+  var cfg = loadSyncConfig();
+  if (!cfg || !cfg.workerUrl) { state.syncStatus = "local"; return; }
+  state.syncStatus = "connecting"; render();
+  fetchRemote().then(function (remote) {
+    if (remote) { applyRemote(remote); }
+    else { pushAllNow(); } // nothing in KV yet — seed it with what's on this device
+    state.syncStatus = "synced"; render();
+    startPolling();
+  }).catch(function () {
+    state.syncStatus = "error"; render();
   });
 }
-
-function pairAsJoinerFromOffer(offerCode) {
-  var desc;
-  try { desc = b64DecodeObj(offerCode); } catch (e) {
-    showToast("That code doesn't look right.");
-    return;
-  }
-  p2pReset();
-  var pc = new RTCPeerConnection({ iceServers: P2P_STUN_SERVERS });
-  p2pPC = pc;
-  p2pWatchConnectionState(pc);
-  pc.ondatachannel = function (e) { p2pAttachChannel(e.channel); };
-
-  state.p2pMode = "join";
-  state.p2pPhase = "creating";
-  state.p2pStatus = "connecting";
+function handleConnectSync() {
+  var url = (state.syncWorkerUrl || "").trim();
+  if (!url) { showToast("Paste your Worker URL first."); return; }
+  if (!/^https:\/\//.test(url)) { showToast("The Worker URL should start with https://"); return; }
+  var cfg = { workerUrl: url, authKey: (state.syncAuthKey || "").trim() };
+  saveSyncConfig(cfg);
+  state.showSyncModal = false;
+  showToast("Connecting to sync…");
   render();
-
-  pc.setRemoteDescription(desc)
-    .then(function () { return pc.createAnswer(); })
-    .then(function (answer) { return pc.setLocalDescription(answer); })
-    .then(function () { return waitIceGatheringComplete(pc); })
-    .then(function () {
-      state.p2pLocalCode = b64EncodeObj(pc.localDescription);
-      state.p2pPhase = "answer-ready";
-      render();
-    })
-    .catch(function () {
-      state.p2pStatus = "error";
-      showToast("Couldn't join with that code.");
-      render();
-    });
+  initSync();
 }
-
-function stopPairing() {
-  p2pReset();
-  state.p2pStatus = "off";
-  showToast("This device is no longer paired.");
+function handleDisconnectSync() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  if (pushTimer) { clearTimeout(pushTimer); pushTimer = null; }
+  clearSyncConfig();
+  state.syncStatus = "local";
+  showToast("Disconnected — this device now stores data locally only.");
   render();
 }
-
 function commitProjectDraft() {
   if (!state.projectDraft) return;
   var draft = state.projectDraft;
@@ -1013,7 +879,7 @@ function handleCreateProject() {
   if (!name) return;
   var proj = {
     id: uid("proj"), name: name, client: f.client.trim() || "—", type: f.type, date: f.date,
-    hook: "", script: "", caption: "", hashtags: "", publishDate: "", gear: "", shotList: [],
+    hook: "", script: "", caption: "", hashtags: "", publishDate: "",
   };
   persistProjects([proj].concat(state.projects));
   state.showNewProjectModal = false;
@@ -1032,6 +898,7 @@ function handleDeleteProject(id) {
   if (!confirm(msg)) return;
   persistProjects(state.projects.filter(function (p2) { return p2.id !== id; }));
   persistClips(state.clips.map(function (c) { return c.project === id ? Object.assign({}, c, { project: "" }) : c; }));
+  persistCalendarEvents(state.calendarEvents.map(function (ev) { return ev.projectId === id ? Object.assign({}, ev, { projectId: "" }) : ev; }));
   state.selectedProjectId = null;
   state.projectDraft = null;
   showToast("Project deleted.");
@@ -1041,6 +908,29 @@ function resetToSample() {
   var seed = buildSeed();
   persistClips(seed.clips);
   persistProjects(seed.projects);
+  persistCalendarEvents([]);
+}
+function handleSaveEvent() {
+  var f = state.eventForm;
+  if (!f || !f.date) { showToast("Pick a date."); return; }
+  if (state.editingEventId) {
+    var id = state.editingEventId;
+    persistCalendarEvents(state.calendarEvents.map(function (ev) { return ev.id === id ? Object.assign({}, ev, f) : ev; }));
+    showToast("Event updated.");
+  } else {
+    var newEv = Object.assign({ id: uid("evt"), createdAt: Date.now() }, f);
+    persistCalendarEvents([newEv].concat(state.calendarEvents));
+    showToast((f.type === "shoot" ? "Shoot day" : "Upload day") + " added to the calendar.");
+  }
+  state.showEventModal = false; state.eventForm = null; state.editingEventId = null;
+  render();
+}
+function handleDeleteEvent(id) {
+  if (!confirm("Delete this calendar event?")) return;
+  persistCalendarEvents(state.calendarEvents.filter(function (ev) { return ev.id !== id; }));
+  state.showEventModal = false; state.eventForm = null; state.editingEventId = null;
+  showToast("Event deleted.");
+  render();
 }
 
 function showToast(msg) {
@@ -1060,7 +950,6 @@ function viewPredicate(view) {
     case "selected": return function (c) { return c.usage === "selected"; };
     case "used": return function (c) { return c.usage === "used"; };
     case "needs_attention": return function (c) { return !c.project || !c.description || !c.shotTypes.length || !c.exercise; };
-    case "not_backed_up": return function (c) { return !c.backup || c.backup === "not_backed_up"; };
     default: return function () { return true; };
   }
 }
@@ -1125,7 +1014,6 @@ function ClipCard(clip, project, selected, selectMode) {
         '<div class="clip-card-row1"><span class="clip-filename mono">' + esc(clip.filename) + '</span><span class="clip-date">' + fmtDateShort(clip.date) + '</span></div>' +
         '<div class="clip-card-row2"><span class="clip-project">' + esc(project ? project.name : "No project") + '</span></div>' +
         '<div class="clip-card-row3">' + Pill(EDITING_VAR[clip.editing], EDITING_LABEL[clip.editing]) + Pill(USAGE_VAR[clip.usage], USAGE_LABEL[clip.usage]) + '</div>' +
-        ((!clip.backup || clip.backup === "not_backed_up") ? '<div class="clip-card-row3">' + Pill(BACKUP_VAR.not_backed_up, "Not backed up") + '</div>' : "") +
       '</div>' +
     '</div>'
   );
@@ -1154,7 +1042,6 @@ function FilterPanelHtml() {
         '<label>Shot type<select data-bind="filters.shotType"><option value="">Any shot type</option>' + optionsHtml(SHOT_TYPES, f.shotType) + '</select></label>' +
         '<label>Usage<select data-bind="filters.usage"><option value="">Any usage</option>' + optionsHtml(USAGE_STATUSES, f.usage, USAGE_LABEL) + '</select></label>' +
         '<label>Editing<select data-bind="filters.editing"><option value="">Any editing status</option>' + optionsHtml(EDITING_STATUSES, f.editing, EDITING_LABEL) + '</select></label>' +
-        '<label>Backup<select data-bind="filters.backup"><option value="">Any backup status</option>' + optionsHtml(BACKUP_STATUSES, f.backup, BACKUP_LABEL) + '</select></label>' +
         '<label class="filter-full">Location<input data-bind="filters.location" value="' + esc(f.location) + '" placeholder="Any location" /></label>' +
       '</div>' +
       '<button class="btn btn-ghost filter-clear" data-action="clear-filters">Clear all filters</button>' +
@@ -1197,7 +1084,6 @@ function AddModalHtml() {
             '<div class="form-grid">' +
               '<label>Usage<select data-bind="addForm.usage">' + optionsHtml(USAGE_STATUSES, f.usage, USAGE_LABEL) + '</select></label>' +
               '<label>Editing<select data-bind="addForm.editing">' + optionsHtml(EDITING_STATUSES, f.editing, EDITING_LABEL) + '</select></label>' +
-              '<label>Backup<select data-bind="addForm.backup">' + optionsHtml(BACKUP_STATUSES, f.backup, BACKUP_LABEL) + '</select></label>' +
             '</div></section>' +
         '</div>' +
         '<div class="modal-foot"><button class="btn btn-ghost" data-action="close-add-modal">Cancel</button>' +
@@ -1238,7 +1124,6 @@ function DetailPanelHtml() {
           '<div class="detail-status-row">' +
             '<label class="status-select-label">Usage<select class="status-select" style="color:' + USAGE_VAR[d.usage] + '" data-bind="detailDraft.usage">' + optionsHtml(USAGE_STATUSES, d.usage, USAGE_LABEL) + '</select></label>' +
             '<label class="status-select-label">Editing<select class="status-select" style="color:' + EDITING_VAR[d.editing] + '" data-bind="detailDraft.editing">' + optionsHtml(EDITING_STATUSES, d.editing, EDITING_LABEL) + '</select></label>' +
-            '<label class="status-select-label">Backup<select class="status-select" style="color:' + BACKUP_VAR[d.backup || "not_backed_up"] + '" data-bind="detailDraft.backup">' + optionsHtml(BACKUP_STATUSES, d.backup || "not_backed_up", BACKUP_LABEL) + '</select></label>' +
           '</div>' +
           '<section class="form-section"><p class="form-section-title">Shot type</p>' +
             '<div class="tag-grid">' + SHOT_TYPES.map(function (s) { return '<button type="button" class="tag-chip ' + (d.shotTypes.indexOf(s) > -1 ? "is-active" : "") + '" data-action="toggle-shot" data-scope="detailDraft" data-shot="' + esc(s) + '">' + esc(s) + '</button>'; }).join("") + '</div></section>' +
@@ -1286,66 +1171,6 @@ function CommandPaletteHtml() {
   );
 }
 
-/* ================================ sync modal ================================ */
-
-function SyncModalHtml() {
-  var status = state.p2pStatus;
-  var statusLabel = status === "connected" ? "Live sync active" : status === "connecting" ? "Connecting…" : status === "error" ? "Connection error" : "Not paired";
-  var dotClass = status === "connected" ? "is-on" : status === "error" ? "is-error" : "is-off";
-  var body;
-
-  if (status === "connected") {
-    body =
-      '<section class="form-section"><p class="form-section-title">Paired</p>' +
-        '<p class="sync-note">Connected directly to your other device. Changes on either side push over instantly while both tabs stay open.</p>' +
-        '<button class="btn btn-ghost btn-danger-text" data-action="pair-stop">' + icon("cloud-off", 14) + ' Disconnect</button>' +
-      '</section>';
-  } else if (state.p2pMode === "host" && state.p2pPhase === "offer-ready") {
-    body =
-      '<section class="form-section"><p class="form-section-title">Step 1 — send this code to your other device</p>' +
-        '<div class="sync-code-box" style="align-items:flex-start"><textarea readonly rows="3" style="flex:1;resize:vertical;background:transparent;border:none;color:inherit;font-family:inherit">' + esc(state.p2pLocalCode) + '</textarea>' +
-          '<button class="icon-btn" title="Copy code" data-action="pair-copy-code">' + icon("copy", 15) + '</button></div>' +
-        '<p class="sync-note">Copy it however you like (message, email, AirDrop) and paste it into "Join a device" on the other one.</p>' +
-      '</section>' +
-      '<section class="form-section"><p class="form-section-title">Step 2 — paste the reply code from that device</p>' +
-        '<div class="sync-join-row"><input data-bind="p2pRemoteInput" value="' + esc(state.p2pRemoteInput) + '" placeholder="Paste reply code…" />' +
-          '<button class="btn btn-ghost" data-action="pair-complete">Connect</button></div>' +
-      '</section>' +
-      '<button class="btn btn-ghost btn-danger-text" data-action="pair-stop">' + icon("x", 14) + ' Cancel pairing</button>';
-  } else if (state.p2pMode === "join" && state.p2pPhase === "answer-ready") {
-    body =
-      '<section class="form-section"><p class="form-section-title">Step 2 — send this reply code back</p>' +
-        '<div class="sync-code-box" style="align-items:flex-start"><textarea readonly rows="3" style="flex:1;resize:vertical;background:transparent;border:none;color:inherit;font-family:inherit">' + esc(state.p2pLocalCode) + '</textarea>' +
-          '<button class="icon-btn" title="Copy code" data-action="pair-copy-code">' + icon("copy", 15) + '</button></div>' +
-        '<p class="sync-note">Paste this into the "paste the reply code" box on the device that sent you the first code. Once it does, this device connects automatically.</p>' +
-      '</section>';
-  } else {
-    body =
-      '<section class="form-section"><p class="form-section-title">Pair with another device</p>' +
-        '<p class="sync-note">Peer-to-peer, no server: you\u2019ll get a short code to send to your other device, and one back to paste here. Both tabs need to stay open while paired.</p>' +
-        '<button class="btn btn-primary" data-action="pair-host">' + icon("refresh-cw", 14) + ' Start pairing (get a code)</button>' +
-      '</section>' +
-      '<section class="form-section"><p class="form-section-title">Have a code from another device?</p>' +
-        '<div class="sync-join-row"><input data-bind="p2pRemoteInput" value="' + esc(state.p2pRemoteInput) + '" placeholder="Paste code…" />' +
-          '<button class="btn btn-ghost" data-action="pair-join">Join</button></div>' +
-      '</section>';
-  }
-
-  return (
-    '<div class="modal-overlay" data-action="close-sync-modal">' +
-      '<div class="modal sync-modal" data-action="noop">' +
-        '<div class="modal-head"><div><p class="modal-eyebrow">Cinematicbymo.com / Files</p><h2>Sync across devices</h2></div>' +
-          '<button class="icon-btn" data-action="close-sync-modal">' + icon("x", 16) + '</button></div>' +
-        '<div class="modal-body">' +
-          '<div class="sync-status-row"><span class="sync-dot ' + dotClass + '"></span><span>' + esc(statusLabel) + '</span></div>' +
-          body +
-          '<p class="sync-note">This connects the two browsers directly (WebRTC) — your data never touches a server. A public STUN service is used only to help the two devices find each other on the network; it never sees your data. Not a substitute for \u201CDownload full backup.\u201D</p>' +
-        '</div>' +
-      '</div>' +
-    '</div>'
-  );
-}
-
 /* ================================ dashboard ================================ */
 
 function DashboardHtml() {
@@ -1359,6 +1184,9 @@ function DashboardHtml() {
     projects: projects.length,
   };
   var recent = clips.slice().sort(function (a, b) { return b.createdAt - a.createdAt; }).slice(0, 6);
+  var todayStr = new Date().toISOString().slice(0, 10);
+  var upcoming = state.calendarEvents.filter(function (ev) { return ev.date >= todayStr; })
+    .sort(function (a, b) { return a.date < b.date ? -1 : 1; }).slice(0, 5);
   var cards = [
     { label: "Total clips", value: stats.total, nav: "all", color: null },
     { label: "Unedited", value: stats.unedited, nav: "unedited", color: "var(--rec)" },
@@ -1388,6 +1216,21 @@ function DashboardHtml() {
             '</button>';
           }).join("")) +
       '</div>' +
+      '<div class="section-head"><h2>Upcoming shoot & upload days</h2><button class="link-btn" data-action="navigate" data-view="calendar">Open calendar ' + icon("chevron-right", 14) + '</button></div>' +
+      '<div class="recent-list">' +
+        (upcoming.length === 0 ? EmptyState("calendar", "Nothing scheduled", "Add a shoot day or upload day to the content calendar.") :
+          upcoming.map(function (ev) {
+            var proj = findProject(ev.projectId);
+            return '<button class="recent-row" data-action="open-event" data-id="' + ev.id + '">' +
+              '<span class="recent-tally" style="background:' + EVENT_TYPE_VAR[ev.type] + '"></span>' +
+              '<span class="recent-filename mono">' + esc(ev.title || EVENT_TYPE_LABEL[ev.type]) + '</span>' +
+              '<span class="recent-project">' + esc(proj ? proj.name : "No project") + '</span>' +
+              '<span class="recent-date">' + fmtDateShort(ev.date) + '</span>' +
+              '<span class="recent-shot"></span>' +
+              Pill(EVENT_TYPE_VAR[ev.type], EVENT_TYPE_LABEL[ev.type]) +
+            '</button>';
+          }).join("")) +
+      '</div>' +
     '</div>'
   );
 }
@@ -1403,7 +1246,6 @@ function AllFilesHtml(view) {
   if (filters.shotType) filtered = filtered.filter(function (c) { return c.shotTypes.indexOf(filters.shotType) > -1; });
   if (filters.usage) filtered = filtered.filter(function (c) { return c.usage === filters.usage; });
   if (filters.editing) filtered = filtered.filter(function (c) { return c.editing === filters.editing; });
-  if (filters.backup) filtered = filtered.filter(function (c) { return (c.backup || "not_backed_up") === filters.backup; });
   if (filters.location) filtered = filtered.filter(function (c) { return (c.location || "").toLowerCase().indexOf(filters.location.toLowerCase()) > -1; });
   filtered = filtered.slice().sort(function (a, b) { return b.createdAt - a.createdAt; });
 
@@ -1442,12 +1284,195 @@ function BulkToolbarHtml(selCount) {
       '<div class="bulk-actions">' +
         '<select data-action="bulk-select" data-field="editing"><option value="" disabled selected>Set editing status…</option>' + EDITING_STATUSES.map(function (c) { return '<option value="' + c + '">' + EDITING_LABEL[c] + '</option>'; }).join("") + '</select>' +
         '<select data-action="bulk-select" data-field="usage"><option value="" disabled selected>Set usage…</option>' + USAGE_STATUSES.map(function (c) { return '<option value="' + c + '">' + USAGE_LABEL[c] + '</option>'; }).join("") + '</select>' +
-        '<select data-action="bulk-select" data-field="backup"><option value="" disabled selected>Set backup…</option>' + BACKUP_STATUSES.map(function (c) { return '<option value="' + c + '">' + BACKUP_LABEL[c] + '</option>'; }).join("") + '</select>' +
         '<button class="btn btn-ghost btn-sm" data-action="bulk-archive">' + icon("archive", 13) + ' Archive</button>' +
         '<button class="btn btn-ghost btn-sm btn-danger-text" data-action="bulk-delete">' + icon("trash", 13) + ' Delete</button>' +
         '<button class="icon-btn" data-action="clear-selection">' + icon("x", 14) + '</button>' +
       '</div></div>'
   );
+}
+
+/* ================================ content calendar ================================ */
+
+function shiftMonth(monthStr, delta) {
+  var parts = monthStr.split("-");
+  var d = new Date(+parts[0], +parts[1] - 1 + delta, 1);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+}
+function eventsByDate(monthStr) {
+  var map = {};
+  state.calendarEvents.forEach(function (ev) {
+    if (!ev.date) return;
+    (map[ev.date] = map[ev.date] || []).push(ev);
+  });
+  return map;
+}
+function CalendarHtml() {
+  var monthStr = state.calendarMonth;
+  var parts = monthStr.split("-");
+  var year = +parts[0], monthIdx = +parts[1] - 1;
+  var monthLabel = new Date(year, monthIdx, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  var firstOfMonth = new Date(year, monthIdx, 1);
+  var startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday = 0
+  var daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
+  var gridStart = new Date(year, monthIdx, 1 - startOffset);
+  var todayStr = new Date().toISOString().slice(0, 10);
+  var byDate = eventsByDate(monthStr);
+
+  var cells = "";
+  for (var i = 0; i < 42; i++) {
+    var d = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+    var dateStr = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    var isOutside = d.getMonth() !== monthIdx;
+    var dayEvents = byDate[dateStr] || [];
+    cells += '<div class="cal-daycell ' + (isOutside ? "is-outside" : "") + ' ' + (dateStr === todayStr ? "is-today" : "") + '">' +
+      '<span class="cal-daynum">' + d.getDate() + '</span>' +
+      '<button class="cal-day-add" data-action="cal-add-event" data-date="' + dateStr + '" title="Add event">' + icon("plus", 13) + '</button>' +
+      '<div class="cal-events">' + dayEvents.map(function (ev) {
+        var proj = findProject(ev.projectId);
+        var label = (ev.title ? ev.title : (proj ? proj.name : EVENT_TYPE_LABEL[ev.type]));
+        return '<button class="cal-event-pill" style="--evt-color:' + EVENT_TYPE_VAR[ev.type] + '" data-action="open-event" data-id="' + ev.id + '">' +
+          '<span class="evt-dot"></span><span class="evt-label">' + esc(label) + '</span></button>';
+      }).join("") + '</div>' +
+    '</div>';
+  }
+
+  return (
+    '<div class="view-pad">' +
+      '<div class="view-head"><div><p class="brand-eyebrow">Cinematicbymo.com / Files</p><h1>Content calendar</h1><p class="dash-tagline">Plan shoot days and upload days across your projects.</p></div>' +
+        '<div class="view-head-actions"><button class="btn btn-primary" data-action="cal-add-event" data-date="' + todayStr + '">' + icon("plus", 14) + ' Add event</button></div>' +
+      '</div>' +
+      '<div class="cal-toolbar">' +
+        '<div class="cal-nav">' +
+          '<button class="icon-btn" data-action="cal-prev-month">' + icon("chevron-left", 16) + '</button>' +
+          '<span class="cal-month-label">' + monthLabel + '</span>' +
+          '<button class="icon-btn" data-action="cal-next-month">' + icon("chevron-right", 16) + '</button>' +
+          '<button class="btn btn-ghost btn-sm" data-action="cal-today">Today</button>' +
+        '</div>' +
+        '<div class="cal-legend">' +
+          '<span class="cal-legend-item"><span class="cal-legend-dot" style="background:' + EVENT_TYPE_VAR.shoot + '"></span>Shoot day</span>' +
+          '<span class="cal-legend-item"><span class="cal-legend-dot" style="background:' + EVENT_TYPE_VAR.upload + '"></span>Upload day</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cal-grid">' + DOW_LABELS.map(function (l) { return '<div class="cal-dow">' + l + '</div>'; }).join("") + cells + '</div>' +
+    '</div>'
+  );
+}
+
+function EventModalHtml() {
+  var f = state.eventForm;
+  var isEdit = !!state.editingEventId;
+  return (
+    '<div class="modal-overlay" data-action="close-event-modal">' +
+      '<div class="modal" data-action="noop">' +
+        '<div class="modal-head"><div><p class="modal-eyebrow">Cinematicbymo.com / Files</p><h2>' + (isEdit ? "Edit event" : "Add calendar event") + '</h2></div>' +
+          '<button class="icon-btn" data-action="close-event-modal">' + icon("x", 16) + '</button></div>' +
+        '<div class="modal-body">' +
+          '<section class="form-section"><div class="form-grid">' +
+            '<label>Date<input type="date" data-bind="eventForm.date" value="' + esc(f.date) + '" /></label>' +
+            '<label>Type<select data-bind="eventForm.type">' + optionsHtml(EVENT_TYPES, f.type, EVENT_TYPE_LABEL) + '</select></label>' +
+            '<label class="span-2">Project <span class="optional">Optional</span><select data-bind="eventForm.projectId">' +
+              '<option value="">No project</option>' + optionsHtml(state.projects.map(function (p) { return p.id; }), f.projectId, (function () { var m = {}; state.projects.forEach(function (p) { m[p.id] = p.name; }); return m; })()) +
+            '</select></label>' +
+            '<label class="span-2">Title <span class="optional">Optional</span><input data-bind="eventForm.title" value="' + esc(f.title) + '" placeholder="e.g. Sunrise gym shoot" /></label>' +
+            '<label class="span-2">Notes <span class="optional">Optional</span><textarea data-bind="eventForm.notes" placeholder="Location, call time, what to bring…">' + esc(f.notes) + '</textarea></label>' +
+          '</div></section>' +
+        '</div>' +
+        '<div class="modal-foot">' +
+          (isEdit ? '<button class="btn btn-ghost btn-danger-text" data-action="delete-event" data-id="' + state.editingEventId + '">' + icon("trash", 13) + ' Delete</button>' : '<span></span>') +
+          '<span style="flex:1"></span>' +
+          '<button class="btn btn-ghost" data-action="close-event-modal">Cancel</button>' +
+          '<button class="btn btn-primary" data-action="submit-event-modal" ' + (f.date ? "" : "disabled") + '>' + (isEdit ? "Save changes" : "Add to calendar") + '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ================================ sync setup modal ================================ */
+
+var WORKER_SNIPPET = "export default {\n" +
+  "  async fetch(request, env) {\n" +
+  "    const cors = {\n" +
+  "      \"Access-Control-Allow-Origin\": \"*\",\n" +
+  "      \"Access-Control-Allow-Methods\": \"GET,PUT,OPTIONS\",\n" +
+  "      \"Access-Control-Allow-Headers\": \"Content-Type,X-Auth-Key\",\n" +
+  "    };\n" +
+  "    if (request.method === \"OPTIONS\") return new Response(null, { headers: cors });\n" +
+  "\n" +
+  "    const url = new URL(request.url);\n" +
+  "    if (url.pathname !== \"/data\") {\n" +
+  "      return new Response(\"Not found\", { status: 404, headers: cors });\n" +
+  "    }\n" +
+  "    if (env.AUTH_KEY) {\n" +
+  "      const key = request.headers.get(\"X-Auth-Key\");\n" +
+  "      if (key !== env.AUTH_KEY) {\n" +
+  "        return new Response(\"Unauthorized\", { status: 401, headers: cors });\n" +
+  "      }\n" +
+  "    }\n" +
+  "\n" +
+  "    if (request.method === \"GET\") {\n" +
+  "      const raw = await env.FILES_KV.get(\"state\");\n" +
+  "      return new Response(JSON.stringify({ data: raw ? JSON.parse(raw) : null }), {\n" +
+  "        headers: { \"Content-Type\": \"application/json\", ...cors },\n" +
+  "      });\n" +
+  "    }\n" +
+  "\n" +
+  "    if (request.method === \"PUT\") {\n" +
+  "      const body = await request.text();\n" +
+  "      await env.FILES_KV.put(\"state\", body);\n" +
+  "      return new Response(JSON.stringify({ ok: true }), {\n" +
+  "        headers: { \"Content-Type\": \"application/json\", ...cors },\n" +
+  "      });\n" +
+  "    }\n" +
+  "\n" +
+  "    return new Response(\"Method not allowed\", { status: 405, headers: cors });\n" +
+  "  },\n" +
+  "};";
+
+function SyncModalHtml() {
+  var connected = !!loadSyncConfig();
+  return (
+    '<div class="modal-overlay" data-action="close-sync-modal">' +
+      '<div class="modal sync-modal" data-action="noop">' +
+        '<div class="modal-head"><div><p class="modal-eyebrow">Cinematicbymo.com / Files</p><h2>Sync across devices (Cloudflare KV)</h2></div>' +
+          '<button class="icon-btn" data-action="close-sync-modal">' + icon("x", 16) + '</button></div>' +
+        '<div class="modal-body sync-modal-body">' +
+          (connected ?
+            '<div class="sync-connected-badge">' + icon(state.syncStatus === "synced" ? "cloud" : "loader", 14) + ' ' + syncStatusLabel() + '</div>' +
+            '<p>This device is connected to your Cloudflare KV store through the Worker below. Files, projects and the calendar now sync automatically to every device connected to the same Worker (checked every few seconds, and instantly on every save).</p>' +
+            '<button class="btn btn-ghost btn-danger-text" data-action="disconnect-sync">' + icon("cloud-off", 13) + ' Disconnect this device</button>'
+          :
+            '<p>By default this app only saves data in this one browser. Cloudflare KV is a real cloud key-value database, but a static page can\'t write to it directly without exposing your account credentials — so a tiny free "Worker" sits in between. It\'s a one-time, ~5 minute setup:</p>' +
+            '<ol>' +
+              '<li>Go to <code>dash.cloudflare.com</code> and sign in (or make a free account).</li>' +
+              '<li>In the sidebar, open <strong>Workers &amp; Pages → Create</strong>, then <strong>Create Worker</strong>. Give it any name (e.g. <code>cbm-files-sync</code>) and click <strong>Deploy</strong>.</li>' +
+              '<li>Click <strong>Edit code</strong>, delete everything in the editor, paste in the code below, then click <strong>Deploy</strong> again to save it.</li>' +
+              '<li>Go to the Worker\'s <strong>Settings → Bindings → Add binding → KV Namespace</strong>. Set the variable name to exactly <code>FILES_KV</code>, then click <strong>Create new</strong> to make a namespace (any name), select it, and save.</li>' +
+              '<li>(Recommended) Still in Settings, add an <strong>Environment Variable</strong> named <code>AUTH_KEY</code>, type "Secret", and set it to a password you make up. This stops anyone else from reading or overwriting your data.</li>' +
+              '<li>Copy the Worker\'s URL from the top of its overview page (looks like <code>https://cbm-files-sync.yourname.workers.dev</code>) and paste it below, along with the password you set as AUTH_KEY. Click <strong>Connect</strong>.</li>' +
+              '<li>Repeat only this last step — pasting the same Worker URL and password — on every other device, so they all point at the same store.</li>' +
+            '</ol>' +
+            '<label>Worker code — paste this into "Edit code"<textarea readonly class="mono" onclick="this.select()">' + esc(WORKER_SNIPPET) + '</textarea></label>' +
+            '<div class="form-grid">' +
+              '<label class="span-2">Worker URL<input data-bind="syncWorkerUrl" value="' + esc(state.syncWorkerUrl) + '" placeholder="https://cbm-files-sync.yourname.workers.dev" /></label>' +
+              '<label class="span-2">AUTH_KEY password <span class="optional">Recommended</span><input data-bind="syncAuthKey" value="' + esc(state.syncAuthKey) + '" placeholder="Same value you set as AUTH_KEY in the Worker" /></label>' +
+            '</div>'
+          ) +
+        '</div>' +
+        '<div class="modal-foot"><button class="btn btn-ghost" data-action="close-sync-modal">Close</button>' +
+          (connected ? "" : '<button class="btn btn-primary" data-action="connect-sync">Connect</button>') +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+function syncStatusLabel() {
+  switch (state.syncStatus) {
+    case "synced": return "Synced — changes save to all your devices.";
+    case "connecting": return "Connecting…";
+    case "error": return "Connection error — check the Worker URL/password and your internet connection.";
+    default: return "Local only — not synced to other devices.";
+  }
 }
 
 /* ================================ projects ================================ */
@@ -1502,83 +1527,6 @@ function NewProjectModalHtml() {
   );
 }
 
-function CalendarHtml() {
-  var monthStr = state.calendarMonth; // "YYYY-MM"
-  var parts = monthStr.split("-").map(Number);
-  var year = parts[0], month = parts[1] - 1;
-  var firstOfMonth = new Date(year, month, 1);
-  var startWeekday = firstOfMonth.getDay(); // 0=Sun
-  var daysInMonth = new Date(year, month + 1, 0).getDate();
-  var todayStr = new Date().toISOString().slice(0, 10);
-
-  var eventsByDate = {};
-  state.projects.forEach(function (p) {
-    if (p.date) {
-      (eventsByDate[p.date] = eventsByDate[p.date] || []).push({ kind: "shoot", project: p });
-    }
-    if (p.publishDate) {
-      (eventsByDate[p.publishDate] = eventsByDate[p.publishDate] || []).push({ kind: "publish", project: p });
-    }
-  });
-
-  var monthLabel = firstOfMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-  var cells = "";
-  for (var i = 0; i < startWeekday; i++) cells += '<div class="cal-cell cal-cell-empty"></div>';
-  for (var day = 1; day <= daysInMonth; day++) {
-    var dateStr = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(day).padStart(2, "0");
-    var events = eventsByDate[dateStr] || [];
-    var isToday = dateStr === todayStr;
-    cells += '<div class="cal-cell ' + (isToday ? "is-today" : "") + '">' +
-      '<div class="cal-cell-head"><span class="cal-daynum">' + day + '</span>' +
-        '<button type="button" class="cal-add-btn" data-action="new-project-on-date" data-date="' + dateStr + '" title="New project on this date">' + icon("plus", 12) + '</button>' +
-      '</div>' +
-      '<div class="cal-events">' +
-        events.slice(0, 3).map(function (ev) {
-          var cls = ev.kind === "shoot" ? "cal-event-shoot" : "cal-event-publish";
-          var label = (ev.kind === "shoot" ? "Shoot: " : "Publish: ") + ev.project.name;
-          return '<button type="button" class="cal-event ' + cls + '" data-action="open-project" data-id="' + ev.project.id + '" title="' + esc(label) + '">' + esc(label) + '</button>';
-        }).join("") +
-        (events.length > 3 ? '<span class="cal-more">+' + (events.length - 3) + ' more</span>' : "") +
-      '</div>' +
-    '</div>';
-  }
-
-  var upcoming = [];
-  state.projects.forEach(function (p) {
-    if (p.publishDate && p.publishDate >= todayStr) upcoming.push({ kind: "publish", date: p.publishDate, project: p });
-    if (p.date && p.date >= todayStr) upcoming.push({ kind: "shoot", date: p.date, project: p });
-  });
-  upcoming.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
-  upcoming = upcoming.slice(0, 6);
-
-  return (
-    '<div class="view-pad">' +
-      '<div class="view-head"><div><p class="brand-eyebrow">Cinematicbymo.com / Files</p><h1>Content calendar</h1><p class="dash-tagline">Shoot dates and publish dates across every project.</p></div>' +
-        '<div class="view-head-actions">' +
-          '<button class="btn btn-ghost" data-action="calendar-prev">' + icon("arrow-left", 14) + '</button>' +
-          '<button class="btn btn-ghost" data-action="calendar-today">Today</button>' +
-          '<button class="btn btn-ghost" data-action="calendar-next">' + icon("chevron-right", 14) + '</button>' +
-        '</div></div>' +
-      '<h2 class="cal-month-label">' + monthLabel + '</h2>' +
-      '<div class="cal-grid">' +
-        ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(function (d) { return '<div class="cal-weekday">' + d + '</div>'; }).join("") +
-        cells +
-      '</div>' +
-      '<div class="cal-legend"><span class="cal-legend-item"><span class="cal-legend-dot cal-legend-shoot"></span>Shoot day</span><span class="cal-legend-item"><span class="cal-legend-dot cal-legend-publish"></span>Publish day</span></div>' +
-      (upcoming.length ? '<div class="section-head"><h2>Coming up</h2></div><div class="recent-list">' +
-        upcoming.map(function (u) {
-          return '<button class="recent-row" style="grid-template-columns:5px 1fr 110px auto" data-action="open-project" data-id="' + u.project.id + '">' +
-            '<span class="recent-tally" style="background:' + (u.kind === "shoot" ? "var(--rec)" : "var(--green)") + '"></span>' +
-            '<span class="recent-filename">' + (u.kind === "shoot" ? "Shoot" : "Publish") + ' \u2014 ' + esc(u.project.name) + '</span>' +
-            '<span class="recent-date">' + fmtDate(u.date) + '</span>' +
-            '<span></span>' +
-          '</button>';
-        }).join("") +
-      '</div>' : "") +
-    '</div>'
-  );
-}
-
 function ProjectDetailHtml(project) {
   var clips = state.clips;
   var d = state.projectDraft || projectDraftFrom(project);
@@ -1608,11 +1556,9 @@ function ProjectDetailHtml(project) {
       '</div>' +
       '<div class="project-tabs">' +
         '<button class="project-tab ' + (tab === "clips" ? "is-active" : "") + '" data-action="project-tab" data-tab="clips">Clips</button>' +
-        '<button class="project-tab ' + (tab === "shotlist" ? "is-active" : "") + '" data-action="project-tab" data-tab="shotlist">Shot list' + (d.shotList && d.shotList.length ? ' <span class="tab-count">' + d.shotList.filter(function (s) { return s.status !== "shot"; }).length + '</span>' : "") + '</button>' +
         '<button class="project-tab ' + (tab === "script" ? "is-active" : "") + '" data-action="project-tab" data-tab="script">Script &amp; caption</button>' +
       '</div>' +
       (tab === "script" ? ScriptFormHtml(d, project) :
-        tab === "shotlist" ? ShotListHtml(d) :
         (projClips.length === 0 ? EmptyState("film", "No clips yet", "Add a file to this project to get started.") :
           '<div class="clip-grid">' + projClips.map(function (c) { return ClipCard(c, project, !!state.selectedIds[c.id], state.selectMode); }).join("") + '</div>')) +
       (tab === "clips" && selCount > 0 ? BulkToolbarHtml(selCount) : "") +
@@ -1642,34 +1588,7 @@ function ScriptFormHtml(d, project) {
       '</section>' +
       '<section class="form-section"><p class="form-section-title">Hashtags</p>' +
         '<label><input data-bind="projectDraft.hashtags" value="' + esc(d.hashtags) + '" placeholder="#gymtok #cinematography #fitness" /></label>' +
-      '</section>' +
-      '<section class="form-section"><p class="form-section-title">Gear &amp; equipment <span class="optional">Camera bodies, lenses, gimbal, audio, lighting…</span></p>' +
-        '<label><textarea rows="3" data-bind="projectDraft.gear" placeholder="A7C III + 24-70mm f/2.8&#10;DJI RS3 gimbal&#10;Rode Wireless GO II&#10;2x ND filters, reflector">' + esc(d.gear) + '</textarea></label>' +
         '<p class="script-hint">Changes here save automatically to this project.</p>' +
-      '</section>' +
-    '</div>'
-  );
-}
-
-function ShotListHtml(d) {
-  var list = d.shotList || [];
-  var shotCount = list.filter(function (s) { return s.status === "shot"; }).length;
-  return (
-    '<div class="script-form">' +
-      '<section class="form-section">' +
-        '<p class="form-section-title">Pre-production shot list <span class="optional">' + shotCount + ' of ' + list.length + ' captured</span></p>' +
-        (list.length === 0 ? '<p class="script-hint" style="margin:0 0 12px">Plan the shots you need before you get to set — check them off as you capture them.</p>' : '') +
-        '<div class="shotlist">' +
-          list.map(function (s, idx) {
-            return '<div class="shotlist-row ' + (s.status === "shot" ? "is-shot" : "") + '">' +
-              '<button type="button" class="icon-btn shotlist-check" data-action="shotlist-toggle" data-idx="' + idx + '" title="Mark as captured">' + icon(s.status === "shot" ? "check-circle" : "circle", 17) + '</button>' +
-              '<input class="shotlist-desc" data-bind="projectDraft.shotList.' + idx + '.description" value="' + esc(s.description) + '" placeholder="e.g. Wide establishing shot of gym floor at sunrise" />' +
-              '<select class="shotlist-type" data-bind="projectDraft.shotList.' + idx + '.shotType">' + optionsHtml(SHOT_TYPES, s.shotType) + '</select>' +
-              '<button type="button" class="icon-btn icon-btn-danger" data-action="shotlist-remove" data-idx="' + idx + '" title="Remove shot">' + icon("trash", 14) + '</button>' +
-            '</div>';
-          }).join("") +
-        '</div>' +
-        '<button type="button" class="btn btn-ghost btn-sm" data-action="shotlist-add" style="margin-top:10px">' + icon("plus", 13) + ' Add shot</button>' +
       '</section>' +
     '</div>'
   );
@@ -1691,12 +1610,13 @@ function SidebarHtml() {
       '<div class="sidebar-foot">' +
         '<button class="sidebar-item" data-action="toggle-settings">' + icon("users", 15) + ' Editor workspace</button>' +
         (state.settingsOpen ? '<div class="settings-drop">' +
-          '<button data-action="open-sync-modal">' + icon("refresh-cw", 13) + ' Sync devices' + (state.p2pStatus !== "off" ? ' <span class="sync-dot ' + (state.p2pStatus === "connected" ? "is-on" : state.p2pStatus === "error" ? "is-error" : "is-off") + '" style="margin-left:auto"></span>' : "") + '</button>' +
+          '<button data-action="open-sync-modal">' + icon(state.syncStatus === "synced" ? "cloud" : "cloud-off", 13) + ' Sync across devices</button>' +
           '<button data-action="export-backup">' + icon("download", 13) + ' Download full backup</button>' +
           '<button data-action="trigger-import-backup">' + icon("upload", 13) + ' Restore from backup</button>' +
           '<input id="backupFileInput" type="file" accept="application/json,.json" style="display:none" />' +
           '<button data-action="restore-sample">' + icon("rotate-ccw", 13) + ' Restore sample data</button>' +
         '</div>' : "") +
+        '<div class="sync-status sync-' + state.syncStatus + '">' + icon(state.syncStatus === "synced" ? "cloud" : "cloud-off", 12) + ' ' + esc(syncStatusLabel()) + '</div>' +
       '</div>' +
     '</aside>'
   );
@@ -1738,6 +1658,7 @@ function buildAppHtml() {
   if (state.showNewProjectModal) overlays += NewProjectModalHtml();
   if (state.selectedClipId && state.detailDraft) overlays += DetailPanelHtml();
   if (state.showPalette) overlays += CommandPaletteHtml();
+  if (state.showEventModal && state.eventForm) overlays += EventModalHtml();
   if (state.showSyncModal) overlays += SyncModalHtml();
 
   return (
@@ -1807,7 +1728,7 @@ function handleCreate() {
     id: uid("clip"), filename: filename, date: f.date, project: projectId || "",
     client: f.client || (proj ? proj.client : ""), location: f.location, exercise: f.exercise,
     description: f.description, shotTypes: f.shotTypes, usage: f.usage, editing: f.editing,
-    backup: f.backup || "not_backed_up", notes: f.notes, createdAt: Date.now(),
+    notes: f.notes, createdAt: Date.now(),
   };
   persistClips([clip].concat(state.clips));
   state.showAddModal = false;
@@ -1866,11 +1787,11 @@ function handleBulk(action, value) {
 
 function handleExport(scopeClips) {
   var rows = scopeClips || state.clips;
-  var headers = ["filename", "date", "project", "client", "location", "exercise", "description", "shot_type", "usage_status", "editing_status", "backup_status", "notes"];
+  var headers = ["filename", "date", "project", "client", "location", "exercise", "description", "shot_type", "usage_status", "editing_status", "notes"];
   var lines = [headers.join(",")];
   rows.forEach(function (c) {
     var proj = findProject(c.project);
-    lines.push([c.filename, c.date, proj ? proj.name : "", c.client, c.location, c.exercise, c.description, c.shotTypes.join(" | "), c.usage, c.editing, c.backup || "not_backed_up", c.notes].map(csvEscape).join(","));
+    lines.push([c.filename, c.date, proj ? proj.name : "", c.client, c.location, c.exercise, c.description, c.shotTypes.join(" | "), c.usage, c.editing, c.notes].map(csvEscape).join(","));
   });
   downloadText("files-export.csv", lines.join("\n"));
   showToast("Exported metadata to CSV.");
@@ -1909,7 +1830,6 @@ function handleImportFile(file) {
         shotTypes: r.shot_type ? r.shot_type.split("|").map(function (s) { return s.trim(); }).filter(Boolean) : [],
         usage: USAGE_STATUSES.indexOf(r.usage_status) > -1 ? r.usage_status : "no_usage",
         editing: EDITING_STATUSES.indexOf(r.editing_status) > -1 ? r.editing_status : "unedited",
-        backup: BACKUP_STATUSES.indexOf(r.backup_status) > -1 ? r.backup_status : "not_backed_up",
         notes: r.notes || "", createdAt: Date.now(),
       };
     });
@@ -1927,6 +1847,7 @@ function handleExportBackup() {
     exportedAt: new Date().toISOString(),
     clips: state.clips,
     projects: state.projects,
+    calendarEvents: state.calendarEvents,
   };
   var stamp = new Date().toISOString().slice(0, 10);
   downloadText("files-backup-" + stamp + ".json", JSON.stringify(payload, null, 2), "application/json");
@@ -1939,13 +1860,13 @@ function handleImportBackupFile(file) {
   reader.onload = function () {
     try {
       var data = JSON.parse(String(reader.result));
-      var clips = data.clips, projects = data.projects;
+      var clips = data.clips, projects = data.projects, events = Array.isArray(data.calendarEvents) ? data.calendarEvents : [];
       if (!Array.isArray(clips) || !Array.isArray(projects)) {
         showToast("That file doesn't look like a Files backup.");
         return;
       }
-      persistAll(clips, projects);
-      state.clips = clips; state.projects = projects;
+      persistAll(clips, projects, events);
+      state.clips = clips; state.projects = projects; state.calendarEvents = events;
       showToast("Backup restored — " + clips.length + " files, " + projects.length + " projects.");
       render();
     } catch (e) {
@@ -2048,7 +1969,6 @@ function handleAction(action, el, e) {
       if (f.shotType) clips = clips.filter(function (c) { return c.shotTypes.indexOf(f.shotType) > -1; });
       if (f.usage) clips = clips.filter(function (c) { return c.usage === f.usage; });
       if (f.editing) clips = clips.filter(function (c) { return c.editing === f.editing; });
-      if (f.backup) clips = clips.filter(function (c) { return (c.backup || "not_backed_up") === f.backup; });
       if (f.location) clips = clips.filter(function (c) { return (c.location || "").toLowerCase().indexOf(f.location.toLowerCase()) > -1; });
       var ids = {}; clips.forEach(function (c) { ids[c.id] = true; });
       state.selectedIds = ids;
@@ -2062,7 +1982,7 @@ function handleAction(action, el, e) {
       state.showFiltersPopover = !state.showFiltersPopover; render();
       break;
     case "clear-filters":
-      state.filters = { project: "", client: "", exercise: "", shotType: "", usage: "", editing: "", location: "", backup: "" };
+      state.filters = { project: "", client: "", exercise: "", shotType: "", usage: "", editing: "", location: "" };
       render();
       break;
     case "export-csv":
@@ -2104,27 +2024,6 @@ function handleAction(action, el, e) {
       state.projectTab = el.getAttribute("data-tab");
       render();
       break;
-    case "shotlist-add":
-      if (!state.projectDraft.shotList) state.projectDraft.shotList = [];
-      state.projectDraft.shotList.push({ description: "", shotType: SHOT_TYPES[0], status: "planned" });
-      commitProjectDraft();
-      render();
-      break;
-    case "shotlist-remove": {
-      var rmIdx = parseInt(el.getAttribute("data-idx"), 10);
-      state.projectDraft.shotList.splice(rmIdx, 1);
-      commitProjectDraft();
-      render();
-      break;
-    }
-    case "shotlist-toggle": {
-      var tgIdx = parseInt(el.getAttribute("data-idx"), 10);
-      var item = state.projectDraft.shotList[tgIdx];
-      item.status = item.status === "shot" ? "planned" : "shot";
-      commitProjectDraft();
-      render();
-      break;
-    }
     case "open-new-project-modal":
       state.showNewProjectModal = true; state.newProjectForm = defaultNewProjectForm();
       render();
@@ -2139,26 +2038,6 @@ function handleAction(action, el, e) {
     case "delete-project":
       handleDeleteProject(el.getAttribute("data-id"));
       break;
-    case "calendar-prev":
-    case "calendar-next": {
-      var cparts = state.calendarMonth.split("-").map(Number);
-      var cd = new Date(cparts[0], cparts[1] - 1, 1);
-      cd.setMonth(cd.getMonth() + (action === "calendar-next" ? 1 : -1));
-      state.calendarMonth = cd.getFullYear() + "-" + String(cd.getMonth() + 1).padStart(2, "0");
-      render();
-      break;
-    }
-    case "calendar-today":
-      state.calendarMonth = new Date().toISOString().slice(0, 7);
-      render();
-      break;
-    case "new-project-on-date":
-      state.showNewProjectModal = true;
-      state.newProjectForm = defaultNewProjectForm();
-      state.newProjectForm.date = el.getAttribute("data-date");
-      render();
-      setTimeout(function () { var f = document.getElementById("np-name"); if (f) f.focus(); }, 0);
-      break;
     case "open-palette":
       state.showPalette = true; state.paletteQuery = "";
       render();
@@ -2169,30 +2048,6 @@ function handleAction(action, el, e) {
       break;
     case "toggle-settings":
       state.settingsOpen = !state.settingsOpen; render();
-      break;
-    case "open-sync-modal":
-      state.showSyncModal = true; state.settingsOpen = false; state.p2pRemoteInput = "";
-      render();
-      break;
-    case "close-sync-modal":
-      state.showSyncModal = false; render();
-      break;
-    case "pair-host":
-      pairAsHost();
-      break;
-    case "pair-join":
-      pairAsJoinerFromOffer(state.p2pRemoteInput);
-      break;
-    case "pair-complete":
-      pairCompleteHost(state.p2pRemoteInput);
-      break;
-    case "pair-stop":
-      if (state.p2pStatus !== "connected" || confirm("Disconnect this device from its paired device?")) stopPairing();
-      break;
-    case "pair-copy-code":
-      if (state.p2pLocalCode && navigator.clipboard) {
-        navigator.clipboard.writeText(state.p2pLocalCode).then(function () { showToast("Code copied."); });
-      }
       break;
     case "export-backup":
       handleExportBackup();
@@ -2215,6 +2070,54 @@ function handleAction(action, el, e) {
       break;
     case "close-mobile-sidebar":
       state.mobileSidebarOpen = false; render();
+      break;
+    case "cal-prev-month":
+      state.calendarMonth = shiftMonth(state.calendarMonth, -1); render();
+      break;
+    case "cal-next-month":
+      state.calendarMonth = shiftMonth(state.calendarMonth, 1); render();
+      break;
+    case "cal-today":
+      state.calendarMonth = new Date().toISOString().slice(0, 7); render();
+      break;
+    case "cal-add-event":
+      state.eventForm = defaultEventForm(el.getAttribute("data-date"));
+      state.editingEventId = null;
+      state.showEventModal = true;
+      render();
+      break;
+    case "open-event": {
+      var evId = el.getAttribute("data-id");
+      var ev = state.calendarEvents.filter(function (x) { return x.id === evId; })[0];
+      if (!ev) return;
+      state.eventForm = { date: ev.date, type: ev.type, projectId: ev.projectId || "", title: ev.title || "", notes: ev.notes || "" };
+      state.editingEventId = evId;
+      state.showEventModal = true;
+      render();
+      break;
+    }
+    case "close-event-modal":
+      state.showEventModal = false; state.eventForm = null; state.editingEventId = null;
+      render();
+      break;
+    case "submit-event-modal":
+      handleSaveEvent();
+      break;
+    case "delete-event":
+      handleDeleteEvent(el.getAttribute("data-id"));
+      break;
+    case "open-sync-modal":
+      state.syncWorkerUrl = ""; state.syncAuthKey = ""; state.showSyncModal = true; state.settingsOpen = false;
+      render();
+      break;
+    case "close-sync-modal":
+      state.showSyncModal = false; render();
+      break;
+    case "connect-sync":
+      handleConnectSync();
+      break;
+    case "disconnect-sync":
+      handleDisconnectSync();
       break;
   }
 }
@@ -2278,7 +2181,6 @@ document.addEventListener("keydown", function (e) {
   }
   if (e.key === "Escape") {
     if (state.showPalette) { state.showPalette = false; render(); }
-    else if (state.showSyncModal) { state.showSyncModal = false; render(); }
     else if (state.showAddModal) { state.showAddModal = false; render(); }
     else if (state.selectedClipId) { commitDetailDraft(); state.selectedClipId = null; state.detailDraft = null; render(); }
     else if (state.settingsOpen) { state.settingsOpen = false; render(); }
