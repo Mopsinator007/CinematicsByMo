@@ -1,0 +1,10 @@
+name = "cinematicsbymo"
+main = "worker.js"
+compatibility_date = "2026-08-27"
+
+# Weist Cloudflare an, den public-Ordner für Webseiten-Dateien zu nutzen
+assets = { directory = "./public" }
+
+[[kv_namespaces]]
+binding = "FILES_KV"
+id = "8ee359ae05d848ed983c522c6b20c39d"
