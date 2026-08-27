@@ -689,10 +689,11 @@ var state = {
   mobileSidebarOpen: false,
   calendarMonth: new Date().toISOString().slice(0, 7),
   showSyncModal: false,
-  syncCodeInput: "",
-  syncStatus: "off",
-  syncBucket: null,
-  syncLastAt: 0,
+  p2pStatus: "off",
+  p2pMode: null,
+  p2pPhase: null,
+  p2pLocalCode: "",
+  p2pRemoteInput: "",
   dataUpdatedAt: 0,
 };
 
@@ -721,7 +722,6 @@ function loadData() {
     state.clips = clips || []; state.projects = projects || []; state.loading = false;
     try { state.dataUpdatedAt = parseInt(localStorage.getItem("cbm-files-updated-at"), 10) || Date.now(); } catch (e) { state.dataUpdatedAt = Date.now(); }
     render();
-    initSync();
   };
   try {
     if (window.storage) {
@@ -778,196 +778,227 @@ function persistClips(next) {
   try { window.storage && window.storage.set("clips", JSON.stringify(next), false); } catch (e) {}
   try { localStorage.setItem("cbm-files-clips", JSON.stringify(next)); } catch (e) {}
   bumpUpdatedAt();
-  scheduleCloudPush();
+  scheduleP2PPush();
 }
 function persistProjects(next) {
   state.projects = next;
   try { window.storage && window.storage.set("projects", JSON.stringify(next), false); } catch (e) {}
   try { localStorage.setItem("cbm-files-projects", JSON.stringify(next)); } catch (e) {}
   bumpUpdatedAt();
-  scheduleCloudPush();
+  scheduleP2PPush();
 }
 function persistAll(clips, projects) {
   try { window.storage && window.storage.set("clips", JSON.stringify(clips), false); } catch (e) {}
   try { window.storage && window.storage.set("projects", JSON.stringify(projects), false); } catch (e) {}
   try { localStorage.setItem("cbm-files-clips", JSON.stringify(clips)); localStorage.setItem("cbm-files-projects", JSON.stringify(projects)); } catch (e) {}
   bumpUpdatedAt();
-  scheduleCloudPush();
+  scheduleP2PPush();
 }
 
-/* ---- cross-device sync (kvdb.io — free, no-signup key/value store) ----
-   All data for a "sync code" lives at https://kvdb.io/{bucket}/data as one
-   JSON blob { clips, projects, updatedAt }. Every local change pushes that
-   blob to the cloud (debounced); every device polls it periodically and on
-   focus, and applies whichever copy — local or cloud — is newer. This is a
-   free community service with no account system: good for a solo shooter
-   or small team, but it can go down, and it isn't a substitute for the
-   "Download full backup" option in the sidebar. */
+/* ---- cross-device sync (WebRTC, peer-to-peer, no server) ----
+   Two browsers connect directly to each other over a WebRTC DataChannel.
+   There's no backend involved in moving your data — but WebRTC still needs
+   a one-time "signaling" handshake to find the peer, and with no server to
+   carry that handshake, it happens manually: device A generates a short
+   pairing code, you copy it to device B, device B generates a reply code,
+   you copy that back to device A. After that the channel is open and both
+   sides push their state to each other automatically, live, for as long as
+   both tabs stay open and connected.
 
-var SYNC_BUCKET_KEY = "cbm-files-sync-bucket";
-var syncPushTimer = null;
-var syncPollTimer = null;
+   Trade-offs to know:
+   - Both devices must have this page open at the same time to sync — there's
+     no server to hold messages for an offline device.
+   - Closing either tab drops the connection; you'll pair again next time.
+   - NAT traversal uses a public STUN server (Google's) to help the two
+     devices find each other across networks. It only relays connection
+     info, never your data — data flows directly between the two browsers
+     once connected. On the same Wi-Fi/LAN it likely isn't even needed.
+   - This is a convenience layer, not a backup. Use "Download full backup"
+     periodically too. */
 
-function getSyncBucket() {
-  try { return localStorage.getItem(SYNC_BUCKET_KEY) || null; } catch (e) { return null; }
+var P2P_STUN_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
+var p2pPC = null;
+var p2pDC = null;
+var p2pPushTimer = null;
+
+function b64EncodeObj(obj) {
+  return btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
 }
-function setSyncBucket(id) {
-  try {
-    if (id) localStorage.setItem(SYNC_BUCKET_KEY, id);
-    else localStorage.removeItem(SYNC_BUCKET_KEY);
-  } catch (e) {}
-  state.syncBucket = id;
-}
-
-function initSync() {
-  state.syncBucket = getSyncBucket();
-  if (!state.syncBucket) { state.syncStatus = "off"; return; }
-  state.syncStatus = "connected";
-  cloudPull(true);
-  if (syncPollTimer) clearInterval(syncPollTimer);
-  syncPollTimer = setInterval(function () {
-    if (state.syncBucket && document.visibilityState !== "hidden") cloudPull(false);
-  }, 8000);
-  document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState === "visible" && state.syncBucket) cloudPull(false);
-  });
-  window.addEventListener("focus", function () {
-    if (state.syncBucket) cloudPull(false);
-  });
+function b64DecodeObj(str) {
+  return JSON.parse(decodeURIComponent(escape(atob((str || "").trim()))));
 }
 
-function scheduleCloudPush() {
-  if (!state.syncBucket) return;
-  if (syncPushTimer) clearTimeout(syncPushTimer);
-  syncPushTimer = setTimeout(function () { cloudPush(); }, 700);
-}
-
-function cloudPush() {
-  if (!state.syncBucket) return;
-  var payload = JSON.stringify({ clips: state.clips, projects: state.projects, updatedAt: state.dataUpdatedAt || Date.now() });
-  fetch("https://kvdb.io/" + state.syncBucket + "/data", { method: "PUT", body: payload })
-    .then(function (res) {
-      if (!res.ok) throw new Error("push failed");
-      state.syncStatus = "connected"; state.syncLastAt = Date.now();
-      render();
-    })
-    .catch(function () {
-      state.syncStatus = "error";
-      render();
-    });
-}
-
-function cloudPull(isInitial) {
-  if (!state.syncBucket) return;
-  fetch("https://kvdb.io/" + state.syncBucket + "/data")
-    .then(function (res) {
-      if (res.status === 404) { state.syncStatus = "connected"; return null; } // bucket exists, no data yet
-      if (!res.ok) throw new Error("pull failed");
-      return res.text();
-    })
-    .then(function (text) {
-      if (!text) { state.syncStatus = "connected"; render(); return; }
-      var remote;
-      try { remote = JSON.parse(text); } catch (e) { state.syncStatus = "connected"; render(); return; }
-      var localUpdatedAt = state.dataUpdatedAt || 0;
-      if (remote && remote.updatedAt && (isInitial || remote.updatedAt > localUpdatedAt)) {
-        state.clips = remote.clips || [];
-        state.projects = remote.projects || [];
-        state.dataUpdatedAt = remote.updatedAt;
-        try {
-          localStorage.setItem("cbm-files-clips", JSON.stringify(state.clips));
-          localStorage.setItem("cbm-files-projects", JSON.stringify(state.projects));
-          localStorage.setItem("cbm-files-updated-at", String(state.dataUpdatedAt));
-        } catch (e) {}
-        try { window.storage && window.storage.set("clips", JSON.stringify(state.clips), false); } catch (e) {}
-        try { window.storage && window.storage.set("projects", JSON.stringify(state.projects), false); } catch (e) {}
+function waitIceGatheringComplete(pc) {
+  return new Promise(function (resolve) {
+    if (pc.iceGatheringState === "complete") { resolve(); return; }
+    function check() {
+      if (pc.iceGatheringState === "complete") {
+        pc.removeEventListener("icegatheringstatechange", check);
+        resolve();
       }
-      state.syncStatus = "connected"; state.syncLastAt = Date.now();
-      render();
-    })
-    .catch(function () {
-      state.syncStatus = "error";
-      render();
-    });
+    }
+    pc.addEventListener("icegatheringstatechange", check);
+    setTimeout(resolve, 4000); // don't block forever on flaky networks
+  });
 }
 
-function createSync() {
-  state.syncStatus = "connecting";
-  render();
-  fetch("https://kvdb.io/", { method: "POST" })
-    .then(function (res) {
-      if (!res.ok) throw new Error("create failed");
-      return res.text();
-    })
-    .then(function (bucketId) {
-      bucketId = bucketId.trim();
-      setSyncBucket(bucketId);
-      state.syncStatus = "connected";
-      bumpUpdatedAt();
-      cloudPush();
-      showToast("Sync started — enter this code on your other devices.");
-      render();
-    })
-    .catch(function () {
-      state.syncStatus = "off";
-      showToast("Couldn't reach the sync service. Check your connection and try again.");
-      render();
-    });
-}
-
-function joinSync(code) {
-  code = (code || "").trim();
-  if (!code) return;
-  setSyncBucket(code);
-  state.syncStatus = "connecting";
-  render();
-  fetch("https://kvdb.io/" + code + "/data")
-    .then(function (res) {
-      if (res.status === 404) return null;
-      if (!res.ok) throw new Error("join failed");
-      return res.text();
-    })
-    .then(function (text) {
-      if (text) {
-        var remote;
-        try { remote = JSON.parse(text); } catch (e) { remote = null; }
-        if (remote) {
-          state.clips = remote.clips || [];
-          state.projects = remote.projects || [];
-          state.dataUpdatedAt = remote.updatedAt || Date.now();
-          try {
-            localStorage.setItem("cbm-files-clips", JSON.stringify(state.clips));
-            localStorage.setItem("cbm-files-projects", JSON.stringify(state.projects));
-            localStorage.setItem("cbm-files-updated-at", String(state.dataUpdatedAt));
-          } catch (e) {}
-        }
-      } else {
-        // Empty bucket — push what we have so the other device(s) can pick it up.
-        bumpUpdatedAt();
-        cloudPush();
+function p2pWatchConnectionState(pc) {
+  pc.oniceconnectionstatechange = function () {
+    var s = pc.iceConnectionState;
+    if (s === "failed" || s === "disconnected" || s === "closed") {
+      if (state.p2pStatus !== "off") {
+        state.p2pStatus = "error";
+        render();
       }
-      state.syncStatus = "connected";
-      state.showSyncModal = false;
-      state.syncCodeInput = "";
-      showToast("Synced with code " + code + ".");
-      if (syncPollTimer) clearInterval(syncPollTimer);
-      syncPollTimer = setInterval(function () {
-        if (state.syncBucket && document.visibilityState !== "hidden") cloudPull(false);
-      }, 8000);
+    }
+  };
+}
+
+function p2pAttachChannel(dc) {
+  p2pDC = dc;
+  dc.onopen = function () {
+    state.p2pStatus = "connected";
+    showToast("Paired \u2014 syncing live with this device.");
+    render();
+    p2pSendState();
+  };
+  dc.onclose = function () {
+    p2pDC = null;
+    if (state.p2pStatus !== "off") { state.p2pStatus = "off"; render(); }
+  };
+  dc.onerror = function () {
+    state.p2pStatus = "error";
+    render();
+  };
+  dc.onmessage = function (e) {
+    var remote;
+    try { remote = JSON.parse(e.data); } catch (err) { return; }
+    if (!remote) return;
+    var localUpdatedAt = state.dataUpdatedAt || 0;
+    if (remote.updatedAt && remote.updatedAt > localUpdatedAt) {
+      state.clips = remote.clips || [];
+      state.projects = remote.projects || [];
+      state.dataUpdatedAt = remote.updatedAt;
+      try {
+        localStorage.setItem("cbm-files-clips", JSON.stringify(state.clips));
+        localStorage.setItem("cbm-files-projects", JSON.stringify(state.projects));
+        localStorage.setItem("cbm-files-updated-at", String(state.dataUpdatedAt));
+      } catch (e) {}
+      try { window.storage && window.storage.set("clips", JSON.stringify(state.clips), false); } catch (e) {}
+      try { window.storage && window.storage.set("projects", JSON.stringify(state.projects), false); } catch (e) {}
+      render();
+    } else if (remote.updatedAt && remote.updatedAt < localUpdatedAt) {
+      // We're ahead of the peer — tell them so they catch up too.
+      p2pSendState();
+    }
+  };
+}
+
+function p2pSendState() {
+  if (!p2pDC || p2pDC.readyState !== "open") return;
+  var payload = JSON.stringify({
+    clips: state.clips,
+    projects: state.projects,
+    updatedAt: state.dataUpdatedAt || Date.now()
+  });
+  try { p2pDC.send(payload); } catch (e) {}
+}
+
+function scheduleP2PPush() {
+  if (!p2pDC || p2pDC.readyState !== "open") return;
+  if (p2pPushTimer) clearTimeout(p2pPushTimer);
+  p2pPushTimer = setTimeout(function () { p2pSendState(); }, 400);
+}
+
+function p2pReset() {
+  if (p2pPC) { try { p2pPC.close(); } catch (e) {} }
+  p2pPC = null; p2pDC = null;
+  state.p2pMode = null;
+  state.p2pPhase = null;
+  state.p2pLocalCode = "";
+  state.p2pRemoteInput = "";
+}
+
+function pairAsHost() {
+  p2pReset();
+  var pc = new RTCPeerConnection({ iceServers: P2P_STUN_SERVERS });
+  p2pPC = pc;
+  p2pWatchConnectionState(pc);
+  p2pAttachChannel(pc.createDataChannel("sync"));
+
+  state.p2pMode = "host";
+  state.p2pPhase = "creating";
+  state.p2pStatus = "connecting";
+  render();
+
+  pc.createOffer()
+    .then(function (offer) { return pc.setLocalDescription(offer); })
+    .then(function () { return waitIceGatheringComplete(pc); })
+    .then(function () {
+      state.p2pLocalCode = b64EncodeObj(pc.localDescription);
+      state.p2pPhase = "offer-ready";
       render();
     })
     .catch(function () {
-      state.syncStatus = "error";
-      showToast("Couldn't reach that sync code. Check it and try again.");
+      state.p2pStatus = "error";
+      showToast("Couldn't create a pairing code.");
       render();
     });
 }
 
-function leaveSync() {
-  setSyncBucket(null);
-  state.syncStatus = "off";
-  if (syncPollTimer) { clearInterval(syncPollTimer); syncPollTimer = null; }
-  showToast("This device is no longer syncing.");
+function pairCompleteHost(answerCode) {
+  if (!p2pPC) return;
+  var desc;
+  try { desc = b64DecodeObj(answerCode); } catch (e) {
+    showToast("That code doesn't look right.");
+    return;
+  }
+  state.p2pStatus = "connecting";
+  render();
+  p2pPC.setRemoteDescription(desc).catch(function () {
+    state.p2pStatus = "error";
+    showToast("Couldn't complete pairing with that code.");
+    render();
+  });
+}
+
+function pairAsJoinerFromOffer(offerCode) {
+  var desc;
+  try { desc = b64DecodeObj(offerCode); } catch (e) {
+    showToast("That code doesn't look right.");
+    return;
+  }
+  p2pReset();
+  var pc = new RTCPeerConnection({ iceServers: P2P_STUN_SERVERS });
+  p2pPC = pc;
+  p2pWatchConnectionState(pc);
+  pc.ondatachannel = function (e) { p2pAttachChannel(e.channel); };
+
+  state.p2pMode = "join";
+  state.p2pPhase = "creating";
+  state.p2pStatus = "connecting";
+  render();
+
+  pc.setRemoteDescription(desc)
+    .then(function () { return pc.createAnswer(); })
+    .then(function (answer) { return pc.setLocalDescription(answer); })
+    .then(function () { return waitIceGatheringComplete(pc); })
+    .then(function () {
+      state.p2pLocalCode = b64EncodeObj(pc.localDescription);
+      state.p2pPhase = "answer-ready";
+      render();
+    })
+    .catch(function () {
+      state.p2pStatus = "error";
+      showToast("Couldn't join with that code.");
+      render();
+    });
+}
+
+function stopPairing() {
+  p2pReset();
+  state.p2pStatus = "off";
+  showToast("This device is no longer paired.");
   render();
 }
 
@@ -1258,34 +1289,57 @@ function CommandPaletteHtml() {
 /* ================================ sync modal ================================ */
 
 function SyncModalHtml() {
-  var connected = !!state.syncBucket;
-  var statusLabel = state.syncStatus === "connected" ? "Synced" : state.syncStatus === "connecting" ? "Connecting…" : state.syncStatus === "error" ? "Sync error — retrying" : "Not syncing";
-  var dotClass = state.syncStatus === "connected" ? "is-on" : state.syncStatus === "error" ? "is-error" : "is-off";
+  var status = state.p2pStatus;
+  var statusLabel = status === "connected" ? "Live sync active" : status === "connecting" ? "Connecting…" : status === "error" ? "Connection error" : "Not paired";
+  var dotClass = status === "connected" ? "is-on" : status === "error" ? "is-error" : "is-off";
+  var body;
+
+  if (status === "connected") {
+    body =
+      '<section class="form-section"><p class="form-section-title">Paired</p>' +
+        '<p class="sync-note">Connected directly to your other device. Changes on either side push over instantly while both tabs stay open.</p>' +
+        '<button class="btn btn-ghost btn-danger-text" data-action="pair-stop">' + icon("cloud-off", 14) + ' Disconnect</button>' +
+      '</section>';
+  } else if (state.p2pMode === "host" && state.p2pPhase === "offer-ready") {
+    body =
+      '<section class="form-section"><p class="form-section-title">Step 1 — send this code to your other device</p>' +
+        '<div class="sync-code-box" style="align-items:flex-start"><textarea readonly rows="3" style="flex:1;resize:vertical;background:transparent;border:none;color:inherit;font-family:inherit">' + esc(state.p2pLocalCode) + '</textarea>' +
+          '<button class="icon-btn" title="Copy code" data-action="pair-copy-code">' + icon("copy", 15) + '</button></div>' +
+        '<p class="sync-note">Copy it however you like (message, email, AirDrop) and paste it into "Join a device" on the other one.</p>' +
+      '</section>' +
+      '<section class="form-section"><p class="form-section-title">Step 2 — paste the reply code from that device</p>' +
+        '<div class="sync-join-row"><input data-bind="p2pRemoteInput" value="' + esc(state.p2pRemoteInput) + '" placeholder="Paste reply code…" />' +
+          '<button class="btn btn-ghost" data-action="pair-complete">Connect</button></div>' +
+      '</section>' +
+      '<button class="btn btn-ghost btn-danger-text" data-action="pair-stop">' + icon("x", 14) + ' Cancel pairing</button>';
+  } else if (state.p2pMode === "join" && state.p2pPhase === "answer-ready") {
+    body =
+      '<section class="form-section"><p class="form-section-title">Step 2 — send this reply code back</p>' +
+        '<div class="sync-code-box" style="align-items:flex-start"><textarea readonly rows="3" style="flex:1;resize:vertical;background:transparent;border:none;color:inherit;font-family:inherit">' + esc(state.p2pLocalCode) + '</textarea>' +
+          '<button class="icon-btn" title="Copy code" data-action="pair-copy-code">' + icon("copy", 15) + '</button></div>' +
+        '<p class="sync-note">Paste this into the "paste the reply code" box on the device that sent you the first code. Once it does, this device connects automatically.</p>' +
+      '</section>';
+  } else {
+    body =
+      '<section class="form-section"><p class="form-section-title">Pair with another device</p>' +
+        '<p class="sync-note">Peer-to-peer, no server: you\u2019ll get a short code to send to your other device, and one back to paste here. Both tabs need to stay open while paired.</p>' +
+        '<button class="btn btn-primary" data-action="pair-host">' + icon("refresh-cw", 14) + ' Start pairing (get a code)</button>' +
+      '</section>' +
+      '<section class="form-section"><p class="form-section-title">Have a code from another device?</p>' +
+        '<div class="sync-join-row"><input data-bind="p2pRemoteInput" value="' + esc(state.p2pRemoteInput) + '" placeholder="Paste code…" />' +
+          '<button class="btn btn-ghost" data-action="pair-join">Join</button></div>' +
+      '</section>';
+  }
+
   return (
     '<div class="modal-overlay" data-action="close-sync-modal">' +
       '<div class="modal sync-modal" data-action="noop">' +
         '<div class="modal-head"><div><p class="modal-eyebrow">Cinematicbymo.com / Files</p><h2>Sync across devices</h2></div>' +
           '<button class="icon-btn" data-action="close-sync-modal">' + icon("x", 16) + '</button></div>' +
         '<div class="modal-body">' +
-          '<div class="sync-status-row"><span class="sync-dot ' + dotClass + '"></span><span>' + esc(statusLabel) + (connected ? " · code " + esc(state.syncBucket) : "") + '</span></div>' +
-          (!connected ?
-            '<section class="form-section"><p class="form-section-title">Start syncing</p>' +
-              '<p class="sync-note">Generates a short code for this library. Enter that same code on your other devices to keep everything — clips, projects, calendar — in sync.</p>' +
-              '<button class="btn btn-primary" data-action="sync-create">' + icon("refresh-cw", 14) + ' Start syncing this device</button>' +
-            '</section>' +
-            '<section class="form-section"><p class="form-section-title">Already have a code?</p>' +
-              '<div class="sync-join-row"><input data-bind="syncCodeInput" value="' + esc(state.syncCodeInput) + '" placeholder="Paste sync code…" />' +
-                '<button class="btn btn-ghost" data-action="sync-join">Join</button></div>' +
-              '<p class="sync-note">Joining replaces this device\u2019s library with whatever is already in that sync group.</p>' +
-            '</section>'
-            :
-            '<section class="form-section"><p class="form-section-title">Your sync code</p>' +
-              '<div class="sync-code-box"><span style="flex:1">' + esc(state.syncBucket) + '</span>' +
-                '<button class="icon-btn" title="Copy code" data-action="sync-copy-code">' + icon("copy", 15) + '</button></div>' +
-              '<p class="sync-note">Enter this code on another device (Settings → Sync devices → Join) to keep it in step with this one. Changes sync automatically, roughly every few seconds.</p>' +
-              '<button class="btn btn-ghost btn-danger-text" data-action="sync-leave">' + icon("cloud-off", 14) + ' Stop syncing this device</button>' +
-            '</section>') +
-          '<p class="sync-note">Sync uses a free, no-signup community service (kvdb.io). It\u2019s convenient for keeping a solo or small-team library in step, but don\u2019t rely on it as your only backup — use \u201CDownload full backup\u201D periodically too.</p>' +
+          '<div class="sync-status-row"><span class="sync-dot ' + dotClass + '"></span><span>' + esc(statusLabel) + '</span></div>' +
+          body +
+          '<p class="sync-note">This connects the two browsers directly (WebRTC) — your data never touches a server. A public STUN service is used only to help the two devices find each other on the network; it never sees your data. Not a substitute for \u201CDownload full backup.\u201D</p>' +
         '</div>' +
       '</div>' +
     '</div>'
@@ -1637,7 +1691,7 @@ function SidebarHtml() {
       '<div class="sidebar-foot">' +
         '<button class="sidebar-item" data-action="toggle-settings">' + icon("users", 15) + ' Editor workspace</button>' +
         (state.settingsOpen ? '<div class="settings-drop">' +
-          '<button data-action="open-sync-modal">' + icon("refresh-cw", 13) + ' Sync devices' + (state.syncBucket ? ' <span class="sync-dot ' + (state.syncStatus === "connected" ? "is-on" : state.syncStatus === "error" ? "is-error" : "is-off") + '" style="margin-left:auto"></span>' : "") + '</button>' +
+          '<button data-action="open-sync-modal">' + icon("refresh-cw", 13) + ' Sync devices' + (state.p2pStatus !== "off" ? ' <span class="sync-dot ' + (state.p2pStatus === "connected" ? "is-on" : state.p2pStatus === "error" ? "is-error" : "is-off") + '" style="margin-left:auto"></span>' : "") + '</button>' +
           '<button data-action="export-backup">' + icon("download", 13) + ' Download full backup</button>' +
           '<button data-action="trigger-import-backup">' + icon("upload", 13) + ' Restore from backup</button>' +
           '<input id="backupFileInput" type="file" accept="application/json,.json" style="display:none" />' +
@@ -2117,24 +2171,27 @@ function handleAction(action, el, e) {
       state.settingsOpen = !state.settingsOpen; render();
       break;
     case "open-sync-modal":
-      state.showSyncModal = true; state.settingsOpen = false; state.syncCodeInput = "";
+      state.showSyncModal = true; state.settingsOpen = false; state.p2pRemoteInput = "";
       render();
       break;
     case "close-sync-modal":
       state.showSyncModal = false; render();
       break;
-    case "sync-create":
-      createSync();
+    case "pair-host":
+      pairAsHost();
       break;
-    case "sync-join":
-      joinSync(state.syncCodeInput);
+    case "pair-join":
+      pairAsJoinerFromOffer(state.p2pRemoteInput);
       break;
-    case "sync-leave":
-      if (confirm("Stop syncing this device? Your data stays here, but it will no longer update from — or push to — your other devices.")) leaveSync();
+    case "pair-complete":
+      pairCompleteHost(state.p2pRemoteInput);
       break;
-    case "sync-copy-code":
-      if (state.syncBucket && navigator.clipboard) {
-        navigator.clipboard.writeText(state.syncBucket).then(function () { showToast("Sync code copied."); });
+    case "pair-stop":
+      if (state.p2pStatus !== "connected" || confirm("Disconnect this device from its paired device?")) stopPairing();
+      break;
+    case "pair-copy-code":
+      if (state.p2pLocalCode && navigator.clipboard) {
+        navigator.clipboard.writeText(state.p2pLocalCode).then(function () { showToast("Code copied."); });
       }
       break;
     case "export-backup":
